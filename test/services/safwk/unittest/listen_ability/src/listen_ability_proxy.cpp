@@ -13,28 +13,20 @@
  * limitations under the License.
  */
 
-#ifndef SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
-#define SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#include "listen_ability_proxy.h"
+#include "message_parcel.h"
 
-#include <string>
-#include <vector>
+using namespace std;
 
 namespace OHOS {
-using DlHandle = void*;
-
-struct SaProfile {
-    std::u16string process;
-    int32_t saId = 0;
-    std::u16string libPath;
-    std::vector<std::u16string> dependSa;
-    int32_t dependTimeout = 0;
-    bool runOnCreate = false;
-    bool distributed = false;
-    int32_t dumpLevel = 0;
-    std::u16string capability;
-    std::u16string permission;
-    std::u16string bootPhase;
-    DlHandle handle = nullptr;
-};
+int32_t ListenAbilityProxy::AddVolume(int32_t volume)
+{
+    MessageParcel data, reply;
+    MessageOption option;
+    data.WriteInterfaceToken(GetDescriptor());
+    data.WriteInt32(volume);
+    Remote()->SendRequest(ADD_VOLUME, data, reply, option);
+    int32_t result = reply.ReadInt32();
+    return result;
 }
-#endif // SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+}

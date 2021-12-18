@@ -13,28 +13,20 @@
  * limitations under the License.
  */
 
-#ifndef SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
-#define SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#ifndef SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_ILISTEN_ABILITY_H_
+#define SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_ILISTEN_ABILITY_H_
 
-#include <string>
-#include <vector>
+#include "iremote_broker.h"
 
 namespace OHOS {
-using DlHandle = void*;
+class IListenAbility : public IRemoteBroker {
+public:
+    virtual int32_t AddVolume(int32_t volume) = 0;
 
-struct SaProfile {
-    std::u16string process;
-    int32_t saId = 0;
-    std::u16string libPath;
-    std::vector<std::u16string> dependSa;
-    int32_t dependTimeout = 0;
-    bool runOnCreate = false;
-    bool distributed = false;
-    int32_t dumpLevel = 0;
-    std::u16string capability;
-    std::u16string permission;
-    std::u16string bootPhase;
-    DlHandle handle = nullptr;
+    enum {
+        ADD_VOLUME = 1,
+    };
+    DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.test.IListenAbility");
 };
 }
-#endif // SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#endif /* SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_ILISTEN_ABILITY_H_ */

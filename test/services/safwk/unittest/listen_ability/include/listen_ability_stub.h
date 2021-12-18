@@ -13,28 +13,17 @@
  * limitations under the License.
  */
 
-#ifndef SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
-#define SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#ifndef SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_LISTEN_ABILITY_STUB_H_
+#define SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_LISTEN_ABILITY_STUB_H_
 
-#include <string>
-#include <vector>
+#include "message_parcel.h"
+#include "ilisten_ability.h"
+#include "iremote_stub.h"
 
 namespace OHOS {
-using DlHandle = void*;
-
-struct SaProfile {
-    std::u16string process;
-    int32_t saId = 0;
-    std::u16string libPath;
-    std::vector<std::u16string> dependSa;
-    int32_t dependTimeout = 0;
-    bool runOnCreate = false;
-    bool distributed = false;
-    int32_t dumpLevel = 0;
-    std::u16string capability;
-    std::u16string permission;
-    std::u16string bootPhase;
-    DlHandle handle = nullptr;
+class ListenAbilityStub : public IRemoteStub<IListenAbility> {
+public:
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel &reply, MessageOption &option) override;
 };
-}
-#endif // SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+} // namespace OHOS
+#endif /* SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_LISTEN_ABILITY_STUB_H_ */

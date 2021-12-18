@@ -24,22 +24,16 @@ config("system_ability_config") {
     "//developtools/liblog",
     "../../../services/safwk/include",
     "//foundation/distributedschedule/samgr/services/lsamgr/include",
-    "//foundation/distributedschedule/dmsfwk/utils/native/include",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk",
   ]
 }
 
 ohos_shared_library("system_ability_fwk") {
   sources = [
-    "../../../services/safwk/src/if_system_ability_connection_callback.cpp",
-    "../../../services/safwk/src/ilocal_ability_manager.cpp",
     "../../../services/safwk/src/local_ability_manager.cpp",
     "../../../services/safwk/src/local_ability_manager_stub.cpp",
-    "../../../services/safwk/src/sa_profile_parser.cpp",
-    "../../../services/safwk/src/samgr_death_recipient.cpp",
+    "../../../services/safwk/src/parse_util.cpp",
     "../../../services/safwk/src/system_ability.cpp",
-    "../../../services/safwk/src/system_ability_connection_callback.cpp",
-    "../../../services/safwk/src/system_ability_connection_callback_proxy.cpp",
-    "../../../services/safwk/src/system_ability_connection_callback_stub.cpp",
   ]
 
   public_configs = [ ":system_ability_config" ]

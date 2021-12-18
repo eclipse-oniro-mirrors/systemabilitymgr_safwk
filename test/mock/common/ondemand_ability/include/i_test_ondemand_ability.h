@@ -13,28 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
-#define SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#ifndef TEST_MOCK_COMMON_ONDEMAND_ABILITY_INCLUDE_IF_ONDEMAND_ABILITY_H_
+#define TEST_MOCK_COMMON_ONDEMAND_ABILITY_INCLUDE_IF_ONDEMAND_ABILITY_H_
 
 #include <string>
-#include <vector>
+#include "iremote_broker.h"
+#include "iremote_object.h"
+#include "iremote_stub.h"
+#include "iremote_proxy.h"
 
 namespace OHOS {
-using DlHandle = void*;
+class ITestOnDemandAbility : public IRemoteBroker {
+public:
+    virtual int AddVolume(int volume) = 0;
 
-struct SaProfile {
-    std::u16string process;
-    int32_t saId = 0;
-    std::u16string libPath;
-    std::vector<std::u16string> dependSa;
-    int32_t dependTimeout = 0;
-    bool runOnCreate = false;
-    bool distributed = false;
-    int32_t dumpLevel = 0;
-    std::u16string capability;
-    std::u16string permission;
-    std::u16string bootPhase;
-    DlHandle handle = nullptr;
+    enum {
+        ADD_VOLUME = 1,
+    };
+public:
+    DECLARE_INTERFACE_DESCRIPTOR(u"test.safwk.ITestOnDemandAbility");
 };
 }
-#endif // SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#endif // TEST_MOCK_COMMON_ONDEMAND_ABILITY_INCLUDE_IF_ONDEMAND_ABILITY_H_

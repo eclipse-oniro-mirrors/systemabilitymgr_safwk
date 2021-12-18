@@ -55,29 +55,10 @@ bool SystemAbility::MakeAndRegisterAbility(SystemAbility* systemAbility)
     return LocalAbilityManager::GetInstance().AddAbility(systemAbility);
 }
 
-bool SystemAbility::AddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
-{
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-    return LocalAbilityManager::GetInstance().AddSystemAbilityListener(systemAbilityId, listenerSaId);
-}
-
 bool SystemAbility::AddSystemAbilityListener(int32_t systemAbilityId)
 {
     HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, saId_);
     return LocalAbilityManager::GetInstance().AddSystemAbilityListener(systemAbilityId, saId_);
-}
-
-bool SystemAbility::InitAddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
-{
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-    return LocalAbilityManager::GetInstance().InitAddSystemAbilityListener(systemAbilityId,
-        listenerSaId);
-}
-
-bool SystemAbility::RemoveSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
-{
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-    return LocalAbilityManager::GetInstance().RemoveSystemAbilityListener(systemAbilityId, listenerSaId);
 }
 
 bool SystemAbility::RemoveSystemAbilityListener(int32_t systemAbilityId)
@@ -105,14 +86,6 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
     HILOGI(TAG, "AddSystemAbility result:%{public}d", result);
     return result == ERR_OK;
-}
-
-bool SystemAbility::RePublish()
-{
-    if (publishObj_ == nullptr) {
-        return true;
-    }
-    return Publish(publishObj_);
 }
 
 void SystemAbility::StopAbility(int32_t systemAbilityId)
@@ -164,16 +137,6 @@ void SystemAbility::Stop()
 void SystemAbility::SADump()
 {
     OnDump();
-}
-
-void SystemAbility::Test()
-{
-    OnTest();
-}
-
-void SystemAbility::Debug()
-{
-    OnDebug();
 }
 
 int32_t SystemAbility::GetSystemAbilitId() const
@@ -255,16 +218,6 @@ void SystemAbility::OnDump()
 }
 
 // The details should be implemented by subclass
-void SystemAbility::OnDebug()
-{
-}
-
-// The details should be implemented by subclass
-void SystemAbility::OnTest()
-{
-}
-
-// The details should be implemented by subclass
 void SystemAbility::OnStart()
 {
 }
@@ -275,8 +228,7 @@ void SystemAbility::OnStop()
 }
 
 // The details should be implemented by subclass
-void SystemAbility::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId,
-    const sptr<IRemoteObject>& ability)
+void SystemAbility::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
 {
 }
 
@@ -294,16 +246,6 @@ sptr<IRemoteObject> SystemAbility::GetSystemAbility(int32_t systemAbilityId)
     }
 
     return samgrProxy->GetSystemAbility(systemAbilityId);
-}
-
-// Reserved for future usage
-void SystemAbility::AddToLocal() const
-{
-}
-
-// Reserved for future usage
-void SystemAbility::DeleteFromLocal() const
-{
 }
 
 void SystemAbility::SetCapability(const std::u16string& capability)

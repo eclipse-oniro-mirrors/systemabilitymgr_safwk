@@ -11,44 +11,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/ohos.gni")
+import("//build/test.gni")
 
-################################################################################
-config("config_safwk") {
+config("listen_ability_config") {
   visibility = [ ":*" ]
   include_dirs = [
+    "include",
     "//developtools/liblog",
-    "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk",
     "//utils/native/base/include",
     "//utils/system/safwk/native/include",
-    "//third_party/libxml2/include",
   ]
 }
 
-ohos_executable("sa_main") {
-  install_enable = true
-  sources = [ "src/main.cpp" ]
+ohos_shared_library("listen_test") {
+  sources = [
+    "src/listen_ability.cpp",
+    "src/listen_ability_proxy.cpp",
+    "src/listen_ability_stub.cpp",
+  ]
 
-  configs = [ ":config_safwk" ]
-
-  ldflags = [ "-rdynamic" ]
+  configs = [ ":listen_ability_config" ]
 
   deps = [
-    "../../interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//utils/native/base:utils",
   ]
 
   if (is_standard_system) {
-    external_deps = [
-      "hiviewdfx_hilog_native:libhilog",
-      "ipc:ipc_core",
-      "samgr_standard:samgr_proxy",
-    ]
-    public_deps = [ "//third_party/libxml2:libxml2" ]
+    external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+  } else {
+    external_deps = [ "hilog:libhilog" ]
   }
 
+  external_deps += [ "ipc:ipc_core" ]
   part_name = "safwk"
   subsystem_name = "distributedschedule"
 }
-################################################################################
