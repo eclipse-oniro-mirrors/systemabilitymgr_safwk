@@ -13,28 +13,22 @@
  * limitations under the License.
  */
 
-#ifndef SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
-#define SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+#ifndef TEST_MOCK_COMMON_AUDIO_ABILITY_INCLUDE_AUDIO_ABILITY_STUB_H_
+#define TEST_MOCK_COMMON_AUDIO_ABILITY_INCLUDE_AUDIO_ABILITY_STUB_H_
 
-#include <string>
-#include <vector>
+#include "i_test_audio_ability.h"
+#include "parcel.h"
+#include "iremote_stub.h"
+#include "hilog/log.h"
 
 namespace OHOS {
-using DlHandle = void*;
+class TestAudioAbilityStub : public IRemoteStub<ITestAudioAbility> {
+public:
+    int32_t OnRemoteRequest(uint32_t code, MessageParcel& data, MessageParcel& reply, MessageOption& option) override;
 
-struct SaProfile {
-    std::u16string process;
-    int32_t saId = 0;
-    std::u16string libPath;
-    std::vector<std::u16string> dependSa;
-    int32_t dependTimeout = 0;
-    bool runOnCreate = false;
-    bool distributed = false;
-    int32_t dumpLevel = 0;
-    std::u16string capability;
-    std::u16string permission;
-    std::u16string bootPhase;
-    DlHandle handle = nullptr;
+protected:
+    OHOS::HiviewDFX::HiLogLabel label_ = { LOG_CORE, 0XD001800, "SA" };
 };
 }
-#endif // SAFWK_SERVICE_SAFWK_INCLUDE_SAPROFILE_H
+
+#endif // TEST_MOCK_COMMON_AUDIO_ABILITY_INCLUDE_AUDIO_ABILITY_STUB_H_

@@ -27,11 +27,6 @@ namespace OHOS {
     const bool abilityClassName##_##RegisterResult = \
     SystemAbility::MakeAndRegisterAbility(new abilityClassName(systemAbilityId, runOnCreate));
 
-#define INIT_LISTEN_SYSTEM_ABILITY_BY_ID(abilityClassName, \
-    abilityClassNameListenerName, systemAbilityId, listenerName) \
-    const bool abilityClassName##_##abilityClassNameListenerName##_##RegisterResult = \
-    SystemAbility::InitAddSystemAbilityListener(systemAbilityId, listenerName);
-
 #define DECLEAR_SYSTEM_ABILITY(className) \
 public: \
 virtual std::string GetClassName() override { \
@@ -68,22 +63,14 @@ class SystemAbility {
 
 public:
     static bool MakeAndRegisterAbility(SystemAbility* systemAbility);
-
-    // IntToString adapter interface
-    static bool InitAddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId);
-    bool AddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId);
     bool AddSystemAbilityListener(int32_t systemAbilityId);
-    bool RemoveSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId);
     bool RemoveSystemAbilityListener(int32_t systemAbilityId);
 
 protected:
     virtual void OnDump();
-    virtual void OnDebug();
-    virtual void OnTest();
     virtual void OnStart();
     virtual void OnStop();
-    virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId,
-        const sptr<IRemoteObject>& ability);
+    virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     virtual void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
     sptr<IRemoteObject> GetSystemAbility(int32_t systemAbilityId);
@@ -98,8 +85,6 @@ private:
     void Start();
     void Stop();
     void SADump();
-    void Debug();
-    void Test();
     int32_t GetSystemAbilitId() const;
     void SetLibPath(const std::u16string& libPath);
     const std::u16string& GetLibPath() const;
@@ -114,12 +99,9 @@ private:
     void SetDependTimeout(int dependTimeout);
     int GetDependTimeout() const;
     bool GetRunningStatus() const;
-    void AddToLocal() const;
-    void DeleteFromLocal() const;
     void SetCapability(const std::u16string& capability);
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
-    bool RePublish();
 
     friend class LocalAbilityManager;
 

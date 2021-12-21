@@ -31,17 +31,7 @@ protected:
     static bool CheckInputSysAbilityId(int32_t systemAbilityId);
 
 private:
-    int32_t DebugInner(MessageParcel& data, MessageParcel& reply);
-    int32_t TestInner(MessageParcel& data, MessageParcel& reply);
-    int32_t DumpInner(MessageParcel& data, MessageParcel& reply);
-    int32_t HandOffAbilityAfterInner(MessageParcel& data, MessageParcel& reply);
-    int32_t HandOffAbilityBeginInner(MessageParcel& data, MessageParcel& reply);
     int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
-    int32_t StopAbilityInner(MessageParcel& data, MessageParcel& reply);
-    int32_t OnAddSystemAbilityInner(MessageParcel& data, MessageParcel& reply);
-    int32_t OnRemoveSystemAbilityInner(MessageParcel& data, MessageParcel& reply);
-    int32_t StartAbilityAsyncInner(MessageParcel& data, MessageParcel& reply);
-    int32_t RecycleOndemandAbilityInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();
     static bool EnforceInterceToken(MessageParcel& data);
 

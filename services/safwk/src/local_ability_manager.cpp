@@ -27,7 +27,6 @@
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "safwk_log.h"
-#include "samgr_death_recipient.h"
 #include "string_ex.h"
 #include "system_ability.h"
 
@@ -41,6 +40,7 @@ const string TAG = "LocalAbilityManager";
 
 constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
+constexpr int32_t DEFAULT_SAID = -1;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 
@@ -50,6 +50,8 @@ constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 
 const string PROFILES_DIR = "/system/profile/";
 const string DEFAULT_DIR = "/system/usr/";
+const string PREFIX = PROFILES_DIR;
+const string SUFFIX = "_trust.xml";
 
 enum {
     BOOT_START = 1,
@@ -62,8 +64,7 @@ IMPLEMENT_SINGLE_INSTANCE(LocalAbilityManager);
 
 LocalAbilityManager::LocalAbilityManager()
 {
-    currentPid_ = getpid();
-    profileParser_ = std::make_shared<SaProfileParser>();
+    profileParser_ = std::make_shared<ParseUtil>();
     ondemandPool_.Start(std::thread::hardware_concurrency());
     ondemandPool_.SetMaxTaskNum(MAX_TASK_NUMBER);
 }
@@ -73,26 +74,17 @@ LocalAbilityManager::~LocalAbilityManager()
     ondemandPool_.Stop();
 }
 
-void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath)
+void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
-    if (profilePath.length() > PATH_MAX) {
-        HILOGE(TAG, "profilePath length too long!");
+    HILOGI(TAG, "DoStartSAProcess saId : %d", saId);
+    string realProfilePath = "";
+    if (!CheckAndGetProfilePath(profilePath, realProfilePath)) {
+        HILOGE(TAG, "DoStartSAProcess invalid path");
         return;
     }
-    char realProfilePath[PATH_MAX] = {'\0'};
-    if (realpath(profilePath.c_str(), realProfilePath) == nullptr) {
-        HILOGE(TAG, "xmlDocName path does not exist!");
-        return;
-    }
-    // pathString must begin with "/system/profile/" or begin with "/system/usr/"
-    string pathString(realProfilePath);
-    if (pathString.find(PROFILES_DIR) != 0 && pathString.find(DEFAULT_DIR) != 0) {
-        HILOGE(TAG, "xmlDoc dir is not matched");
-        return;
-    }
-    bool ret = InitSystemAbilityProfiles(pathString);
+    bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
     if (!ret) {
-        HILOGW(TAG, "InitSystemAbilityProfiles failed!");
+        HILOGW(TAG, "InitSystemAbilityProfiles no right profile");
         return;
     }
     ret = CheckSystemAbilityManagerReady();
@@ -100,18 +92,38 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath)
         HILOGW(TAG, "CheckSystemAbilityManagerReady failed!");
         return;
     }
-    ret = InitializeSaProfiles();
+    ret = InitializeSaProfiles(saId);
     if (!ret) {
         HILOGW(TAG, "InitializeSaProfiles failed!");
         return;
     }
-    ret = Run();
+    ret = Run(saId);
     if (!ret) {
         HILOGW(TAG, "Run failed!");
         return;
     }
     IPCSkeleton::JoinWorkThread();
     ClearResource();
+}
+
+bool LocalAbilityManager::CheckAndGetProfilePath(const std::string& profilePath, std::string& realProfilePath)
+{
+    if (profilePath.length() > PATH_MAX) {
+        HILOGE(TAG, "profilePath length too long!");
+        return false;
+    }
+    char realPath[PATH_MAX] = {'\0'};
+    if (realpath(profilePath.c_str(), realPath) == nullptr) {
+        HILOGE(TAG, "xmlDocName path does not exist!");
+        return false;
+    }
+    // realProfilePath must begin with "/system/profile/" or begin with "/system/usr/"
+    realProfilePath = realPath;
+    if (realProfilePath.find(PROFILES_DIR) != 0 && realProfilePath.find(DEFAULT_DIR) != 0) {
+        HILOGE(TAG, "xmlDoc dir is not matched");
+        return false;
+    }
+    return true;
 }
 
 bool LocalAbilityManager::CheckSystemAbilityManagerReady()
@@ -133,7 +145,7 @@ bool LocalAbilityManager::CheckSystemAbilityManagerReady()
     return true;
 }
 
-bool LocalAbilityManager::InitSystemAbilityProfiles(const std::string& profilePath)
+bool LocalAbilityManager::InitSystemAbilityProfiles(const std::string& profilePath, int32_t saId)
 {
     bool ret = profileParser_->ParseSaProfiles(profilePath);
     if (!ret) {
@@ -141,38 +153,44 @@ bool LocalAbilityManager::InitSystemAbilityProfiles(const std::string& profilePa
         return false;
     }
 
-    profileParser_->OpenSo();
-    return true;
+    procName_ = profileParser_->GetProcessName();
+    auto saInfos = profileParser_->GetAllSaProfiles();
+    std::string process = Str16ToStr8(procName_);
+    std::string path = PREFIX + process + SUFFIX;
+    bool isExist = profileParser_->CheckPathExist(path);
+    if (isExist) {
+        CheckTrustSa(path, process, saInfos);
+    }
+    if (saId != DEFAULT_SAID) {
+        return profileParser_->LoadSaLib(saId);
+    } else {
+        profileParser_->OpenSo();
+        return true;
+    }
+}
+
+void LocalAbilityManager::CheckTrustSa(const std::string& path, const std::string& process,
+    const std::list<SaProfile>& saInfos)
+{
+    HILOGD(TAG, "CheckTrustSa start");
+    std::map<std::u16string, std::set<int32_t>> trustMaps;
+    bool ret = profileParser_->ParseTrustConfig(path, trustMaps);
+    if (ret && !trustMaps.empty()) {
+        // 1.get allowed sa set in the process
+        const auto& saSets = trustMaps[Str8ToStr16(process)];
+        // 2.check to-load sa in the allowed sa set, and if to-load sa not in the allowed, will remove and not load it
+        for (const auto& saInfo : saInfos) {
+            if (saSets.find(saInfo.saId) == saSets.end()) {
+                HILOGW(TAG, "sa : %{public}d not allow to load in %{public}s", saInfo.saId, process.c_str());
+                profileParser_->RemoveSaProfile(saInfo.saId);
+            }
+        }
+    }
 }
 
 void LocalAbilityManager::ClearResource()
 {
     profileParser_->ClearResource();
-}
-
-bool LocalAbilityManager::RecycleOndemandSystemAbility(int32_t systemAbilityId)
-{
-    std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
-    auto iter = abilityMap_.find(systemAbilityId);
-    if (iter == abilityMap_.end()) {
-        HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
-        return false;
-    }
-
-    auto abilityInstance = iter->second;
-    if (abilityInstance == nullptr) {
-        HILOGW(TAG, "SA:%{public}d instance not exist", systemAbilityId);
-        return false;
-    }
-
-    if (!abilityInstance->isRunning_) {
-        delete abilityInstance;
-        abilityInstance = nullptr;
-        (void)abilityMap_.erase(iter);
-    }
-
-    profileParser_->CloseSo(systemAbilityId);
-    return true;
 }
 
 bool LocalAbilityManager::AddAbility(SystemAbility* ability)
@@ -183,14 +201,26 @@ bool LocalAbilityManager::AddAbility(SystemAbility* ability)
     }
 
     int32_t saId = ability->GetSystemAbilitId();
+    SaProfile saProfile;
+    bool ret = profileParser_->GetProfile(saId, saProfile);
+    if (!ret) {
+        return false;
+    }
     std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
     auto iter = abilityMap_.find(saId);
     if (iter != abilityMap_.end()) {
-        HILOGI(TAG, "try to add exsited ability:%{public}d!", saId);
+        HILOGW(TAG, "try to add existed ability:%{public}d!", saId);
         return false;
     }
-
-    HILOGI(TAG, "adding SA:%{public}d", saId);
+    HILOGI(TAG, "set profile attributes for SA:%{public}d", saId);
+    ability->SetLibPath(saProfile.libPath);
+    ability->SetRunOnCreate(saProfile.runOnCreate);
+    ability->SetDependSa(saProfile.dependSa);
+    ability->SetDependTimeout(saProfile.dependTimeout);
+    ability->SetDistributed(saProfile.distributed);
+    ability->SetDumpLevel(saProfile.dumpLevel);
+    ability->SetCapability(saProfile.capability);
+    ability->SetPermission(saProfile.permission);
     abilityMap_.emplace(saId, ability);
     return true;
 }
@@ -206,203 +236,105 @@ bool LocalAbilityManager::RemoveAbility(int32_t systemAbilityId)
     return true;
 }
 
-bool LocalAbilityManager::SaveAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
-{
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-
-    if (!CheckInputSysAbilityId(systemAbilityId) || !CheckInputSysAbilityId(listenerSaId)) {
-        HILOGW(TAG, "SA:%{public}d or listenerSA:%{public}d invalid!", systemAbilityId, listenerSaId);
-        return false;
-    }
-
-    auto& listenerSaIdList = listenerMap_[systemAbilityId];
-    auto iter = std::find_if(listenerSaIdList.begin(), listenerSaIdList.end(), [listenerSaId](auto SaId) {
-        return SaId == listenerSaId;
-    });
-    if (iter == listenerSaIdList.end()) {
-        listenerSaIdList.emplace_back(listenerSaId);
-        return true;
-    }
-    HILOGI(TAG, "SA:%{public}d already exist, listener SA is %{public}d", systemAbilityId, listenerSaId);
-    return false;
-}
-
-bool LocalAbilityManager::DeleteAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
-{
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-
-    if (!CheckInputSysAbilityId(systemAbilityId) || !CheckInputSysAbilityId(listenerSaId)) {
-        HILOGW(TAG, "SA:%{public}d or listenerSA:%{public}d invalid!",
-            systemAbilityId, listenerSaId);
-        return false;
-    }
-
-    if (listenerMap_.count(systemAbilityId) == 0) {
-        return false;
-    }
-    auto& listenerSaIdList = listenerMap_[systemAbilityId];
-    for (auto iter = listenerSaIdList.begin(); iter != listenerSaIdList.end();) {
-        if (*iter == listenerSaId) {
-            iter = listenerSaIdList.erase(iter);
-            return true;
-        } else {
-            ++iter;
-        }
-    }
-    return false;
-}
-
-bool LocalAbilityManager::InitAddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
-{
-    return SaveAbilityListener(systemAbilityId, listenerSaId);
-}
-
-bool LocalAbilityManager::StartAllAddAbilityListener()
-{
-    std::string localAbilityManagerName = "localabilitymanager" + std::to_string(currentPid_);
-    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgrProxy == nullptr) {
-        HILOGE(TAG, "failed to get samgrProxy");
-        return false;
-    }
-
-    HILOGD(TAG, "localAbilityManagerName:%{public}s", localAbilityManagerName.c_str());
-    for (const auto& [saId, listenerSaIdList] : listenerMap_) {
-        if (samgrProxy->CheckSystemAbility(saId) != nullptr) {
-            HILOGI(TAG, "SA:%{public}d already started, localabilitymanager = %{public}s",
-                saId, localAbilityManagerName.c_str());
-            std::string deviceId;
-            if (!samgrProxy->GetDeviceId(deviceId)) {
-                HILOGE(TAG, "failed to get deviceId");
-                return false;
-            }
-            FindAndNotifyAbilityListeners(saId, deviceId, ON_ADD_SYSTEM_ABILITY_TRANSACTION);
-        }
-
-        int32_t ret = samgrProxy->SubscribeSystemAbility(saId, OHOS::to_utf16(localAbilityManagerName));
-        if (ret != ERR_NONE) {
-            HILOGE(TAG, "failed to subscribe SA:%{public}d, localabilitymanager:%{public}s",
-                saId, localAbilityManagerName.c_str());
-        }
-    }
-    return true;
-}
-
 bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
 {
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-
     if (!CheckInputSysAbilityId(systemAbilityId) || !CheckInputSysAbilityId(listenerSaId)) {
         HILOGW(TAG, "SA:%{public}d or listenerSA:%{public}d invalid!",
             systemAbilityId, listenerSaId);
         return false;
     }
-
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");
         return false;
     }
 
-    std::string localAbilityManagerName = "localabilitymanager" + std::to_string(currentPid_);
-    if (!SaveAbilityListener(systemAbilityId, listenerSaId)) {
-        HILOGE(TAG, "failed to save ability listener");
-        return false;
-    }
-
-    if (samgrProxy->CheckSystemAbility(systemAbilityId) != nullptr) {
-        HILOGE(TAG, "SA:%{public}d already start, localabilitymanager:%{public}s", systemAbilityId,
-            localAbilityManagerName.c_str());
-        std::string deviceId;
-        if (!samgrProxy->GetDeviceId(deviceId)) {
-            HILOGE(TAG, "failed to get deviceId");
-            return false;
+    {
+        HILOGI(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
+        std::lock_guard<std::mutex> autoLock(listenerLock_);
+        auto& listenerSaIdList = listenerMap_[systemAbilityId];
+        auto iter = std::find_if(listenerSaIdList.begin(), listenerSaIdList.end(), [listenerSaId](int32_t SaId) {
+            return SaId == listenerSaId;
+        });
+        if (iter == listenerSaIdList.end()) {
+            listenerSaIdList.emplace_back(listenerSaId);
         }
-        NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, ON_ADD_SYSTEM_ABILITY_TRANSACTION);
+        HILOGI(TAG, "AddSystemAbilityListener SA:%{public}d, size:%{public}zu", systemAbilityId,
+            listenerSaIdList.size());
+        if (listenerSaIdList.size() > 1) {
+            return true;
+        }
     }
 
-    int32_t ret = samgrProxy->SubscribeSystemAbility(systemAbilityId, OHOS::to_utf16(localAbilityManagerName));
+    int32_t ret = samgrProxy->SubscribeSystemAbility(systemAbilityId, GetSystemAbilityStatusChange());
     if (ret) {
-        HILOGE(TAG, "failed to subscribe sa:%{public}d, localabilitymanager:%{public}s", systemAbilityId,
-            localAbilityManagerName.c_str());
+        HILOGE(TAG, "failed to subscribe sa:%{public}d, process name:%{public}s", systemAbilityId,
+            Str16ToStr8(procName_).c_str());
         return false;
     }
-
     return true;
 }
 
 bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
 {
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
-
     if (!CheckInputSysAbilityId(systemAbilityId) || !CheckInputSysAbilityId(listenerSaId)) {
         HILOGW(TAG, "SA:%{public}d or listenerSA:%{public}d invalid!",
             systemAbilityId, listenerSaId);
         return false;
     }
 
+    {
+        HILOGI(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
+        std::lock_guard<std::mutex> autoLock(listenerLock_);
+        if (listenerMap_.count(systemAbilityId) == 0) {
+            return true;
+        }
+        auto& listenerSaIdList = listenerMap_[systemAbilityId];
+        auto iter = std::find_if(listenerSaIdList.begin(), listenerSaIdList.end(), [listenerSaId](int32_t SaId) {
+            return SaId == listenerSaId;
+        });
+        if (iter != listenerSaIdList.end()) {
+            listenerSaIdList.erase(iter);
+        }
+        HILOGI(TAG, "RemoveSystemAbilityListener SA:%{public}d, size:%{public}zu", systemAbilityId,
+            listenerSaIdList.size());
+        if (!listenerSaIdList.empty()) {
+            return true;
+        }
+        listenerMap_.erase(systemAbilityId);
+    }
+
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");
         return false;
     }
-
-    std::string localAbilityManagerName = "localabilitymanager" + std::to_string(currentPid_);
-    if (!DeleteAbilityListener(systemAbilityId, listenerSaId)) {
-        HILOGE(TAG, "failed to delete ability listener");
-        return false;
-    }
-
-    int32_t ret = samgrProxy->UnSubscribeSystemAbility(systemAbilityId, to_utf16(localAbilityManagerName));
+    int32_t ret = samgrProxy->UnSubscribeSystemAbility(systemAbilityId, GetSystemAbilityStatusChange());
     if (ret) {
-        HILOGE(TAG, "failed to unsubscribe SA:%{public}d, localAbilityManager:%{public}s",
-            systemAbilityId, localAbilityManagerName.c_str());
+        HILOGE(TAG, "failed to unsubscribe SA:%{public}d, process name:%{public}s",
+            systemAbilityId, Str16ToStr8(procName_).c_str());
         return false;
     }
-
     return true;
 }
 
-bool LocalAbilityManager::NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId, int32_t code)
-{
-    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgrProxy == nullptr) {
-        HILOGE(TAG, "failed to get samgrProxy");
-        return false;
-    }
-    std::string deviceId;
-    if (!samgrProxy->GetDeviceId(deviceId)) {
-        HILOGE(TAG, "failed to get deviceId");
-        return false;
-    }
-    return NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, code);
-}
-
-bool LocalAbilityManager::NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId,
+void LocalAbilityManager::NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId,
     const std::string& deviceId, int32_t code)
 {
-    HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d, code:%{public}d", systemAbilityId, listenerSaId, code);
-
+    HILOGI(TAG, "SA:%{public}d, listenerSA:%{public}d, code:%{public}d", systemAbilityId, listenerSaId, code);
     auto ability = GetAbility(listenerSaId);
     if (ability == nullptr) {
         HILOGE(TAG, "failed to get listener SA:%{public}d", listenerSaId);
-        return false;
-    }
-
-    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgrProxy == nullptr) {
-        HILOGE(TAG, "failed to get samgrProxy");
-        return false;
+        return;
     }
 
     switch (code) {
-        case ON_ADD_SYSTEM_ABILITY_TRANSACTION: {
+        case ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY: {
             HILOGD(TAG, "OnAddSystemAbility, SA:%{public}d", listenerSaId);
-            sptr<IRemoteObject> saObject = samgrProxy->GetSystemAbility(systemAbilityId);
-            ability->OnAddSystemAbility(systemAbilityId, deviceId, saObject);
+            ability->OnAddSystemAbility(systemAbilityId, deviceId);
             break;
         }
-        case ON_REMOVE_SYSTEM_ABILITY_TRANSACTION: {
+        case ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY: {
             HILOGD(TAG, "OnRemoveSystemAbility, SA:%{public}d", listenerSaId);
             ability->OnRemoveSystemAbility(systemAbilityId, deviceId);
             break;
@@ -410,51 +342,31 @@ bool LocalAbilityManager::NotifyAbilityListener(int32_t systemAbilityId, int32_t
         default:
             break;
     }
-
-    return true;
 }
 
-bool LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
+void LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
     const std::string& deviceId, int32_t code)
 {
-    HILOGD(TAG, "SA:%{public}d, code:%{public}d", systemAbilityId, code);
-
-    auto iter = listenerMap_.find(systemAbilityId);
-    if (iter != listenerMap_.end()) {
-        auto& listenerSaIdList = iter->second;
-        for (auto listenerSaId : listenerSaIdList) {
-            NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, code);
+    HILOGI(TAG, "SA:%{public}d, code:%{public}d", systemAbilityId, code);
+    int64_t begin = GetTickCount();
+    std::list<int32_t> listenerSaIdList;
+    {
+        std::lock_guard<std::mutex> autoLock(listenerLock_);
+        auto iter = listenerMap_.find(systemAbilityId);
+        if (iter != listenerMap_.end()) {
+            listenerSaIdList = iter->second;
+        } else {
+            HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
         }
-    } else {
-        HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
     }
-
-    return true;
+    for (auto listenerSaId : listenerSaIdList) {
+        NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, code);
+    }
+    HILOGI(TAG, "SA:%{public}d, code:%{public}d spend:%{public}" PRId64 " ms", systemAbilityId, code,
+        GetTickCount() - begin);
 }
 
-bool LocalAbilityManager::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
-{
-    HILOGD(TAG, "SA:%{public}d added", systemAbilityId);
-    if (!CheckInputSysAbilityId(systemAbilityId)) {
-        HILOGW(TAG, "SA:%{public}d is invalid!", systemAbilityId);
-        return false;
-    }
-
-    return FindAndNotifyAbilityListeners(systemAbilityId, deviceId, ON_ADD_SYSTEM_ABILITY_TRANSACTION);
-}
-
-bool LocalAbilityManager::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
-{
-    HILOGD(TAG, "SA:%{public}d removed", systemAbilityId);
-    if (!CheckInputSysAbilityId(systemAbilityId)) {
-        HILOGW(TAG, "SA:%{public}d is invalid!", systemAbilityId);
-        return false;
-    }
-
-    return FindAndNotifyAbilityListeners(systemAbilityId, deviceId, ON_REMOVE_SYSTEM_ABILITY_TRANSACTION);
-}
-
-bool LocalAbilityManager::StartAbility(int32_t systemAbilityId)
+bool LocalAbilityManager::OnStartAbility(int32_t systemAbilityId)
 {
     HILOGD(TAG, "try to start SA:%{public}d", systemAbilityId);
     auto ability = GetAbility(systemAbilityId);
@@ -462,27 +374,6 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId)
         return false;
     }
     ability->Start();
-    return true;
-}
-
-bool LocalAbilityManager::StopAbility(int32_t systemAbilityId)
-{
-    HILOGD(TAG, "try to stop SA:%{public}d", systemAbilityId);
-    auto ability = GetAbility(systemAbilityId);
-    if (ability == nullptr) {
-        return false;
-    }
-    ability->Stop();
-    return true;
-}
-
-bool LocalAbilityManager::HandoffAbilityAfter(const u16string& begin, const u16string& after)
-{
-    return true;
-}
-
-bool LocalAbilityManager::HandoffAbilityBegin(int32_t systemAbilityId)
-{
     return true;
 }
 
@@ -505,38 +396,6 @@ bool LocalAbilityManager::GetRunningStatus(int32_t systemAbilityId)
     }
 
     return ability->GetRunningStatus();
-}
-
-bool LocalAbilityManager::Debug(int32_t systemAbilityId)
-{
-    auto ability = GetAbility(systemAbilityId);
-    if (ability == nullptr) {
-        return false;
-    }
-    ability->Debug();
-    return true;
-}
-
-bool LocalAbilityManager::Test(int32_t systemAbilityId)
-{
-    auto ability = GetAbility(systemAbilityId);
-    if (ability == nullptr) {
-        return false;
-    }
-
-    ability->Test();
-    return true;
-}
-
-bool LocalAbilityManager::SADump(int32_t systemAbilityId)
-{
-    auto ability = GetAbility(systemAbilityId);
-    if (ability == nullptr) {
-        return false;
-    }
-
-    ability->SADump();
-    return true;
 }
 
 void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
@@ -562,7 +421,7 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
             }
         }
 
-        if (!StartAbility(systemAbilityId)) {
+        if (!OnStartAbility(systemAbilityId)) {
             HILOGE(TAG, "failed to start ability:%{public}d", systemAbilityId);
         }
     } else {
@@ -570,52 +429,68 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
     }
 }
 
-void LocalAbilityManager::StartAbilityAsyn(int32_t systemAbilityId)
+bool LocalAbilityManager::StartAbility(int32_t systemAbilityId)
 {
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
     ondemandPool_.AddTask(task);
+    return true;
 }
 
-bool LocalAbilityManager::InitializeSaProfiles()
+bool LocalAbilityManager::InitializeSaProfiles(int32_t saId)
 {
-    HILOGD(TAG, "initializing sa profiles...");
+    return (saId == DEFAULT_SAID) ? InitializeRunOnCreateSaProfiles() : InitializeOnDemandSaProfile(saId);
+}
+
+bool LocalAbilityManager::InitializeRunOnCreateSaProfiles()
+{
+    HILOGD(TAG, "initializing run-on-create sa profiles...");
     auto& saProfileList = profileParser_->GetAllSaProfiles();
     if (saProfileList.empty()) {
         HILOGW(TAG, "sa profile is empty");
         return false;
     }
 
-    std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
     for (const auto& saProfile : saProfileList) {
-        auto iterProfile = abilityMap_.find(saProfile.saId);
-        if (iterProfile == abilityMap_.end()) {
-            HILOGW(TAG, "SA:%{public}d not found", saProfile.saId);
+        if (!InitializeSaProfilesInnerLocked(saProfile)) {
+            HILOGW(TAG, "SA:%{public}d init fail", saProfile.saId);
             continue;
         }
-        auto systemAbility = iterProfile->second;
-        if (systemAbility == nullptr) {
-            HILOGW(TAG, "SA:%{public}d is null", saProfile.saId);
-            continue;
-        }
-        HILOGI(TAG, "set profile attributes for SA:%{public}d", saProfile.saId);
-        systemAbility->SetLibPath(saProfile.libPath);
-        systemAbility->SetRunOnCreate(saProfile.runOnCreate);
-        systemAbility->SetDependSa(saProfile.dependSa);
-        systemAbility->SetDependTimeout(saProfile.dependTimeout);
-        systemAbility->SetDistributed(saProfile.distributed);
-        systemAbility->SetDumpLevel(saProfile.dumpLevel);
-        systemAbility->SetCapability(saProfile.capability);
-        systemAbility->SetPermission(saProfile.permission);
-
-        uint32_t phase = OTHER_START;
-        if (saProfile.bootPhase == BOOT_START_PHASE) {
-            phase = BOOT_START;
-        } else if (saProfile.bootPhase == CORE_START_PHASE) {
-            phase = CORE_START;
-        }
-        auto& saList = abilityPhaseMap_[phase];
-        saList.emplace_back(systemAbility);
     }
+    return true;
+}
+
+bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
+{
+    HILOGD(TAG, "initializing ondemand sa profile...");
+    SaProfile saProfile;
+    bool ret = profileParser_->GetProfile(saId, saProfile);
+    if (ret) {
+        return InitializeSaProfilesInnerLocked(saProfile);
+    }
+    return false;
+}
+
+bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saProfile)
+{
+    std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
+    auto iterProfile = abilityMap_.find(saProfile.saId);
+    if (iterProfile == abilityMap_.end()) {
+        HILOGW(TAG, "SA:%{public}d not found", saProfile.saId);
+        return false;
+    }
+    auto systemAbility = iterProfile->second;
+    if (systemAbility == nullptr) {
+        HILOGW(TAG, "SA:%{public}d is null", saProfile.saId);
+        return false;
+    }
+    uint32_t phase = OTHER_START;
+    if (saProfile.bootPhase == BOOT_START_PHASE) {
+        phase = BOOT_START;
+    } else if (saProfile.bootPhase == CORE_START_PHASE) {
+        phase = CORE_START;
+    }
+    auto& saList = abilityPhaseMap_[phase];
+    saList.emplace_back(systemAbility);
     return true;
 }
 
@@ -679,7 +554,7 @@ void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
     startPhaseCV_.notify_one();
 }
 
-void LocalAbilityManager::RegisterOnDemandSystemAbility()
+void LocalAbilityManager::RegisterOnDemandSystemAbility(int32_t saId)
 {
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
@@ -687,13 +562,11 @@ void LocalAbilityManager::RegisterOnDemandSystemAbility()
         return;
     }
 
-    std::string localAbilityManagerName = "localabilitymanager" + std::to_string(currentPid_);
     auto& saProfileList = profileParser_->GetAllSaProfiles();
     for (const auto& saProfile : saProfileList) {
-        HILOGD(TAG, "register ondemand ability:%{public}d to samgr", saProfile.saId);
-        if (!saProfile.runOnCreate) {
-            int32_t ret = samgrProxy->AddOnDemandSystemAbilityInfo(saProfile.saId,
-                OHOS::to_utf16(localAbilityManagerName));
+        if (NeedRegisterOnDemand(saProfile, saId)) {
+            HILOGD(TAG, "register ondemand ability:%{public}d to samgr", saProfile.saId);
+            int32_t ret = samgrProxy->AddOnDemandSystemAbilityInfo(saProfile.saId, procName_);
             if (ret != ERR_OK) {
                 HILOGI(TAG, "failed to add ability info for on-demand SA:%{public}d", saProfile.saId);
             }
@@ -701,16 +574,12 @@ void LocalAbilityManager::RegisterOnDemandSystemAbility()
     }
 }
 
-void LocalAbilityManager::AddSamgrDeathRecipient()
+// on default load, not-run-on-create SA will register to OnDemandSystemAbility
+// on demand load, other SA will register to OnDemandSystemAbility, although some are runOnCreate
+bool LocalAbilityManager::NeedRegisterOnDemand(const SaProfile& saProfile, int32_t saId)
 {
-    sptr<IRemoteObject> registryObject = SystemAbilityManagerClient::GetInstance().GetRegistryRemoteObject();
-    if (registryObject == nullptr) {
-        HILOGD(TAG, "failed to get registry object");
-        return;
-    }
-    auto recipient = sptr<IRemoteObject::DeathRecipient>(new SamgrDeathRecipient());
-    bool result = registryObject->AddDeathRecipient(recipient);
-    HILOGD(TAG, "%{public}s to add death recipient", result ? "success" : "failed");
+    return (saId == DEFAULT_SAID && !saProfile.runOnCreate) ||
+        (saId != DEFAULT_SAID && saProfile.saId != saId);
 }
 
 void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& systemAbilityList)
@@ -720,7 +589,7 @@ void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& syste
     }
 
     for (auto systemAbility : systemAbilityList) {
-        if (systemAbility != nullptr && systemAbility->IsRunOnCreate()) {
+        if (systemAbility != nullptr) {
             HILOGD(TAG, "add phase task for SA:%{public}d", systemAbility->GetSystemAbilitId());
             std::lock_guard<std::mutex> autoLock(startPhaseLock_);
             ++startTaskNum_;
@@ -753,33 +622,27 @@ void LocalAbilityManager::FindAndStartPhaseTasks()
     }
 }
 
-bool LocalAbilityManager::Run()
+bool LocalAbilityManager::Run(int32_t saId)
 {
     HILOGD(TAG, "local ability manager is running...");
-    std::string localAbilityManagerName = "localabilitymanager" + std::to_string(currentPid_);
-    bool addResult = AddLocalAbilityManager(localAbilityManagerName);
+    bool addResult = AddLocalAbilityManager();
     if (!addResult) {
         HILOGE(TAG, "failed to add local abilitymanager");
         return false;
     }
-    HILOGI(TAG, "success to add local ability manager:%{public}s", localAbilityManagerName.c_str());
-
-    AddSamgrDeathRecipient();
-    bool startResult = StartAllAddAbilityListener();
-    HILOGI(TAG, "%{public}s to start all Listeners for ability add", startResult ? "success" : "failed");
-
+    HILOGI(TAG, "success to add process name:%{public}s", Str16ToStr8(procName_).c_str());
     uint32_t concurrentThreads = std::thread::hardware_concurrency();
     HILOGD(TAG, "concurrentThreads is %{public}d", concurrentThreads);
     pool_.Start(concurrentThreads);
     pool_.SetMaxTaskNum(MAX_TASK_NUMBER);
 
     FindAndStartPhaseTasks();
-    RegisterOnDemandSystemAbility();
+    RegisterOnDemandSystemAbility(saId);
     pool_.Stop();
     return true;
 }
 
-bool LocalAbilityManager::AddLocalAbilityManager(const std::string& localAbilityMgrName)
+bool LocalAbilityManager::AddLocalAbilityManager()
 {
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
@@ -790,30 +653,42 @@ bool LocalAbilityManager::AddLocalAbilityManager(const std::string& localAbility
     if (localAbilityManager_ == nullptr) {
         localAbilityManager_ = this;
     }
-    int32_t ret = samgrProxy->AddLocalAbilityManager(OHOS::to_utf16(localAbilityMgrName), localAbilityManager_);
+    int32_t ret = samgrProxy->AddSystemProcess(procName_, localAbilityManager_);
     return ret == ERR_OK;
 }
 
-bool LocalAbilityManager::ReRegisterSA()
+sptr<ISystemAbilityStatusChange> LocalAbilityManager::GetSystemAbilityStatusChange()
 {
-    HILOGI(TAG, "try to register SA again...");
-    auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgrProxy == nullptr) {
-        HILOGE(TAG, "failed to get samgrProxy");
-        return false;
+    std::lock_guard<std::mutex> autoLock(listenerLock_);
+    if (statusChangeListener_ == nullptr) {
+        statusChangeListener_ = new SystemAbilityListener();
+    }
+    return statusChangeListener_;
+}
+
+void LocalAbilityManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbilityId,
+    const std::string& deviceId)
+{
+    HILOGD(TAG, "SA:%{public}d added", systemAbilityId);
+    if (!CheckInputSysAbilityId(systemAbilityId)) {
+        HILOGW(TAG, "SA:%{public}d is invalid!", systemAbilityId);
+        return;
     }
 
-    std::string localAbilityManagerName = "localabilitymanager" + std::to_string(currentPid_);
-    int32_t ret = samgrProxy->AddLocalAbilityManager(OHOS::to_utf16(localAbilityManagerName), this);
-    HILOGD(TAG, "%{public}s to add local ability manager", (ret == ERR_OK) ? "success" : "failed");
+    GetInstance().FindAndNotifyAbilityListeners(systemAbilityId, deviceId,
+        ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
+}
 
-    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-    for (const auto& [abilityId, ability] : abilityMap_) {
-        if (ability != nullptr) {
-            HILOGD(TAG, "%{public}s to republish ability:%{public}d", ability->RePublish() ? "success" : "failed",
-                abilityId);
-        }
+void LocalAbilityManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t systemAbilityId,
+    const std::string& deviceId)
+{
+    HILOGD(TAG, "SA:%{public}d removed", systemAbilityId);
+    if (!CheckInputSysAbilityId(systemAbilityId)) {
+        HILOGW(TAG, "SA:%{public}d is invalid!", systemAbilityId);
+        return;
     }
-    return true;
+
+    GetInstance().FindAndNotifyAbilityListeners(systemAbilityId, deviceId,
+        ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY);
 }
 }
