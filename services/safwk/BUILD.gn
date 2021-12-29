@@ -17,12 +17,8 @@ import("//build/ohos.gni")
 config("config_safwk") {
   visibility = [ ":*" ]
   include_dirs = [
-    "//developtools/liblog",
     "//foundation/distributedschedule/safwk/services/safwk/include",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk",
-    "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
-    "//third_party/libxml2/include",
   ]
 }
 
@@ -34,18 +30,16 @@ ohos_executable("sa_main") {
 
   ldflags = [ "-rdynamic" ]
 
-  deps = [
-    "../../interfaces/innerkits/safwk:system_ability_fwk",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "../../interfaces/innerkits/safwk:system_ability_fwk" ]
 
   if (is_standard_system) {
     external_deps = [
       "hiviewdfx_hilog_native:libhilog",
       "ipc:ipc_core",
+      "samgr_standard:samgr_common",
       "samgr_standard:samgr_proxy",
+      "utils_base:utils",
     ]
-    public_deps = [ "//third_party/libxml2:libxml2" ]
   }
 
   part_name = "safwk"

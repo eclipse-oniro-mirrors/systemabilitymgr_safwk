@@ -15,53 +15,6 @@ import("//build/test.gni")
 
 module_output_path = "safwk/safwk"
 
-config("safwk_test_config") {
-  visibility = [ ":*" ]
-  include_dirs = [
-    "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk",
-    "//foundation/distributedschedule/samgr/services/lsamgr/include",
-    "//utils/native/base/include",
-    "//utils/system/safwk/native/include",
-    "//developtools/liblog",
-  ]
-}
-
-ohos_unittest("ProfileParseUtilTest") {
-  module_out_path = module_output_path
-  resource_config_file =
-      "//foundation/distributedschedule/safwk/test/resource/ohos_test.xml"
-
-  include_dirs = [
-    "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//utils/native/base/include",
-  ]
-
-  sources = [ "./profile_parse_util_test.cpp" ]
-
-  configs = [ ":safwk_test_config" ]
-
-  deps = [
-    "listen_ability:listen_test",
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
-  ]
-
-  cflags = []
-  if (target_cpu == "arm") {
-    cflags += [ "-DBINDER_IPC_32BIT" ]
-  }
-
-  external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
-    "ipc:ipc_core",
-    "samgr_standard:samgr_proxy",
-  ]
-
-  public_deps = [ "//third_party/libxml2:libxml2" ]
-}
-
 ohos_unittest("LocalAbilityManagerTest") {
   module_out_path = module_output_path
   resource_config_file =
@@ -70,19 +23,16 @@ ohos_unittest("LocalAbilityManagerTest") {
   include_dirs = [
     "//foundation/distributedschedule/safwk/services/safwk/include",
     "//foundation/distributedschedule/samgr/services/lsamgr/include",
-    "//utils/native/base/include",
   ]
 
   sources = [ "./local_ability_manager_test.cpp" ]
 
-  configs = [ ":safwk_test_config" ]
-
   deps = [
+    "listen_ability:listen_test",
     "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/distributedschedule/safwk/test/mock/common/audio_ability:test_audio_ability",
     "//foundation/distributedschedule/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
     "//third_party/googletest:gtest_main",
-    "//utils/native/base:utils",
   ]
 
   cflags = []
@@ -93,16 +43,13 @@ ohos_unittest("LocalAbilityManagerTest") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "samgr_standard:samgr_common",
     "samgr_standard:samgr_proxy",
+    "utils_base:utils",
   ]
-
-  public_deps = [ "//third_party/libxml2:libxml2" ]
 }
 
 group("unittest") {
   testonly = true
-  deps = [
-    ":LocalAbilityManagerTest",
-    ":ProfileParseUtilTest",
-  ]
+  deps = [ ":LocalAbilityManagerTest" ]
 }
