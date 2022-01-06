@@ -13,20 +13,6 @@
      limitations under the License.
 -->
 <configuration ver="2.0">
-    <target name="ProfileParseUtilTest">
-        <preparer>
-            <option name="push" value="profile/invalid_root.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/profile.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/test_trust_muti_sa.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/invalid_root_trust.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/invalid_element_trust.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/test_trust_one_sa.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/invalid_muti_root_trust.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/multi_sa_profile.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/test_trust_not_all_allow.xml -> /data/test/resource/safwk/profile/" src="res"/>
-            <option name="push" value="profile/test_trust_all_allow.xml -> /data/test/resource/safwk/profile/" src="res"/>
-        </preparer>
-    </target>
     <target name="LocalAbilityManagerTest">
         <preparer>
             <option name="push" value="profile/multi_sa_profile.xml -> /data/test/resource/safwk/profile/" src="res"/>
