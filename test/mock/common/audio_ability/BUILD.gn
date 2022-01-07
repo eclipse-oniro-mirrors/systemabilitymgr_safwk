@@ -18,9 +18,7 @@ config("test_audio_ability_config") {
   include_dirs = [
     "include",
     "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//utils/native/base/include",
     "//utils/system/safwk/native/include",
-    "//developtools/liblog",
   ]
 }
 
@@ -32,13 +30,11 @@ ohos_shared_library("test_audio_ability") {
   ]
   configs = [ ":test_audio_ability_config" ]
 
-  deps = [
-    "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk",
-    "//utils/native/base:utils",
-  ]
+  deps = [ "//foundation/distributedschedule/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
 
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "utils_base:utils",
   ]
 }
