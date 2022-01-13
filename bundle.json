@@ -1,6 +1,6 @@
 {
     "name": "@ohos/distributedschedule_safwk",
-    "description": "提供系统服务的生命周期管理能力",
+    "description": "system ability framework",
     "homePage": "https://gitee.com/openharmony",
     "version": "3.1",
     "license": "Apache License 2.0",

@@ -20,10 +20,8 @@ ohos_unittest("LocalAbilityManagerTest") {
   resource_config_file =
       "//foundation/distributedschedule/safwk/test/resource/ohos_test.xml"
 
-  include_dirs = [
-    "//foundation/distributedschedule/safwk/services/safwk/include",
-    "//foundation/distributedschedule/samgr/services/lsamgr/include",
-  ]
+  include_dirs =
+      [ "//foundation/distributedschedule/safwk/services/safwk/include" ]
 
   sources = [ "./local_ability_manager_test.cpp" ]
 
@@ -43,6 +41,7 @@ ohos_unittest("LocalAbilityManagerTest") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "samgr_standard:lsamgr",
     "samgr_standard:samgr_common",
     "samgr_standard:samgr_proxy",
     "utils_base:utils",

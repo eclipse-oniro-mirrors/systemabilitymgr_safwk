@@ -15,10 +15,7 @@ import("//build/test.gni")
 
 config("listen_ability_config") {
   visibility = [ ":*" ]
-  include_dirs = [
-    "include",
-    "//utils/system/safwk/native/include",
-  ]
+  include_dirs = [ "include" ]
 }
 
 ohos_shared_library("listen_test") {
@@ -43,6 +40,7 @@ ohos_shared_library("listen_test") {
 
   external_deps += [
     "ipc:ipc_core",
+    "samgr_standard:samgr_proxy",
     "utils_base:utils",
   ]
   part_name = "safwk"
