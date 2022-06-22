@@ -82,6 +82,7 @@ private:
     bool Run(int32_t saId);
     bool NeedRegisterOnDemand(const SaProfile& saProfile, int32_t saId);
     bool OnStartAbility(int32_t systemAbilityId);
+    std::string GetTraceTag(const std::string& profilePath);
 
     std::map<int32_t, SystemAbility*> abilityMap_;
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
