@@ -18,6 +18,7 @@
 #include <cinttypes>
 #include "datetime_ex.h"
 #include "errors.h"
+#include "hitrace_meter.h"
 #include "if_system_ability_manager.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
@@ -113,6 +114,7 @@ void SystemAbility::Start()
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
+    HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
     OnStart();
     isRunning_ = true;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",

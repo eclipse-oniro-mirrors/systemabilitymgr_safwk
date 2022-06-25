@@ -24,6 +24,7 @@
 
 #include "datetime_ex.h"
 #include "errors.h"
+#include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "safwk_log.h"
@@ -47,6 +48,7 @@ constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 const u16string BOOT_START_PHASE = u"BootStartPhase";
 const u16string CORE_START_PHASE = u"CoreStartPhase";
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
+constexpr int32_t SUFFIX_LENGTH = 4; // .xml length
 
 const string PROFILES_DIR = "/system/profile/";
 const string DEFAULT_DIR = "/system/usr/";
@@ -82,28 +84,48 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
         HILOGE(TAG, "DoStartSAProcess invalid path");
         return;
     }
-    bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
-    if (!ret) {
-        HILOGW(TAG, "InitSystemAbilityProfiles no right profile");
-        return;
+    {
+        std::string traceTag = GetTraceTag(realProfilePath);
+        HITRACE_METER_NAME(HITRACE_TAG_SAMGR, traceTag);
+        bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
+        if (!ret) {
+            HILOGW(TAG, "InitSystemAbilityProfiles no right profile");
+            return;
+        }
+        ret = CheckSystemAbilityManagerReady();
+        if (!ret) {
+            HILOGW(TAG, "CheckSystemAbilityManagerReady failed!");
+            return;
+        }
+        ret = InitializeSaProfiles(saId);
+        if (!ret) {
+            HILOGW(TAG, "InitializeSaProfiles failed!");
+            return;
+        }
+        ret = Run(saId);
+        if (!ret) {
+            HILOGW(TAG, "Run failed!");
+            return;
+        }
     }
-    ret = CheckSystemAbilityManagerReady();
-    if (!ret) {
-        HILOGW(TAG, "CheckSystemAbilityManagerReady failed!");
-        return;
-    }
-    ret = InitializeSaProfiles(saId);
-    if (!ret) {
-        HILOGW(TAG, "InitializeSaProfiles failed!");
-        return;
-    }
-    ret = Run(saId);
-    if (!ret) {
-        HILOGW(TAG, "Run failed!");
-        return;
-    }
+
     IPCSkeleton::JoinWorkThread();
     ClearResource();
+}
+
+std::string LocalAbilityManager::GetTraceTag(const std::string& profilePath)
+{
+    std::vector<std::string> libPathVec;
+    string traceTag = "default_proc";
+    SplitStr(profilePath, "/", libPathVec);
+    if ((libPathVec.size() > 0)) {
+        traceTag = libPathVec[libPathVec.size() - 1];
+        auto size = traceTag.length();
+        if (size > SUFFIX_LENGTH) {
+            return traceTag.substr(0, size - SUFFIX_LENGTH);
+        }
+    }
+    return traceTag;
 }
 
 bool LocalAbilityManager::CheckAndGetProfilePath(const std::string& profilePath, std::string& realProfilePath)
