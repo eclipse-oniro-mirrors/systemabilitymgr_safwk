@@ -150,14 +150,14 @@ bool LocalAbilityManager::CheckAndGetProfilePath(const std::string& profilePath,
 
 bool LocalAbilityManager::CheckSystemAbilityManagerReady()
 {
-    sptr<ISystemAbilityManager> samgrProxy;
     int32_t timeout = RETRY_TIMES_FOR_SAMGR;
     constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_SAMGR_ONE_TIME).count();
+    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     while (samgrProxy == nullptr) {
         HILOGI(TAG, "waiting for samgr...");
         if (timeout > 0) {
-            samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
             usleep(duration);
+            samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         } else {
             HILOGE(TAG, "wait for samgr time out (10s)");
             return false;
