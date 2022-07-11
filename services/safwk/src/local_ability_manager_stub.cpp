@@ -15,9 +15,17 @@
 
 #include "local_ability_manager_stub.h"
 
+#include <cstdint>
+#include <map>
+#include <utility>
+
 #include "errors.h"
-#include "ipc_skeleton.h"
+#include "hilog/log_cpp.h"
+#include "if_local_ability_manager.h"
+#include "ipc_object_stub.h"
 #include "ipc_types.h"
+#include "message_option.h"
+#include "message_parcel.h"
 #include "safwk_log.h"
 #include "system_ability_definition.h"
 
