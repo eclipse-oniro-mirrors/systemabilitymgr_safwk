@@ -1,8 +1,9 @@
 {
-    "permissions" : [{
-            "name" : ""
-            "said" : "",
-            "description" : ""
+    "permissions" : [
+        {
+            "name" : "ohos.permission.PERMISSION_USED_STATS",
+            "said" : "3299",
+            "description" : "Invoke AccessToken::PrivacyKit::AddPermissionUsedRecord interface should have own this permission."
         }
     ]
 }
