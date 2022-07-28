@@ -25,7 +25,7 @@
                 "hiviewdfx_hilog_native",
                 "ipc",
                 "samgr",
-                "utils_base"
+                "c_utils"
             ],
             "third_party": [ "libxml2" ]
         },

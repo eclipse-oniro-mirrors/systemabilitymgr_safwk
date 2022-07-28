@@ -39,12 +39,12 @@ ohos_unittest("LocalAbilityManagerTest") {
   }
 
   external_deps = [
+    "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "samgr:lsamgr",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
-    "utils_base:utils",
   ]
 }
 
