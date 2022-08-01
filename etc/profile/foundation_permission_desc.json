@@ -27,5 +27,12 @@
             "said" : "180",
             "description" : "AMS requires all application to restart"
         }
+    ],
+    "mkdir" : [
+        {
+            "name" : "mkdir notification",
+            "said" : "3203",
+            "description" : "Move notification db from /data/system_ce/ans_standard to /data/service/el1/public/notification/."
+        }
     ]
 }
