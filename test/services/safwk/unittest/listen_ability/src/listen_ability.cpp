@@ -54,6 +54,8 @@ void ListenAbility::OnStart()
     HiLog::Info(LABEL, "%{public}s called:AddAbilityListener begin!", __func__);
     AddSystemAbilityListener(DISTRIBUTED_SCHED_SA_ID);
     AddSystemAbilityListener(SOFTBUS_SERVER_SA_ID);
+    AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
+    AddSystemAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
     HiLog::Info(LABEL, "%{public}s called:AddAbilityListener end!", __func__);
 }
 
