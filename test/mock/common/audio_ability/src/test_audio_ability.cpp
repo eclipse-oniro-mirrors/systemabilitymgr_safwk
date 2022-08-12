@@ -17,6 +17,7 @@
 
 #include "hilog/log.h"
 #include "iremote_object.h"
+#include "system_ability_definition.h"
 
 using namespace OHOS;
 using namespace OHOS::HiviewDFX;
@@ -93,9 +94,23 @@ void TestAudioAbility::OnStart()
     if (res == false) {
         HiLog::Error(label_, "%{public}s:fail to onstart res = %{public}d", __func__, res);
     }
+    AddSystemAbilityListener(DISTRIBUTED_SCHED_SA_ID);
+    AddSystemAbilityListener(SOFTBUS_SERVER_SA_ID);
+    AddSystemAbilityListener(RES_SCHED_SYS_ABILITY_ID);
+    AddSystemAbilityListener(BACKGROUND_TASK_MANAGER_SERVICE_ID);
     return;
 }
 
 void TestAudioAbility::OnStop()
 {
+}
+
+void TestAudioAbility::OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    HiLog::Info(label_, "OnAddSystemAbility systemAbilityId:%{public}d added!", systemAbilityId);
+}
+
+void TestAudioAbility::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId)
+{
+    HiLog::Info(label_, "OnRemoveSystemAbility systemAbilityId:%{public}d removed!", systemAbilityId);
 }

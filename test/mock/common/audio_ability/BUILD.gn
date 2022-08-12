@@ -36,6 +36,7 @@ ohos_shared_library("test_audio_ability") {
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
+    "samgr:samgr_proxy",
   ]
 
   part_name = "safwk"

@@ -293,6 +293,11 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
         HILOGI(TAG, "AddSystemAbilityListener SA:%{public}d, size:%{public}zu", systemAbilityId,
             listenerSaIdList.size());
         if (listenerSaIdList.size() > 1) {
+            sptr<IRemoteObject> object = samgrProxy->CheckSystemAbility(systemAbilityId);
+            if (object != nullptr) {
+                NotifyAbilityListener(systemAbilityId, listenerSaId, "",
+                    ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
+            }
             return true;
         }
     }
