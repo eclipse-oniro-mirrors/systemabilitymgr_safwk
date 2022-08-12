@@ -48,6 +48,38 @@ ohos_unittest("LocalAbilityManagerTest") {
   ]
 }
 
+ohos_unittest("SystemAbilityTest") {
+  module_out_path = module_output_path
+
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+  ]
+
+  sources = [
+    "./mock_sa_realize.cpp",
+    "./system_ability_test.cpp",
+  ]
+
+  deps = [
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  cflags = []
+  if (target_cpu == "arm") {
+    cflags += [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "samgr:lsamgr",
+    "samgr:samgr_common",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [ ":LocalAbilityManagerTest" ]
