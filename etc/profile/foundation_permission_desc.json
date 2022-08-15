@@ -39,5 +39,12 @@
             "said" : "3203",
             "description" : "Move notification db from /data/system_ce/ans_standard to /data/service/el1/public/notification/."
         }
+    ],
+    "bootevents" : [
+        {
+            "name" : "bootevent.wms.fullscreen.ready",
+            "said" : "4606",
+            "description" : "WMS define fullscreen ready event"
+        }
     ]
 }
