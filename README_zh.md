@@ -6,7 +6,7 @@
 ## 目录<a name="section161941989596"></a>
 
 ```
-/foundation/distributedschedule
+/foundation/systemabilitymgr
 │── safwk               # 组件目录
 │  ├── bundle.json      # 组件描述及编译脚本
 │  ├── etc              # 配置文件
@@ -194,7 +194,7 @@ ohos_sa_profile("xxx_sa_profile") {
     sources = [
         "serviceid.xml"
     ]
-    subsystem_name = "distributedschedule"
+    subsystem_name = "systemabilitymgr"
 }
 ```
 
@@ -241,10 +241,10 @@ cfg配置文件为linux提供的native进程拉起策略，开机启动阶段由
 
 系统服务管理子系统
 
-[**distributedschedule\_safwk**](https://gitee.com/openharmony/distributedschedule_safwk)
+[**systemabilitymgr\_safwk**](https://gitee.com/openharmony/systemabilitymgr_safwk)
 
-[distributedschedule\_samgr](https://gitee.com/openharmony/distributedschedule_samgr)
+[systemabilitymgr\_samgr](https://gitee.com/openharmony/systemabilitymgr_samgr)
 
-[distributedschedule\_safwk\_lite](https://gitee.com/openharmony/distributedschedule_safwk_lite)
+[systemabilitymgr\_safwk\_lite](https://gitee.com/openharmony/systemabilitymgr_safwk_lite)
 
-[distributedschedule\_samgr\_lite](https://gitee.com/openharmony/distributedschedule_samgr_lite)
+[systemabilitymgr\_samgr\_lite](https://gitee.com/openharmony/systemabilitymgr_samgr_lite)

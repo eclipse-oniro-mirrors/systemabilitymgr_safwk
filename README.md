@@ -6,7 +6,7 @@ The **safwk** module of the System Ability Management subsystem defines how to i
 ## Directory Structure<a name="section161941989596"></a>
 
 ```
-/foundation/distributedschedule
+/foundation/systemabilitymgr
 │── safwk                # Directory for the safwk module
 │  ├── bundle.json      # Description and build file of safwk
 │  ├── etc              # Configuration files
@@ -194,7 +194,7 @@ ohos_sa_profile("xxx_sa_profile") {
     sources = [
         "serviceid.xml"
     ]
-    subsystem_name = "distributedschedule"
+    subsystem_name = "systemabilitymgr"
 }
 ```
 
@@ -241,10 +241,10 @@ The .cfg file contains the native process startup policy provided by Linux. Duri
 
 **System Ability Management Subsystem**
 
-[**distributedschedule\_safwk**](https://gitee.com/openharmony/distributedschedule_safwk)
+[**systemabilitymgr\_safwk**](https://gitee.com/openharmony/systemabilitymgr_safwk)
 
-[distributedschedule\_samgr](https://gitee.com/openharmony/distributedschedule_samgr)
+[systemabilitymgr\_samgr](https://gitee.com/openharmony/systemabilitymgr_samgr)
 
-[distributedschedule\_safwk\_lite](https://gitee.com/openharmony/distributedschedule_safwk_lite)
+[systemabilitymgr\_safwk\_lite](https://gitee.com/openharmony/systemabilitymgr_safwk_lite)
 
-[distributedschedule\_samgr\_lite](https://gitee.com/openharmony/distributedschedule_samgr_lite)
+[systemabilitymgr\_samgr\_lite](https://gitee.com/openharmony/systemabilitymgr_samgr_lite)
