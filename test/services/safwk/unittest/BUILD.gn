@@ -33,9 +33,8 @@ ohos_unittest("LocalAbilityManagerTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  cflags = []
   if (target_cpu == "arm") {
-    cflags += [ "-DBINDER_IPC_32BIT" ]
+    cflags = [ "-DBINDER_IPC_32BIT" ]
   }
 
   external_deps = [
@@ -66,9 +65,8 @@ ohos_unittest("SystemAbilityTest") {
     "//third_party/googletest:gtest_main",
   ]
 
-  cflags = []
   if (target_cpu == "arm") {
-    cflags += [ "-DBINDER_IPC_32BIT" ]
+    cflags = [ "-DBINDER_IPC_32BIT" ]
   }
 
   external_deps = [
