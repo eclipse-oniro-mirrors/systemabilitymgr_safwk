@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <csignal>
 #include <sys/prctl.h>
 #include <vector>
 
@@ -63,6 +63,10 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
             HILOGI(TAG, "call the system API prctl failed!");
         }
         setProcessName(profileName);
+        if (profileName == "screenlock_server") {
+            HILOGI(TAG, "raise 36 for screenlock_server");
+            raise(36);
+        }
     }
 }
 
