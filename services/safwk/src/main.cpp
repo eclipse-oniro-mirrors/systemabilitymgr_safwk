@@ -63,9 +63,9 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
             HILOGI(TAG, "call the system API prctl failed!");
         }
         setProcessName(profileName);
-        if (profileName == "screenlock_server") {
+        if (profileName.find("screenlock_serv") == 0) {
             HILOGI(TAG, "raise 36 for screenlock_server");
-            raise(36);
+            raise(36); // 36: start hook
         }
     }
 }
