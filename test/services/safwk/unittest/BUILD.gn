@@ -80,5 +80,8 @@ ohos_unittest("SystemAbilityTest") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":LocalAbilityManagerTest" ]
+  deps = [
+    ":LocalAbilityManagerTest",
+    ":SystemAbilityTest",
+  ]
 }
