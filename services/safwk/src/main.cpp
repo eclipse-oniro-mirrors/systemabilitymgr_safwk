@@ -12,12 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#ifdef SUPPORT_MEMORY_HOOK
 #include <csignal>
+#endif
 #include <sys/prctl.h>
 #include <vector>
 
 #include "errors.h"
 #include "local_ability_manager.h"
+#ifdef SUPPORT_MEMORY_HOOK
+#include "parameter.h"
+#endif
 #include "safwk_log.h"
 #include "securec.h"
 #include "string_ex.h"
@@ -43,6 +48,27 @@ constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
 }
 
+#ifdef SUPPORT_MEMORY_HOOK
+static void StartMemoryHook(const string& processName)
+{
+    const int paramBufLen = 128;
+    const char defaultValue[paramBufLen] = { 0 };
+    const char targetPrefix[] = "startup:";
+    const int targetPrefixLen = 8;
+    char paramValue[paramBufLen] = { 0 };
+    int retParam = GetParameter("libc.hook_mode", defaultValue, paramValue, sizeof(paramValue));
+    if (retParam <= 0 || strncmp(paramValue, targetPrefix, targetPrefixLen) != 0) {
+        return;
+    }
+
+    if (processName.find(paramValue + targetPrefixLen) == 0) {
+        const int hookSignal = 36;
+        HILOGI(TAG, "raise hook signal %{public}d to %{public}s", hookSignal, processName.c_str());
+        raise(hookSignal);
+    }
+}
+#endif
+
 static void SetProcName(const string& filePath, const ProcessNameSetFunc& setProcessName)
 {
     std::vector<string> strVector;
@@ -63,10 +89,9 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
             HILOGI(TAG, "call the system API prctl failed!");
         }
         setProcessName(profileName);
-        if (profileName.find("screenlock_serv") == 0) {
-            HILOGI(TAG, "raise 36 for screenlock_server");
-            raise(36); // 36: start hook
-        }
+#ifdef SUPPORT_MEMORY_HOOK
+        StartMemoryHook(profileName);
+#endif
     }
 }
 
