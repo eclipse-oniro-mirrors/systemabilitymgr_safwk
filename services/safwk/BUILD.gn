@@ -26,7 +26,10 @@ ohos_executable("sa_main") {
   install_enable = true
   sources = [ "src/main.cpp" ]
 
-  configs = [ ":config_safwk" ]
+  configs = [
+    ":config_safwk",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
 
   ldflags = [ "-rdynamic" ]
 

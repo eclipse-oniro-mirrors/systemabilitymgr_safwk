@@ -25,6 +25,9 @@ ohos_unittest("LocalAbilityManagerTest") {
 
   sources = [ "./local_ability_manager_test.cpp" ]
 
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
   deps = [
     "listen_ability:listen_test",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
@@ -59,6 +62,9 @@ ohos_unittest("SystemAbilityTest") {
     "./mock_sa_realize.cpp",
     "./system_ability_test.cpp",
   ]
+
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
   deps = [
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",

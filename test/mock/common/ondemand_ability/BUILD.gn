@@ -28,7 +28,10 @@ ohos_shared_library("test_ondemand_ability") {
     "src/test_ondemand_ability_proxy.cpp",
     "src/test_ondemand_ability_stub.cpp",
   ]
-  configs = [ ":ondemand_ability_config" ]
+  configs = [
+    ":ondemand_ability_config",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
 
   deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
 

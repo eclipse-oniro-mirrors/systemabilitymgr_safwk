@@ -28,7 +28,10 @@ ohos_shared_library("test_audio_ability") {
     "src/test_audio_ability_proxy.cpp",
     "src/test_audio_ability_stub.cpp",
   ]
-  configs = [ ":test_audio_ability_config" ]
+  configs = [
+    ":test_audio_ability_config",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
 
   deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
 

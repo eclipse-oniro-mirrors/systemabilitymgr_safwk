@@ -25,7 +25,10 @@ ohos_shared_library("listen_test") {
     "src/listen_ability_stub.cpp",
   ]
 
-  configs = [ ":listen_ability_config" ]
+  configs = [
+    ":listen_ability_config",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
 
   deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
 
