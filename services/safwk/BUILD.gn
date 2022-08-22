@@ -37,6 +37,7 @@ ohos_executable("sa_main") {
       "c_utils:utils",
       "hitrace_native:hitrace_meter",
       "hiviewdfx_hilog_native:libhilog",
+      "init:libbegetutil",
       "ipc:ipc_core",
       "samgr:lsamgr",
       "samgr:samgr_common",

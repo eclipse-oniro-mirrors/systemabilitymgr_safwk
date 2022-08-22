@@ -12,12 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <csignal>
 #include <sys/prctl.h>
 #include <vector>
 
 #include "errors.h"
 #include "local_ability_manager.h"
+#include "parameter.h"
 #include "safwk_log.h"
 #include "securec.h"
 #include "string_ex.h"
@@ -43,6 +44,25 @@ constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
 }
 
+static void StartMemoryHook(const string& processName)
+{
+    const int paramBufLen = 128;
+    const char defaultValue[paramBufLen] = { 0 };
+    const char targetPrefix[] = "startup:";
+    const int targetPrefixLen = 8;
+    char paramValue[paramBufLen] = { 0 };
+    int retParam = GetParameter("libc.hook_mode", defaultValue, paramValue, sizeof(paramValue));
+    if (retParam <= 0 || strncmp(paramValue, targetPrefix, targetPrefixLen) != 0) {
+        return;
+    }
+
+    if (processName.find(paramValue + targetPrefixLen) == 0) {
+        const int hookSignal = 36;
+        HILOGI(TAG, "raise hook signal %{public}d to %{public}s", hookSignal, processName.c_str());
+        raise(hookSignal);
+    }
+}
+
 static void SetProcName(const string& filePath, const ProcessNameSetFunc& setProcessName)
 {
     std::vector<string> strVector;
@@ -63,6 +83,7 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
             HILOGI(TAG, "call the system API prctl failed!");
         }
         setProcessName(profileName);
+        StartMemoryHook(profileName);
     }
 }
 
