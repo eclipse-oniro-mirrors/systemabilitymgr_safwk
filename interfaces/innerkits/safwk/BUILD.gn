@@ -30,6 +30,8 @@ ohos_shared_library("system_ability_fwk") {
     "../../../services/safwk/src/local_ability_manager_stub.cpp",
     "../../../services/safwk/src/system_ability.cpp",
   ]
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
   public_configs = [ ":system_ability_config" ]
 

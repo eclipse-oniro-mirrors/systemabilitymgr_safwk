@@ -28,7 +28,10 @@ ohos_shared_library("test_demo_sa") {
     "src/demo_service.cpp",
     "src/demo_stub.cpp",
   ]
-  configs = [ ":demo_sa_config" ]
+  configs = [
+    ":demo_sa_config",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
 
   deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
 
