@@ -14,10 +14,12 @@
  */
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
-#include "local_ability_manager.h"
 #include "memory"
 #include "mock_sa_realize.h"
 #include "test_log.h"
+
+#define private public
+#include "local_ability_manager.h"
 using namespace testing;
 using namespace testing::ext;
 
@@ -25,6 +27,7 @@ namespace OHOS {
 namespace SAFWK {
 namespace {
     constexpr int32_t SAID = 1489;
+    const std::string TEST_RESOURCE_PATH = "/data/test/resource/samgr/profile/";
     constexpr int32_t LISTENER_ID = 1488;
 }
 
@@ -55,6 +58,7 @@ void SystemAbilityTest::TearDown()
 {
     DTEST_LOG << "TearDown" << std::endl;
 }
+
 /**
  * @tc.name: RemoveSystemAbilityListener001
  * @tc.desc: Check RemoveSystemAbilityListener
@@ -66,6 +70,32 @@ HWTEST_F(SystemAbilityTest, RemoveSystemAbilityListener001, TestSize.Level2)
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->AddSystemAbilityListener(LISTENER_ID);
     bool res = sysAby->RemoveSystemAbilityListener(LISTENER_ID);
+    EXPECT_EQ(res, true);
+}
+
+/**
+ * @tc.name: MakeAndRegisterAbility001
+ * @tc.desc: Check MakeAndRegisterAbility
+ * @tc.type: FUNC
+ * @tc.require: I5KMF7
+ */
+HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility001, TestSize.Level2)
+{
+    bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));
+    EXPECT_EQ(res, false);
+}
+
+/**
+ * @tc.name: MakeAndRegisterAbility002
+ * @tc.desc: Check MakeAndRegisterAbility
+ * @tc.type: FUNC
+ * @tc.require: I5KMF7
+ */
+HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility002, TestSize.Level2)
+{
+    bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(TEST_RESOURCE_PATH + "1489.xml");
+    EXPECT_EQ(ret, true);
+    bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));
     EXPECT_EQ(res, true);
 }
 }
