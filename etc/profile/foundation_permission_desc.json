@@ -35,17 +35,17 @@
         {
             "name" : "reset bgtaskmgr_service",
             "said" : "180",
-            "description" : "AMS requires bgtaskmgr_service to restart"
+            "description" : "bgtaskmgr_service rely on AMS, need to restart"
         },
         {
             "name" : "reset resource_schedule_service",
             "said" : "180",
-            "description" : "AMS requires resource_schedule_service to restart"
+            "description" : "resource_schedule_service rely on AMS, need to restart"
         },
         {
             "name" : "reset device_usage_stats_service",
             "said" : "180",
-            "description" : "AMS requires device_usage_stats_service to restart"
+            "description" : "device_usage_stats_service rely on AMS, need to restart"
         }
     ],
     "mkdir" : [
