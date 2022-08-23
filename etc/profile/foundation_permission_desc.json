@@ -31,6 +31,21 @@
             "name" : "reset appspawn",
             "said" : "180",
             "description" : "AMS requires all application to restart"
+        },
+        {
+            "name" : "reset bgtaskmgr_service",
+            "said" : "180",
+            "description" : "bgtaskmgr_service rely on AMS, need to restart"
+        },
+        {
+            "name" : "reset resource_schedule_service",
+            "said" : "180",
+            "description" : "resource_schedule_service rely on AMS, need to restart"
+        },
+        {
+            "name" : "reset device_usage_stats_service",
+            "said" : "180",
+            "description" : "device_usage_stats_service rely on AMS, need to restart"
         }
     ],
     "mkdir" : [
