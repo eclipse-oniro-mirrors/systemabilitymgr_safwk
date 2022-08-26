@@ -68,6 +68,16 @@
             "name" : "mkdir notification",
             "said" : "3203",
             "description" : "Move notification db from /data/system_ce/ans_standard to /data/service/el1/public/notification/."
+        },
+        {
+            "name" : "mkdir thermal",
+            "said" : "3303",
+            "description" : "create thermal directory for thermal service to put thermal info /data/service/el0/thermal/"
+        },
+        {
+            "name" : "mkdir config",
+            "said" : "3303",
+            "description" : "create config directory for thermal service to put config info /data/service/el0/thermal/config/"
         }
     ],
     "bootevents" : [
