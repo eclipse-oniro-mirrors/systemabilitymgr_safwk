@@ -23,4 +23,9 @@
             <option name="push" value="systemabilitymgr/safwk/libtest_ondemand_ability.z.so -> /data/test/" src="out"/>
         </preparer>
     </target>
+    <target name="SystemAbilityTest">
+        <preparer>
+            <option name="push" value="profile/1489.xml -> /data/test/resource/samgr/profile/" src="res"/>
+        </preparer>
+    </target>
 </configuration>
