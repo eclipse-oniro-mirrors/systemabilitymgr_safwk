@@ -16,6 +16,7 @@
 #include "iservice_registry.h"
 #include "memory"
 #include "mock_sa_realize.h"
+#include "sa_mock_permission.h"
 #include "test_log.h"
 
 #define private public
@@ -51,6 +52,7 @@ void SystemAbilityTest::TearDownTestCase()
 
 void SystemAbilityTest::SetUp()
 {
+    SaMockPermission::MockPermission();
     DTEST_LOG << "SetUp" << std::endl;
 }
 
