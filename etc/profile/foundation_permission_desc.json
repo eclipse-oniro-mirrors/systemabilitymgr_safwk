@@ -19,6 +19,16 @@
             "name" : "ohos.permission.MICROPHONE",
             "said" : "4005",
             "description" : "permission required for telephony to set microphone mute."
+        },
+        {
+            "name" : "ohos.permission.WRITE_CALL_LOG",
+            "said" : "4005",
+            "description" : "permission required for telephony to write call log."
+        },
+        {
+            "name" : "ohos.permission.READ_CONTACTS",
+            "said" : "4005",
+            "description" : "permission required for telephony to read contacts info."
         }
     ],
     "restart" : [
