@@ -18,7 +18,9 @@ config("config_safwk") {
   visibility = [ ":*" ]
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/lsamgr",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
+    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
   ]
 }
 
@@ -38,13 +40,8 @@ ohos_executable("sa_main") {
   if (is_standard_system) {
     external_deps = [
       "c_utils:utils",
-      "hitrace_native:hitrace_meter",
       "hiviewdfx_hilog_native:libhilog",
       "init:libbegetutil",
-      "ipc:ipc_core",
-      "samgr:lsamgr",
-      "samgr:samgr_common",
-      "samgr:samgr_proxy",
     ]
   }
 

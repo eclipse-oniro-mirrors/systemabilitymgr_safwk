@@ -24,14 +24,22 @@ config("system_ability_config") {
   ]
 }
 
+config("system_config") {
+  include_dirs =
+      [ "//foundation/systemabilitymgr/samgr/interfaces/innerkits/lsamgr" ]
+}
+
 ohos_shared_library("system_ability_fwk") {
   sources = [
     "../../../services/safwk/src/local_ability_manager.cpp",
     "../../../services/safwk/src/local_ability_manager_stub.cpp",
     "../../../services/safwk/src/system_ability.cpp",
   ]
-  configs =
-      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  configs = [
+    ":system_config",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
 
   public_configs = [ ":system_ability_config" ]
 
@@ -41,11 +49,9 @@ ohos_shared_library("system_ability_fwk") {
       "hitrace_native:hitrace_meter",
       "hiviewdfx_hilog_native:libhilog",
       "ipc:ipc_core",
-      "samgr:lsamgr",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
     ]
-    public_deps = [ "//third_party/libxml2:libxml2" ]
   }
 
   install_images = [ system_base_dir ]
