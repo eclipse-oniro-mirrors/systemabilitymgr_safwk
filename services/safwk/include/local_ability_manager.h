@@ -88,10 +88,7 @@ private:
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
     std::shared_mutex abilityMapLock_;
     sptr<LocalAbilityManager> localAbilityManager_;
-    // Thread pool used to start system abilities in parallel.
-    ThreadPool pool_;
-    // Thread pool used to start ondemand system abilities in parallel.
-    ThreadPool ondemandPool_;
+
     // Max task number in pool is 20.
     const int32_t MAX_TASK_NUMBER = 20;
     // Check dependent sa status every 50 ms, it equals 50000us.

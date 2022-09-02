@@ -52,6 +52,14 @@ const string DEFAULT_DIR = "/system/usr/";
 const string PREFIX = PROFILES_DIR;
 const string SUFFIX = "_trust.xml";
 
+const string ONDEMAND_POOL = "ondemand";
+const string INIT_POOL = "sa_init";
+
+// Thread pool used to start ondemand system abilities in parallel.
+ThreadPool ondemandPool_(ONDEMAND_POOL);
+
+// Thread pool used to start system abilities in parallel.
+ThreadPool pool_(INIT_POOL);
 enum {
     BOOT_START = 1,
     CORE_START = 2,
