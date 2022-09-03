@@ -55,11 +55,6 @@ const string SUFFIX = "_trust.xml";
 const string ONDEMAND_POOL = "ondemand";
 const string INIT_POOL = "sa_init";
 
-// Thread pool used to start ondemand system abilities in parallel.
-ThreadPool ondemandPool_(ONDEMAND_POOL);
-
-// Thread pool used to start system abilities in parallel.
-ThreadPool pool_(INIT_POOL);
 enum {
     BOOT_START = 1,
     CORE_START = 2,
@@ -72,13 +67,15 @@ IMPLEMENT_SINGLE_INSTANCE(LocalAbilityManager);
 LocalAbilityManager::LocalAbilityManager()
 {
     profileParser_ = std::make_shared<ParseUtil>();
-    ondemandPool_.Start(std::thread::hardware_concurrency());
-    ondemandPool_.SetMaxTaskNum(MAX_TASK_NUMBER);
+    initPool_ = std::make_unique<ThreadPool>(INIT_POOL);
+    ondemandPool_ = std::make_unique<ThreadPool>(ONDEMAND_POOL);
+    ondemandPool_->Start(std::thread::hardware_concurrency());
+    ondemandPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
 }
 
 LocalAbilityManager::~LocalAbilityManager()
 {
-    ondemandPool_.Stop();
+    ondemandPool_->Stop();
 }
 
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
@@ -481,7 +478,7 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId)
 {
     HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
-    ondemandPool_.AddTask(task);
+    ondemandPool_->AddTask(task);
     return true;
 }
 
@@ -643,7 +640,7 @@ void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& syste
             std::lock_guard<std::mutex> autoLock(startPhaseLock_);
             ++startTaskNum_;
             auto task = std::bind(&LocalAbilityManager::StartSystemAbilityTask, this, systemAbility);
-            pool_.AddTask(task);
+            initPool_->AddTask(task);
         }
     }
 
@@ -681,12 +678,12 @@ bool LocalAbilityManager::Run(int32_t saId)
     HILOGD(TAG, "success to add process name:%{public}s", Str16ToStr8(procName_).c_str());
     uint32_t concurrentThreads = std::thread::hardware_concurrency();
     HILOGI(TAG, "concurrentThreads is %{public}d", concurrentThreads);
-    pool_.Start(concurrentThreads);
-    pool_.SetMaxTaskNum(MAX_TASK_NUMBER);
+    initPool_->Start(concurrentThreads);
+    initPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
 
     FindAndStartPhaseTasks();
     RegisterOnDemandSystemAbility(saId);
-    pool_.Stop();
+    initPool_->Stop();
     return true;
 }
 
