@@ -26,7 +26,7 @@ config("system_ability_config") {
 
 config("system_config") {
   include_dirs =
-      [ "//foundation/systemabilitymgr/samgr/interfaces/innerkits/lsamgr" ]
+      [ "//foundation/systemabilitymgr/samgr/services/lsamgr/include" ]
 }
 
 ohos_shared_library("system_ability_fwk") {
