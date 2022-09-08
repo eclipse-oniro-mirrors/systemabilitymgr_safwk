@@ -67,7 +67,6 @@ ohos_unittest("SystemAbilityTest") {
     "./mock_sa_realize.cpp",
     "./sa_mock_permission.cpp",
     "./system_ability_test.cpp",
-    "//foundation/systemabilitymgr/samgr/services/lsamgr/src/local_ability_manager_proxy.cpp",
   ]
 
   configs =
