@@ -20,8 +20,10 @@ ohos_unittest("LocalAbilityManagerTest") {
   resource_config_file =
       "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
 
-  include_dirs =
-      [ "//foundation/systemabilitymgr/safwk/services/safwk/include" ]
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
+  ]
 
   sources = [ "./local_ability_manager_test.cpp" ]
 
@@ -44,7 +46,6 @@ ohos_unittest("LocalAbilityManagerTest") {
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "samgr:lsamgr",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
   ]
@@ -59,6 +60,7 @@ ohos_unittest("SystemAbilityTest") {
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
   ]
 
   sources = [
@@ -86,7 +88,6 @@ ohos_unittest("SystemAbilityTest") {
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
-    "samgr:lsamgr",
     "samgr:samgr_common",
   ]
 }
