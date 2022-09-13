@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <fstream>
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "string_ex.h"
@@ -123,6 +124,26 @@ HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess001, TestSize.Level2)
     EXPECT_TRUE(sm != nullptr);
     auto ability = sm->GetSystemAbility(1499);
     EXPECT_TRUE(ability == nullptr);
+}
+
+/**
+ * @tc.name: FoundationRestart001
+ * @tc.desc:  FoundationRestart001
+ * @tc.type: FUNC
+ * @tc.require: I5N9IY
+ */
+HWTEST_F(LocalAbilityManagerTest, FoundationRestart001, TestSize.Level3)
+{
+    std::ifstream foundationCfg;
+    foundationCfg.open("/etc/init/foundation.cfg", std::ios::in);
+    ASSERT_TRUE(foundationCfg.is_open());
+    std::string cfg = "";
+    char ch;
+    while (foundationCfg.get(ch)) {
+        cfg.push_back(ch);
+    }
+    foundationCfg.close();
+    EXPECT_TRUE(cfg.find("critical") == std::string::npos);
 }
 } // namespace SAFWK
 } // namespace OHOS
