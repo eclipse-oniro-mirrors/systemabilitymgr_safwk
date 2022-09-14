@@ -29,6 +29,11 @@
             "name" : "ohos.permission.READ_CONTACTS",
             "said" : "4005",
             "description" : "permission required for telephony to read contacts info."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_DISPOSED_APP_STATUS",
+            "said" : "180",
+            "description" : "Permission required for AMS to get the disposed app status."
         }
     ],
     "restart" : [
