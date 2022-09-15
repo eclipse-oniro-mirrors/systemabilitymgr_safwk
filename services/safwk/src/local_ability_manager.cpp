@@ -52,8 +52,8 @@ const string DEFAULT_DIR = "/system/usr/";
 const string PREFIX = PROFILES_DIR;
 const string SUFFIX = "_trust.xml";
 
-const string ONDEMAND_POOL = "ondemand";
-const string INIT_POOL = "sa_init";
+const string ONDEMAND_POOL = "SaOndemand";
+const string INIT_POOL = "SaInit";
 
 enum {
     BOOT_START = 1,
