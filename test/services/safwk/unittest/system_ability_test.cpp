@@ -14,13 +14,15 @@
  */
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
+#include "local_ability_manager_stub.h"
 #include "memory"
-#include "mock_sa_realize.h"
 #include "sa_mock_permission.h"
 #include "test_log.h"
 
 #define private public
+#define protected public
 #include "local_ability_manager.h"
+#include "mock_sa_realize.h"
 using namespace testing;
 using namespace testing::ext;
 
@@ -30,8 +32,16 @@ namespace {
     constexpr int32_t SAID = 1489;
     const std::string TEST_RESOURCE_PATH = "/data/test/resource/samgr/profile/";
     constexpr int32_t LISTENER_ID = 1488;
+    constexpr int32_t MOCK_DEPEND_TIMEOUT = 1000;
 }
 
+class MockLocalAbilityManager : public LocalAbilityManagerStub {
+public:
+    MockLocalAbilityManager() = default;
+    ~MockLocalAbilityManager() = default;
+
+    bool StartAbility(int32_t systemAbilityId) override;
+};
 class SystemAbilityTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -59,6 +69,12 @@ void SystemAbilityTest::SetUp()
 void SystemAbilityTest::TearDown()
 {
     DTEST_LOG << "TearDown" << std::endl;
+}
+
+bool MockLocalAbilityManager::StartAbility(int32_t systemAbilityId)
+{
+    DTEST_LOG << "said : " << systemAbilityId <<std::endl;
+    return true;
 }
 
 /**
@@ -99,6 +115,65 @@ HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility002, TestSize.Level2)
     EXPECT_EQ(ret, true);
     bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));
     EXPECT_EQ(res, true);
+}
+
+/**
+ * @tc.name: Publish001
+ * @tc.desc: Verify Publish when systemabitly is nullptr
+ * @tc.type: FUNC
+ * @tc.require: I5KMF7
+ */
+HWTEST_F(SystemAbilityTest, Publish001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    bool ret = sysAby->Publish(nullptr);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: Publish002
+ * @tc.desc: Verify Publish function
+ * @tc.type: FUNC
+ * @tc.require: I5KMF7
+ */
+HWTEST_F(SystemAbilityTest, Publish002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sptr<IRemoteObject> obj(new MockLocalAbilityManager());
+    bool ret = sysAby->Publish(obj);
+    ASSERT_TRUE(ret);
+    sysAby->Stop();
+    sysAby->StopAbility(-1);
+    sysAby->Start();
+    sysAby->Stop();
+    EXPECT_FALSE(sysAby->isRunning_);
+}
+
+/**
+ * @tc.name: SetDependTimeout001
+ * @tc.desc: Verify SetDependTimeout
+ * @tc.type: FUNC
+ * @tc.require: I5KMF7
+ */
+HWTEST_F(SystemAbilityTest, SetDependTimeout001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->SetDependTimeout(0);
+    sysAby->SetDependTimeout(MOCK_DEPEND_TIMEOUT);
+    EXPECT_EQ(sysAby->GetDependTimeout(), MOCK_DEPEND_TIMEOUT);
+}
+
+/**
+ * @tc.name: GetSystemAbility001
+ * @tc.desc: Check GetSystemAbility
+ * @tc.type: FUNC
+ * @tc.require: I5KMF7
+ */
+HWTEST_F(SystemAbilityTest, GetSystemAbility001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sptr<IRemoteObject> obj = sysAby->GetSystemAbility(-1);
+    EXPECT_TRUE(obj == nullptr);
 }
 }
 }

@@ -29,6 +29,7 @@ namespace OHOS {
 namespace SAFWK {
 namespace {
     const std::string TEST_RESOURCE_PATH = "/data/test/resource/safwk/profile/";
+    const std::u16string LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN = u"ohos.localabilitymanager.accessToken";
 }
 
 class LocalAbilityManagerTest : public testing::Test {
@@ -144,6 +145,65 @@ HWTEST_F(LocalAbilityManagerTest, FoundationRestart001, TestSize.Level3)
     }
     foundationCfg.close();
     EXPECT_TRUE(cfg.find("critical") == std::string::npos);
+}
+
+/**
+ * @tc.name: OnRemoteRequest001
+ * @tc.desc: OnRemoteRequest001
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest001, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(0, data, reply, option);
+    EXPECT_NE(result, ERR_NONE);
+}
+
+/**
+ * @tc.name: OnRemoteRequest002
+ * @tc.desc: OnRemoteRequest002
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest002, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    MessageParcel reply;
+    MessageOption option;
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(0, data, reply, option);
+    EXPECT_NE(result, ERR_NONE);
+}
+
+/**
+ * @tc.name: OnRemoteRequest003
+ * @tc.desc: OnRemoteRequest003
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest003, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    MessageParcel reply;
+    MessageOption option;
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(1, data, reply, option);
+    EXPECT_NE(result, ERR_NONE);
+}
+/**
+ * @tc.name: OnRemoteRequest004
+ * @tc.desc: OnRemoteRequest004
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest004, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    data.WriteInt32(1);
+    MessageParcel reply;
+    MessageOption option;
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(1, data, reply, option);
+    EXPECT_EQ(result, ERR_NONE);
 }
 } // namespace SAFWK
 } // namespace OHOS
