@@ -549,7 +549,8 @@ vector<u16string> LocalAbilityManager::CheckDependencyStatus(const vector<u16str
     }
     vector<u16string> checkSaStatusResult;
     for (const auto& saName : dependSa) {
-        int32_t systemAbilityId = atoi(Str16ToStr8(saName).c_str());
+        int32_t systemAbilityId = 0;
+        StrToInt(Str16ToStr8(saName), systemAbilityId);
         if (CheckInputSysAbilityId(systemAbilityId)) {
             sptr<IRemoteObject> saObject = samgrProxy->CheckSystemAbility(systemAbilityId);
             if (saObject == nullptr) {
