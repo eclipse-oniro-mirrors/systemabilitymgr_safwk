@@ -29,6 +29,11 @@ config("system_config") {
       [ "//foundation/systemabilitymgr/samgr/services/lsamgr/include" ]
 }
 
+config("system_ability_all_deps_config") {
+  include_dirs =
+      [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk" ]
+}
+
 ohos_shared_library("system_ability_fwk") {
   sources = [
     "../../../services/safwk/src/local_ability_manager.cpp",
@@ -42,7 +47,7 @@ ohos_shared_library("system_ability_fwk") {
   ]
 
   public_configs = [ ":system_ability_config" ]
-
+  all_dependent_configs = [ ":system_ability_all_deps_config" ]
   if (is_standard_system) {
     external_deps = [
       "c_utils:utils",
