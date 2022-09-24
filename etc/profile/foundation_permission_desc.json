@@ -61,11 +61,6 @@
             "name" : "reset device_usage_stats_service",
             "said" : "180",
             "description" : "device_usage_stats_service rely on AMS, need to restart"
-        },
-        {
-            "name" : "reset memmgrservice",
-            "said" : "180",
-            "description" : "memmgrservice rely on AMS, need to restart"
         }
     ],
     "mkdir" : [
