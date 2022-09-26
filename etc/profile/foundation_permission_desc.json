@@ -34,6 +34,11 @@
             "name" : "ohos.permission.MANAGE_DISPOSED_APP_STATUS",
             "said" : "180",
             "description" : "Permission required for AMS to get the disposed app status."
+        },
+        {
+            "name" : "ohos.permission.READ_DFX_SYSEVENT",
+            "said" : "3304",
+            "description" : "Permission required for battery_stats to add hisysevent listener."
         }
     ],
     "restart" : [
@@ -78,6 +83,11 @@
             "name" : "mkdir config",
             "said" : "3303",
             "description" : "create config directory for thermal service to put config info /data/service/el0/thermal/config/"
+        },
+        {
+            "name" : "mkdir stats",
+            "said" : "3304",
+            "description" : "Change process battery_stats to process foundation, need to save data file to folder /data/service/el0/stats"
         }
     ],
     "bootevents" : [
