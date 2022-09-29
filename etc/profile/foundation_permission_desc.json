@@ -1,16 +1,6 @@
 {
     "permissions" : [
         {
-            "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
-            "said" : "401",
-            "description" : "Permission required for BMS to query bundle information."
-        },
-        {
-            "name" : "ohos.permission.INSTALL_BUNDLE",
-            "said" : "401",
-            "description" : "Permission required for BMS to install and uninstall bundle."
-        }, 
-        {
             "name" : "ohos.permission.PERMISSION_USED_STATS",
             "said" : "3299",
             "description" : "Invoke AccessToken::PrivacyKit::AddPermissionUsedRecord interface should have own this permission."
@@ -39,6 +29,16 @@
             "name" : "ohos.permission.READ_DFX_SYSEVENT",
             "said" : "3304",
             "description" : "Permission required for battery_stats to add hisysevent listener."
+        },
+        {
+            "name" : "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
+            "said" : "401",
+            "description" : "Permission required for BMS to grant sensitive permissions."
+        }, 
+        {
+            "name" : "ohos.permission.REVOKE_SENSITIVE_PERMISSIONS",
+            "said" : "401",
+            "description" : "Permission required for BMS to revoke sensitive permissions."
         }
     ],
     "restart" : [
