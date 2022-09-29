@@ -1,7 +1,14 @@
-# safwk组件<a name="ZH-CN_TOPIC_0000001115588558"></a>
+# 系统服务框架部件<a name="ZH-CN_TOPIC_0000001115588558"></a>
 ## 简介<a name="section11660541593"></a>
 
 在系统服务管理子系统中safwk组件定义OpenHarmony中SystemAbility的实现方法，并提供启动、注册等接口实现。
+
+## 系统架构<a name="section342962219551"></a>
+
+**图 1**  系统服务框架图
+
+
+![](figures/zh-cn_image_0000001115820566.png)
 
 ## 目录<a name="section161941989596"></a>
 
