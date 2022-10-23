@@ -26,6 +26,16 @@
             "description" : "Permission required for AMS to get the disposed app status."
         },
         {
+            "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
+            "said" : "180",
+            "description" : "Permission required for AMS to get the information from BMS."
+        },
+        {
+            "name" : "ohos.permission.INSTALL_BUNDLE",
+            "said" : "180",
+            "description" : "Permission required for AMS to start free install app."
+        },
+        {
             "name" : "ohos.permission.READ_DFX_SYSEVENT",
             "said" : "3304",
             "description" : "Permission required for battery_stats to add hisysevent listener."
