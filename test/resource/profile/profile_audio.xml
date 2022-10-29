@@ -20,7 +20,7 @@
     <process>profile_audio</process>
     <systemability>
         <name>1499</name>
-        <libpath>libtest_audio_ability.z.so</libpath>
+        <libpath>/data/test/libtest_audio_ability.z.so</libpath>
         <!-- depend>AUDIO_TST</depend -->
         <!-- depend-time-out>60</depend-time-out> -->
         <run-on-create>true</run-on-create>
