@@ -44,11 +44,16 @@
             "name" : "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
             "said" : "401",
             "description" : "Permission required for BMS to grant sensitive permissions."
-        }, 
+        },
         {
             "name" : "ohos.permission.REVOKE_SENSITIVE_PERMISSIONS",
             "said" : "401",
             "description" : "Permission required for BMS to revoke sensitive permissions."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_SECURE_SETTINGS",
+            "said" : "3308",
+            "description" : "Permission required for settingsdata to access SA."
         }
     ],
     "restart" : [
