@@ -769,7 +769,6 @@ HWTEST_F(LocalAbilityManagerTest, AddLocalAbilityManager002, TestSize.Level3)
 {
     LocalAbilityManager::GetInstance().abilityPhaseMap_.clear();
     LocalAbilityManager::GetInstance().FindAndStartPhaseTasks();
-    LocalAbilityManager::GetInstance().localAbilityManager_ = nullptr;
     LocalAbilityManager::GetInstance().procName_ = u"test";
     bool res = LocalAbilityManager::GetInstance().AddLocalAbilityManager();
     EXPECT_FALSE(res);
