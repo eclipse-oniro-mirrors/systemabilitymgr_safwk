@@ -104,6 +104,7 @@ private:
     std::mutex startPhaseLock_;
     int32_t startTaskNum_ = 0;
     std::u16string procName_;
+    int64_t startBegin_ = 0;
 
     // Thread pool used to start system abilities in parallel.
     std::unique_ptr<ThreadPool> initPool_;

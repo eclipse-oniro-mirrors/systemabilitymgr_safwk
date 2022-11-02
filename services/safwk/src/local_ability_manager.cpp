@@ -81,6 +81,7 @@ LocalAbilityManager::~LocalAbilityManager()
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
     HILOGI(TAG, "DoStartSAProcess saId : %d", saId);
+    startBegin_ = GetTickCount();
     string realProfilePath = "";
     if (!CheckAndGetProfilePath(profilePath, realProfilePath)) {
         HILOGE(TAG, "DoStartSAProcess invalid path");
@@ -592,6 +593,8 @@ void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
                 }
             }
         }
+        HILOGI(TAG, "%{public}s SA : %{public}d init finished, %{public}" PRId64 " ms",
+            Str16ToStr8(procName_).c_str(), ability->GetSystemAbilitId(), (GetTickCount() - startBegin_));
     }
 
     std::lock_guard<std::mutex> lock(startPhaseLock_);
