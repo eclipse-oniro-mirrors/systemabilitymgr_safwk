@@ -1,13 +1,20 @@
-# safwk<a name="en-us_TOPIC_0000001115588558"></a>
-## Introduction<a name="section11660541593"></a>
+# safwk
+## Introduction
 
-The **safwk** module of the System Ability Management subsystem defines how to implement a system ability in OpenHarmony and provides APIs to start and register system abilities.
+The System Ability Framework (safwk) component defines how to implement system abilities in OpenHarmony and provides APIs to start and register system abilities.
 
-## Directory Structure<a name="section161941989596"></a>
+## System Architecture
+
+**Figure 1** Architecture of safwk
+
+
+![](figures/en-us_image_0000001115820566.png)
+
+## Directory Structure
 
 ```
 /foundation/systemabilitymgr
-│── safwk                # Directory for the safwk module
+│── safwk                # Directory of safwk
 │  ├── bundle.json      # Description and build file of safwk
 │  ├── etc              # Configuration files
 │  ├── interfaces       # APIs exposed externally
@@ -15,36 +22,17 @@ The **safwk** module of the System Ability Management subsystem defines how to i
 │  ├── test             # Test cases
 ```
 
-## Usage<a name="section1312121216216"></a>
+## Usage
 
-### Available APIs<a name="section1551164914237"></a>
+### Available APIs
 
-<a name="table775715438253"></a>
-<table><thead align="left"><tr id="row12757154342519"><th class="cellrowborder" valign="top" width="43.19%" id="mcps1.1.3.1.1"><p id="p1075794372512"><a name="p1075794372512"></a><a name="p1075794372512"></a>API</p>
-</th>
-<th class="cellrowborder" valign="top" width="56.81%" id="mcps1.1.3.1.2"><p id="p375844342518"><a name="p375844342518"></a><a name="p375844342518"></a>Description</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row1975804332517"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p5758174313255"><a name="p5758174313255"></a><a name="p5758174313255"></a>sptr&lt;IRemoteObject&gt; GetSystemAbility(int32_t systemAbilityId);</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p14758743192519"><a name="p14758743192519"></a><a name="p14758743192519"></a>Obtains the Remote Procedure Call (RPC) object of a system ability.</p>
-</td>
-</tr>
-<tr id="row2758943102514"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p107581438250"><a name="p107581438250"></a><a name="p107581438250"></a>bool Publish(sptr&lt;IRemoteObject&gt; systemAbility);</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p8758743202512"><a name="p8758743202512"></a><a name="p8758743202512"></a>Publishes a system ability.</p>
-</td>
-</tr>
-<tr id="row09311240175710"><td class="cellrowborder" valign="top" width="43.19%" headers="mcps1.1.3.1.1 "><p id="p159328405571"><a name="p159328405571"></a><a name="p159328405571"></a>virtual void DoStartSAProcess(const std::string&amp; profilePath) = 0;</p>
-</td>
-<td class="cellrowborder" valign="top" width="56.81%" headers="mcps1.1.3.1.2 "><p id="p493294018574"><a name="p493294018574"></a><a name="p493294018574"></a>Starts the system ability based on the system ability profile.</p>
-</td>
-</tr>
-</tbody>
-</table>
+| API                                                      | Description                              |
+| ------------------------------------------------------------ | -------------------------------------- |
+| sptr\<IRemoteObject> GetSystemAbility(int32_t systemAbilityId); | Obtains the remote procedure call (RPC) object of a system ability.           |
+| bool Publish(sptr\<IRemoteObject> systemAbility);            | Publishes a system ability.                        |
+| virtual void DoStartSAProcess(const std::string& profilePath) = 0; | Enables a system ability based on its profile.|
 
-### How to Use<a name="section129654513264"></a>
+### How to Use
 
 A system ability is implemented by using a XXX.cfg, a profile.xml, and a libXXX.z.so. The init process starts the SystemAbility process by executing the corresponding XXX.cfg file.
 
@@ -173,17 +161,17 @@ Create a folder named **sa_profile** in the root directory of the subsystem. The
 Sample *serviceid*.xml file:
 
 ```
-
-
+<?xml version="1.0" encoding="UTF-8"?>
+<info>
     <process>listen_test</process>
-    
+    <systemability>
     <name>serviceid</name>
     <libpath>/system/lib64/liblistentest.z.so</libpath>
     <run-on-create>true</run-on-create>
     <distributed>false</distributed>
     <dump-level>1</dump-level>
-
-
+</systemability>
+</info>
 ```
 
 Sample **BUILD.gn** file:
@@ -198,16 +186,16 @@ ohos_sa_profile("xxx_sa_profile") {
 }
 ```
 
->**NOTE**<br/>
->- Set **process** to the name of the process where the system ability will run. This parameter is mandatory.
->- The *serviceid*.xml file can contain only one **systemability** node. Multiple **systemability** nodes will cause a build failure.
->- Set **name** to the service ID registered in the code for the system ability. This parameter is mandatory.
->- Set **libpath** to the path for loading the system ability. This parameter is mandatory.
->- Set **run-on-create** to **true** if you want to register this system ability with the **samgr** module immediately after the process is started. Set it to **false** if you want the system ability to start only when it is accessed. This parameter is mandatory.
->- Set **distributed** to **true** if this system ability allows cross-device access. Set it to **false** if it allows IPC only on the local device.
->- **bootphase** specifies the startup priority of the system ability. The value can be **BootStartPhase** (highest), **CoreStartPhase**, or **OtherStartPhase** (lowest). In the same process, system abilities of a lower priority can be started and registered only after those of a higher priority have all been started and registered. This parameter is optional. The default value is **OtherStartPhase**.
->- **dump-level** specifies the level supported by the system dumper. The default value is **1**.
->- In the **BUILD.gn** file, set **subsystem_name** to the subsystem name, and add the list of system abilities to be configured for the subsystem in **sources**. Multiple system abilities can be configured.
+>**NOTE**
+>1.  Set **process** to the name of the process where the system ability will run. This parameter is mandatory.
+>2.  The *serviceid*.xml file can contain only one **systemability** node. Multiple **systemability** nodes will cause a build failure.
+>3.  Set **name** to the service ID registered in the code for the system ability. This parameter is mandatory.
+>4.  Set **libpath** to the path for loading the system ability. This parameter is mandatory.
+>5.  Set **run-on-create** to **true** if you want to register this system ability with the Samgr component immediately after the process is started. Set it to **false** if you want the system ability to start only when it is accessed. This parameter is mandatory.
+>6.  Set **distributed** to **true** if this system ability allows cross-device access. Set it to **false** if it allows IPC only on the local device.
+>7.  **bootphase** specifies the startup priority of the system ability. The value can be **BootStartPhase** (highest), **CoreStartPhase**, or **OtherStartPhase** (lowest). In the same process, system abilities of a lower priority can be started and registered only after those of a higher priority have all been started and registered. This parameter is optional. The default value is **OtherStartPhase**.
+>8.  **dump-level** specifies the level supported by the system dumper. The default value is **1**.
+>9. In the **BUILD.gn** file, set **subsystem_name** to the subsystem name, and add the list of system abilities to be configured for the subsystem in **sources**. Multiple system abilities can be configured.
 
 After the preceding steps are complete, an XML file named by the process will be generated in the **out**, for example, **out\...\system\profile\listen_test.xml**.
 
@@ -234,12 +222,13 @@ The .cfg file contains the native process startup policy provided by Linux. Duri
 }
 ```
 
->**NOTE**<br/>
+>**NOTE**
+>
 >For details about the implementation of listen_ability, see **test/services/safwk/unittest/common/listen_ability**.
 
-## Repositories Involved<a name="section1371113476307"></a>
+## Repositories Involved
 
-**System Ability Management Subsystem**
+Samgr
 
 [**systemabilitymgr\_safwk**](https://gitee.com/openharmony/systemabilitymgr_safwk)
 
