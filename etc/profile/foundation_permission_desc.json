@@ -42,7 +42,7 @@
         },
         {
             "name" : "ohos.permission.MANAGE_SECURE_SETTINGS",
-            "said" : "3308",
+            "said" : ["3301", "3308"],
             "description" : "Permission required for settingsdata to access SA."
         }
     ],
