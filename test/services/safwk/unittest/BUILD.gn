@@ -23,9 +23,13 @@ ohos_unittest("LocalAbilityManagerTest") {
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
     "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
   ]
 
-  sources = [ "./local_ability_manager_test.cpp" ]
+  sources = [
+    "./local_ability_manager_test.cpp",
+    "./mock_sa_realize.cpp",
+  ]
 
   configs =
       [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
