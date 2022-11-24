@@ -35,7 +35,6 @@ ohos_unittest("LocalAbilityManagerTest") {
       [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
   deps = [
-    "listen_ability:listen_test",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
