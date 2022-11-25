@@ -92,28 +92,29 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
         HITRACE_METER_NAME(HITRACE_TAG_SAMGR, traceTag);
         bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
         if (!ret) {
-            HILOGW(TAG, "InitSystemAbilityProfiles no right profile");
+            HILOGE(TAG, "InitSystemAbilityProfiles no right profile, will exit");
             return;
         }
         ret = CheckSystemAbilityManagerReady();
         if (!ret) {
-            HILOGW(TAG, "CheckSystemAbilityManagerReady failed!");
+            HILOGE(TAG, "CheckSystemAbilityManagerReady failed! will exit");
             return;
         }
         ret = InitializeSaProfiles(saId);
         if (!ret) {
-            HILOGW(TAG, "InitializeSaProfiles failed!");
+            HILOGE(TAG, "InitializeSaProfiles failed! will exit");
             return;
         }
         ret = Run(saId);
         if (!ret) {
-            HILOGW(TAG, "Run failed!");
+            HILOGE(TAG, "Run failed! will exit");
             return;
         }
     }
 
     IPCSkeleton::JoinWorkThread();
     ClearResource();
+    HILOGE(TAG, "JoinWorkThread stop, will exit");
 }
 
 std::string LocalAbilityManager::GetTraceTag(const std::string& profilePath)
