@@ -86,10 +86,10 @@ private:
     void Stop();
     void SADump();
     int32_t GetSystemAbilitId() const;
-    void SetLibPath(const std::u16string& libPath);
-    const std::u16string& GetLibPath() const;
-    void SetDependSa(const std::vector<std::u16string>& dependSa);
-    const std::vector<std::u16string>& GetDependSa() const;
+    void SetLibPath(const std::string& libPath);
+    const std::string& GetLibPath() const;
+    void SetDependSa(const std::vector<int32_t>& dependSa);
+    const std::vector<int32_t>& GetDependSa() const;
     void SetRunOnCreate(bool isRunOnCreate);
     bool IsRunOnCreate() const;
     void SetDistributed(bool isDistributed);
@@ -107,8 +107,8 @@ private:
 
 private:
     int32_t saId_ = 0;
-    std::u16string libPath_;
-    std::vector<std::u16string> dependSa_;
+    std::string libPath_;
+    std::vector<int32_t> dependSa_;
     bool isRunOnCreate_;
     bool isDistributed_;
     unsigned int dumpLevel_;

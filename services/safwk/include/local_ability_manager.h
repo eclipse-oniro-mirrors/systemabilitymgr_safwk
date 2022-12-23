@@ -45,7 +45,7 @@ public:
     bool GetRunningStatus(int32_t systemAbilityId);
     bool AddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId);
     bool RemoveSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId);
-    std::vector<std::u16string> CheckDependencyStatus(const std::vector<std::u16string>& dependSas);
+    std::vector<int32_t> CheckDependencyStatus(const std::vector<int32_t>& dependSas);
     void StartSystemAbilityTask(SystemAbility* sa);
     bool CheckSystemAbilityManagerReady();
     bool InitSystemAbilityProfiles(const std::string& profilePath, int32_t saId);

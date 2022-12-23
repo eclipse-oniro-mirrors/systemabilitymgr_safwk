@@ -42,15 +42,15 @@ constexpr int32_t DEFAULT_SAID = -1;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 
-const u16string BOOT_START_PHASE = u"BootStartPhase";
-const u16string CORE_START_PHASE = u"CoreStartPhase";
+const string BOOT_START_PHASE = "BootStartPhase";
+const string CORE_START_PHASE = "CoreStartPhase";
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 4; // .xml length
 
 const string PROFILES_DIR = "/system/profile/";
 const string DEFAULT_DIR = "/system/usr/";
 const string PREFIX = PROFILES_DIR;
-const string SUFFIX = "_trust.xml";
+const string SUFFIX = "_trust.json";
 
 const string ONDEMAND_POOL = "SaOndemand";
 const string INIT_POOL = "SaInit";
@@ -80,8 +80,8 @@ LocalAbilityManager::~LocalAbilityManager()
 
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
-    HILOGI(TAG, "DoStartSAProcess saId : %d", saId);
     startBegin_ = GetTickCount();
+    HILOGI(TAG, "DoStartSAProcess saId : %{public}d", saId);
     string realProfilePath = "";
     if (!CheckAndGetProfilePath(profilePath, realProfilePath)) {
         HILOGE(TAG, "DoStartSAProcess invalid path");
@@ -140,13 +140,13 @@ bool LocalAbilityManager::CheckAndGetProfilePath(const std::string& profilePath,
     }
     char realPath[PATH_MAX] = {'\0'};
     if (realpath(profilePath.c_str(), realPath) == nullptr) {
-        HILOGE(TAG, "xmlDocName path does not exist!");
+        HILOGE(TAG, "file path does not exist!");
         return false;
     }
     // realProfilePath must begin with "/system/profile/" or begin with "/system/usr/"
     realProfilePath = realPath;
     if (realProfilePath.find(PROFILES_DIR) != 0 && realProfilePath.find(DEFAULT_DIR) != 0) {
-        HILOGE(TAG, "xmlDoc dir is not matched");
+        HILOGE(TAG, "file path is not matched");
         return false;
     }
     return true;
@@ -542,27 +542,25 @@ bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saPro
     return true;
 }
 
-vector<u16string> LocalAbilityManager::CheckDependencyStatus(const vector<u16string>& dependSa)
+vector<int32_t> LocalAbilityManager::CheckDependencyStatus(const vector<int32_t>& dependSa)
 {
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGW(TAG, "failed to get samgrProxy");
         return dependSa;
     }
-    vector<u16string> checkSaStatusResult;
-    for (const auto& saName : dependSa) {
-        int32_t systemAbilityId = 0;
-        StrToInt(Str16ToStr8(saName), systemAbilityId);
-        if (CheckInputSysAbilityId(systemAbilityId)) {
-            sptr<IRemoteObject> saObject = samgrProxy->CheckSystemAbility(systemAbilityId);
+
+    vector<int32_t> checkSaStatusResult;
+    for (const auto& saId : dependSa) {
+        if (CheckInputSysAbilityId(saId)) {
+            sptr<IRemoteObject> saObject = samgrProxy->CheckSystemAbility(saId);
             if (saObject == nullptr) {
-                checkSaStatusResult.emplace_back(saName);
+                checkSaStatusResult.emplace_back(saId);
             }
         } else {
-            HILOGW(TAG, "dependency's id:%{public}s is invalid", Str16ToStr8(saName).c_str());
+            HILOGW(TAG, "dependency's id:%{public}d is invalid", saId);
         }
     }
-
     return checkSaStatusResult;
 }
 
@@ -584,13 +582,13 @@ void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
                     break;
                 }
             }
-            vector<u16string> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
+            vector<int32_t> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
             if (unpreparedDeps.empty()) {
                 ability->Start();
             } else {
                 for (const auto& unpreparedDep : unpreparedDeps) {
-                    HILOGI(TAG, "%{public}d's dependency:%{public}s not started in %{public}d ms",
-                        ability->GetSystemAbilitId(), Str16ToStr8(unpreparedDep).c_str(), ability->GetDependTimeout());
+                    HILOGI(TAG, "%{public}d's dependency:%{public}d not started in %{public}d ms",
+                        ability->GetSystemAbilitId(), unpreparedDep, ability->GetDependTimeout());
                 }
             }
         }
