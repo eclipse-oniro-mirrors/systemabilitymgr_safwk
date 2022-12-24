@@ -84,7 +84,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckTrustSa001, TestSize.Level1)
      * @tc.expected: step2. load allowed sa
      */
     auto profiles = LocalAbilityManager::GetInstance().profileParser_->GetAllSaProfiles();
-    auto path = TEST_RESOURCE_PATH + "test_trust_not_all_allow.xml";
+    auto path = TEST_RESOURCE_PATH + "test_trust_not_all_allow.json";
     auto process = "test";
     LocalAbilityManager::GetInstance().CheckTrustSa(path, process, profiles);
     profiles = LocalAbilityManager::GetInstance().profileParser_->GetAllSaProfiles();
@@ -111,7 +111,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckTrustSa002, TestSize.Level1)
      * @tc.expected: step2. load all sa
      */
     auto profiles = LocalAbilityManager::GetInstance().profileParser_->GetAllSaProfiles();
-    auto path = TEST_RESOURCE_PATH + "test_trust_all_allow.xml";
+    auto path = TEST_RESOURCE_PATH + "test_trust_all_allow.json";
     auto process = "test";
     LocalAbilityManager::GetInstance().CheckTrustSa(path, process, profiles);
     auto result = LocalAbilityManager::GetInstance().profileParser_->GetAllSaProfiles();
@@ -217,7 +217,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath001, TestSize.Level3)
  */
 HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath002, TestSize.Level1)
 {
-    string profilePath = TEST_RESOURCE_PATH + "test_trust_all_allow.xml";
+    string profilePath = TEST_RESOURCE_PATH + "test_trust_all_allow.json";
     string realProfilePath = "";
     bool res = LocalAbilityManager::GetInstance().CheckAndGetProfilePath(profilePath, realProfilePath);
     EXPECT_FALSE(res);
@@ -230,7 +230,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath002, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, CheckSystemAbilityManagerReady001, TestSize.Level3)
 {
-    string profilePath = TEST_RESOURCE_PATH + "test_trust_all_allow.xml";
+    string profilePath = TEST_RESOURCE_PATH + "test_trust_all_allow.json";
     string realProfilePath = "";
     bool res = LocalAbilityManager::GetInstance().CheckSystemAbilityManagerReady();
     EXPECT_TRUE(res);
@@ -703,8 +703,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked004, TestSize.L
 {
     SaProfile saProfile;
     saProfile.saId = SAID;
-    const std::u16string bootStart = u"BootStartPhase";
-    saProfile.bootPhase = bootStart;
+    saProfile.bootPhase = "BootStartPhase";
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
@@ -722,8 +721,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked005, TestSize.L
 {
     SaProfile saProfile;
     saProfile.saId = SAID;
-    const std::u16string coreStart = u"CoreStartPhase";
-    saProfile.bootPhase = coreStart;
+    saProfile.bootPhase = "BootStartPhase";
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
@@ -740,12 +738,12 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked005, TestSize.L
 HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus001, TestSize.Level1)
 {
     std::string profilePath = "/system/usr/profile_audio.xml";
-    vector<std::u16string> dependSa;
-    dependSa.push_back(u"1499");
+    vector<int32_t> dependSa;
+    dependSa.push_back(1499);
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     EXPECT_TRUE(ret);
     LocalAbilityManager::GetInstance().RegisterOnDemandSystemAbility(SAID);
-    vector<std::u16string> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
+    vector<int32_t> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
     EXPECT_EQ(res.size(), 1);
 }
 
@@ -756,9 +754,9 @@ HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus001, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus002, TestSize.Level1)
 {
-    vector<std::u16string> dependSa;
-    dependSa.push_back(u"-1");
-    vector<std::u16string> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
+    vector<int32_t> dependSa;
+    dependSa.push_back(-1);
+    vector<int32_t> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
     EXPECT_EQ(res.size(), 0);
 }
 
@@ -769,9 +767,9 @@ HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus002, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus003, TestSize.Level1)
 {
-    vector<std::u16string> dependSa;
-    dependSa.push_back(u"401");
-    vector<std::u16string> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
+    vector<int32_t> dependSa;
+    dependSa.push_back(401);
+    vector<int32_t> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
     EXPECT_EQ(res.size(), 0);
 }
 
@@ -815,8 +813,8 @@ HWTEST_F(LocalAbilityManagerTest, NeedRegisterOnDemand003, TestSize.Level3)
     SaProfile saProfile;
     saProfile.saId = INVALID_SAID;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    vector<std::u16string> dependSa;
-    dependSa.push_back(u"1499");
+    vector<int32_t> dependSa;
+    dependSa.push_back(1499);
     mockSa->SetDependSa(dependSa);
     mockSa->SetDependTimeout(200);
     LocalAbilityManager::GetInstance().StartSystemAbilityTask(mockSa);
@@ -835,8 +833,8 @@ HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
 {
     std::list<SystemAbility*> systemAbilityList;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    vector<std::u16string> dependSa;
-    dependSa.push_back(u"-1");
+    vector<int32_t> dependSa;
+    dependSa.push_back(-1);
     mockSa->SetDependSa(dependSa);
     mockSa->SetDependTimeout(200);
     LocalAbilityManager::GetInstance().startTaskNum_ = 1;

@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 
 ohos_prebuilt_etc("foundation_trust") {
-  source = "foundation_trust.xml"
+  source = "foundation_trust.json"
   module_install_dir = "profile"
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"

@@ -152,22 +152,22 @@ int32_t SystemAbility::GetSystemAbilitId() const
     return saId_;
 }
 
-void SystemAbility::SetLibPath(const std::u16string& libPath)
+void SystemAbility::SetLibPath(const std::string& libPath)
 {
     libPath_ = libPath;
 }
 
-const std::u16string& SystemAbility::GetLibPath() const
+const std::string& SystemAbility::GetLibPath() const
 {
     return libPath_;
 }
 
-void SystemAbility::SetDependSa(const std::vector<std::u16string>& dependSa)
+void SystemAbility::SetDependSa(const std::vector<std::int32_t>& dependSa)
 {
     dependSa_ = dependSa;
 }
 
-const std::vector<std::u16string>& SystemAbility::GetDependSa() const
+const std::vector<std::int32_t>& SystemAbility::GetDependSa() const
 {
     return dependSa_;
 }

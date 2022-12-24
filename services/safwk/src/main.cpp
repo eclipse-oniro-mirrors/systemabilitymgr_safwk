@@ -131,12 +131,13 @@ int main(int argc, char *argv[])
             return 0;
         }
     }
-    // Load default system abilities related shared libraries from specific xml-format profile,
+    // Load default system abilities related shared libraries from specific format profile
     // when this process starts.
     string profilePath(DEFAULT_XML);
     if (argc > DEFAULT_LOAD) {
         string filePath(argv[PROFILE_INDEX]);
-        if (filePath.empty() || filePath.find(".xml") == string::npos) {
+        if (filePath.empty() || (filePath.find(".xml") == string::npos
+            && filePath.find(".json") == string::npos)) {
             HILOGE(TAG, "profile file path is invalid!");
             return 0;
         }
