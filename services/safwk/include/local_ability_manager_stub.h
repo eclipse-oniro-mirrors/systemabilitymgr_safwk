@@ -35,6 +35,7 @@ protected:
 
 private:
     int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
+    int32_t StopAbilityInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();
     static bool EnforceInterceToken(MessageParcel& data);
 

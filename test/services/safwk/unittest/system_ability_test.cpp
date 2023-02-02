@@ -41,6 +41,7 @@ public:
     ~MockLocalAbilityManager() = default;
 
     bool StartAbility(int32_t systemAbilityId) override;
+    bool StopAbility(int32_t systemAbilityId) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -72,6 +73,12 @@ void SystemAbilityTest::TearDown()
 }
 
 bool MockLocalAbilityManager::StartAbility(int32_t systemAbilityId)
+{
+    DTEST_LOG << "said : " << systemAbilityId <<std::endl;
+    return true;
+}
+
+bool MockLocalAbilityManager::StopAbility(int32_t systemAbilityId)
 {
     DTEST_LOG << "said : " << systemAbilityId <<std::endl;
     return true;

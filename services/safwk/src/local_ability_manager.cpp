@@ -420,6 +420,17 @@ bool LocalAbilityManager::OnStartAbility(int32_t systemAbilityId)
     return true;
 }
 
+bool LocalAbilityManager::OnStopAbility(int32_t systemAbilityId)
+{
+    HILOGD(TAG, "try to stop SA:%{public}d", systemAbilityId);
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        return false;
+    }
+    ability->Stop();
+    return true;
+}
+
 SystemAbility* LocalAbilityManager::GetAbility(int32_t systemAbilityId)
 {
     std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
@@ -480,6 +491,21 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId)
 {
     HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
+    ondemandPool_->AddTask(task);
+    return true;
+}
+
+void LocalAbilityManager::StopOndemandSystemAbility(int32_t systemAbilityId)
+{
+    if (!OnStopAbility(systemAbilityId)) {
+        HILOGE(TAG, "failed to stop ability:%{public}d", systemAbilityId);
+    }
+}
+
+bool LocalAbilityManager::StopAbility(int32_t systemAbilityId)
+{
+    HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
+    auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
     ondemandPool_->AddTask(task);
     return true;
 }
@@ -684,8 +710,8 @@ bool LocalAbilityManager::Run(int32_t saId)
     initPool_->Start(concurrentThreads);
     initPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
 
-    FindAndStartPhaseTasks();
     RegisterOnDemandSystemAbility(saId);
+    FindAndStartPhaseTasks();
     initPool_->Stop();
     return true;
 }

@@ -109,6 +109,7 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
 void SystemAbility::Start()
 {
     HILOGD(TAG, "starting system ability...");
+    std::lock_guard<std::mutex> autoLock(abilityLock);
     if (isRunning_) {
         return;
     }
@@ -124,14 +125,16 @@ void SystemAbility::Start()
 void SystemAbility::Stop()
 {
     HILOGD(TAG, "stopping system ability...");
-
+    std::lock_guard<std::mutex> autoLock(abilityLock);
     if (!isRunning_) {
         return;
     }
-
+    HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
+    int64_t begin = GetTickCount();
     OnStop();
     isRunning_ = false;
-
+    HILOGI(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+        saId_, (GetTickCount() - begin));
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");

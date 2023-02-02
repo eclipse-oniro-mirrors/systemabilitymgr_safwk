@@ -51,8 +51,9 @@ public:
     bool InitSystemAbilityProfiles(const std::string& profilePath, int32_t saId);
     void ClearResource();
     void StartOndemandSystemAbility(int32_t systemAbilityId);
-
+    void StopOndemandSystemAbility(int32_t systemAbilityId);
     bool StartAbility(int32_t systemAbilityId) override;
+    bool StopAbility(int32_t systemAbilityId) override;
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
 private:
     LocalAbilityManager();
@@ -82,6 +83,7 @@ private:
     bool Run(int32_t saId);
     bool NeedRegisterOnDemand(const SaProfile& saProfile, int32_t saId);
     bool OnStartAbility(int32_t systemAbilityId);
+    bool OnStopAbility(int32_t systemAbilityId);
     std::string GetTraceTag(const std::string& profilePath);
 
     std::map<int32_t, SystemAbility*> abilityMap_;
