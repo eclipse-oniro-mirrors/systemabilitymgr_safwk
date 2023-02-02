@@ -109,6 +109,11 @@
             "said" : "3304",
             "description" : "Change process battery_stats to process foundation, need to save data file to folder /data/service/el0/stats"
         }
+        {
+            "name" : "mkdir window",
+            "said" : "4606",
+            "description" : "Create window directory for window_manager to save window params at /data/service/el1/public/window/"
+        }
     ],
     "bootevents" : [
         {
