@@ -117,6 +117,7 @@ private:
     std::u16string capability_;
     sptr<IRemoteObject> publishObj_;
     std::u16string permission_;
+    std::mutex abilityLock;
 };
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,8 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
 {
     memberFuncMap_[START_ABILITY_TRANSACTION] =
         &LocalAbilityManagerStub::StartAbilityInner;
+    memberFuncMap_[STOP_ABILITY_TRANSACTION] =
+        &LocalAbilityManagerStub::StopAbilityInner;
 }
 
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
@@ -69,6 +71,19 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
 
     bool result = StartAbility(saId);
     HILOGI(TAG, "%{public}s to start ability", result ? "success" : "failed");
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t saId = data.ReadInt32();
+    if (!CheckInputSysAbilityId(saId)) {
+        HILOGW(TAG, "read saId failed!");
+        return ERR_NULL_OBJECT;
+    }
+
+    bool result = StopAbility(saId);
+    HILOGI(TAG, "%{public}s to stop ability", result ? "success" : "failed");
     return ERR_NONE;
 }
 
