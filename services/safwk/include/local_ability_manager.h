@@ -57,7 +57,7 @@ public:
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
 private:
     LocalAbilityManager();
-    ~LocalAbilityManager();
+    ~LocalAbilityManager() = default;
 
     bool AddLocalAbilityManager();
     void RegisterOnDemandSystemAbility(int32_t saId);
@@ -110,8 +110,6 @@ private:
 
     // Thread pool used to start system abilities in parallel.
     std::unique_ptr<ThreadPool> initPool_;
-    // Thread pool used to start ondemand system abilities in parallel.
-    std::unique_ptr<ThreadPool> ondemandPool_;
 };
 }
 #endif
