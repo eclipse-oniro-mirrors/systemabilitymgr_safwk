@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef SYSTEM_ABILITY_H_
-#define SYSTEM_ABILITY_H_
+#ifndef SYSTEM_ABILITY_H
+#define SYSTEM_ABILITY_H
 
 #include <string>
 #include <vector>
