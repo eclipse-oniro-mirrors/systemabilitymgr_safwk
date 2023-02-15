@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef TEST_MOCK_COMMON_DEMO_SA_INCLUDE_DEAM_STUB_H_
-#define TEST_MOCK_COMMON_DEMO_SA_INCLUDE_DEAM_STUB_H_
+#ifndef TEST_MOCK_COMMON_DEMO_SA_INCLUDE_DEAM_STUB_H
+#define TEST_MOCK_COMMON_DEMO_SA_INCLUDE_DEAM_STUB_H
 
 #include "demo_interface.h"
 #include "iremote_stub.h"
@@ -27,4 +27,4 @@ public:
 };
 }
 
-#endif // TEST_MOCK_COMMON_DEMO_SA_INCLUDE_DEAM_STUB_H_
+#endif // TEST_MOCK_COMMON_DEMO_SA_INCLUDE_DEAM_STUB_H

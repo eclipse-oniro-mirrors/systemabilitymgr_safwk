@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef SERVICES_SAFWK_NATIVE_INCLUDE_SAM_LOG_H_
-#define SERVICES_SAFWK_NATIVE_INCLUDE_SAM_LOG_H_
+#ifndef SERVICES_SAFWK_NATIVE_INCLUDE_SAM_LOG_H
+#define SERVICES_SAFWK_NATIVE_INCLUDE_SAM_LOG_H
 
 #include "hilog/log.h"
 

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef SERVICES_SAFWK_INCLUDE_SINGLE_INSTANCE_H_
-#define SERVICES_SAFWK_INCLUDE_SINGLE_INSTANCE_H_
+#ifndef SERVICES_SAFWK_INCLUDE_SINGLE_INSTANCE_H
+#define SERVICES_SAFWK_INCLUDE_SINGLE_INSTANCE_H
 
 namespace OHOS {
 namespace SaFWk {
@@ -43,4 +43,4 @@ className& className::GetInstance()          \
 }; // namespace SaFWk
 }; // namespace OHOS
 
-#endif // SERVICES_SAFWK_INCLUDE_SINGLE_INSTANCE_H_
+#endif // SERVICES_SAFWK_INCLUDE_SINGLE_INSTANCE_H
