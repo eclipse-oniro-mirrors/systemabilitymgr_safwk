@@ -68,8 +68,12 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
-
-    bool result = StartAbility(saId);
+    std::string eventStr = data.ReadString();
+    if (eventStr.empty()) {
+        HILOGW(TAG, "LocalAbilityManagerStub::StartAbilityInner read eventStr failed!");
+        return ERR_NULL_OBJECT;
+    }
+    bool result = StartAbility(saId, eventStr);
     HILOGI(TAG, "%{public}s to start ability", result ? "success" : "failed");
     return ERR_NONE;
 }
@@ -81,8 +85,12 @@ int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
-
-    bool result = StopAbility(saId);
+    std::string eventStr = data.ReadString();
+    if (eventStr.empty()) {
+        HILOGW(TAG, "LocalAbilityManagerStub::StopAbilityInner read eventStr failed!");
+        return ERR_NULL_OBJECT;
+    }
+    bool result = StopAbility(saId, eventStr);
     HILOGI(TAG, "%{public}s to stop ability", result ? "success" : "failed");
     return ERR_NONE;
 }

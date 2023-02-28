@@ -116,7 +116,8 @@ void SystemAbility::Start()
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
     HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
-    OnStart();
+    std::unordered_map<std::string, std::string> startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
+    OnStart(startReason);
     isRunning_ = true;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
@@ -131,7 +132,8 @@ void SystemAbility::Stop()
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
-    OnStop();
+    std::unordered_map<std::string, std::string> stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
+    OnStop(stopReason);
     isRunning_ = false;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
@@ -234,8 +236,20 @@ void SystemAbility::OnStart()
 }
 
 // The details should be implemented by subclass
+void SystemAbility::OnStart(const std::unordered_map<std::string, std::string>& startReason)
+{
+    OnStart();
+}
+
+// The details should be implemented by subclass
 void SystemAbility::OnStop()
 {
+}
+
+// The details should be implemented by subclass
+void SystemAbility::OnStop(const std::unordered_map<std::string, std::string>& stopReason)
+{
+    OnStop();
 }
 
 // The details should be implemented by subclass

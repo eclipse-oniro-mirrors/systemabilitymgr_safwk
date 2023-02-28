@@ -38,6 +38,7 @@ ohos_unittest("LocalAbilityManagerTest") {
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability:listen_test",
     "//third_party/googletest:gtest_main",
   ]
 

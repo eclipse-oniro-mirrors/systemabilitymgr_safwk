@@ -17,6 +17,7 @@
 #define SYSTEM_ABILITY_H
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "iremote_object.h"
@@ -69,7 +70,9 @@ public:
 protected:
     virtual void OnDump();
     virtual void OnStart();
+    virtual void OnStart(const std::unordered_map<std::string, std::string>& startReason);
     virtual void OnStop();
+    virtual void OnStop(const std::unordered_map<std::string, std::string>& stopReason);
     virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     virtual void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
