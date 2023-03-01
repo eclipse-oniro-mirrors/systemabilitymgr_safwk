@@ -234,7 +234,30 @@ void SystemAbility::OnStart()
 }
 
 // The details should be implemented by subclass
+void SystemAbility::OnStart(const std::unordered_map<std::string, std::string>& startReason)
+{
+}
+
+int32_t SystemAbility::OnIdle(const std::unordered_map<std::string, std::string>& idleReason)
+{
+    HILOGD(TAG, "OnIdle system ability, idle reason %{public}s, %{public}s",
+        idleReason.at("eventId").c_str(), idleReason.at("name").c_str());
+    return 0;
+}
+
+void SystemAbility::OnActive(const std::unordered_map<std::string, std::string>& activeReason)
+{
+    HILOGD(TAG, "OnActive system ability, active reason %{public}s, %{public}s",
+        activeReason.at("eventId").c_str(), activeReason.at("name").c_str());
+}
+
+// The details should be implemented by subclass
 void SystemAbility::OnStop()
+{
+}
+
+// The details should be implemented by subclass
+void SystemAbility::OnStop(const std::unordered_map<std::string, std::string>& stopReason)
 {
 }
 
