@@ -19,6 +19,7 @@
 #include "errors.h"
 #include "local_ability_manager.h"
 #include "parameter.h"
+#include "parse_util.h"
 #include "safwk_log.h"
 #include "securec.h"
 #include "string_ex.h"
@@ -29,7 +30,7 @@ using std::string;
 
 namespace {
 const string TAG = "SaMain";
-
+const string START_SAID = "said";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_XML = "/system/usr/default.xml";
@@ -38,7 +39,7 @@ constexpr auto DEFAULT_XML = "/system/usr/default.xml";
 constexpr size_t MAX_LEN_PID_NAME = 15;
 
 constexpr int PROFILE_INDEX = 1;
-constexpr int SAID_INDEX = 2;
+constexpr int EVENT_INDEX = 2;
 constexpr int DEFAULT_SAID = -1;
 constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
@@ -88,13 +89,19 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
 }
 
 // check argv size with SAID_INDEX before using the function
-static int32_t ParseSaId(char *argv[])
+static int32_t ParseArgv(char *argv[], std::unordered_map<std::string, std::string>& eventMap)
 {
-    string saIdStr(argv[SAID_INDEX]);
+    string eventStr(argv[EVENT_INDEX]);
+    HILOGI(TAG, "ParseArgv extraArgv eventStr:%{public}s!", eventStr.c_str());
+    nlohmann::json eventJson = ParseUtil::StringToJsonObj(eventStr);
     int32_t saId = DEFAULT_SAID;
-    if (!StrToInt(saIdStr, saId)) {
-        return DEFAULT_SAID;
+    if (eventJson.contains(START_SAID) && eventJson[START_SAID].is_string()) {
+        if (!StrToInt(eventJson[START_SAID], saId)) {
+            HILOGE(TAG, "eventJson ParseEvent said error");
+            return DEFAULT_SAID;
+        }
     }
+    eventMap = ParseUtil::JsonObjToMap(eventJson);
     return saId;
 }
 
@@ -125,11 +132,13 @@ int main(int argc, char *argv[])
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
     if (argc > ONDEMAND_LOAD) {
-        saId = ParseSaId(argv);
+        std::unordered_map<std::string, std::string> eventMap;
+        saId = ParseArgv(argv, eventMap);
         if (!CheckSaId(saId)) {
             HILOGE(TAG, "saId is invalid!");
             return 0;
         }
+        LocalAbilityManager::GetInstance().SetStartReason(saId, eventMap);
     }
     // Load default system abilities related shared libraries from specific format profile
     // when this process starts.

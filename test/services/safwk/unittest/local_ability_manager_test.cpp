@@ -35,6 +35,7 @@ namespace {
     constexpr int SAID = 1499;
     constexpr int MUT_SAID = 9999;
     constexpr int INVALID_SAID = -1;
+    constexpr int STARTCODE = 1;
 }
 
 class LocalAbilityManagerTest : public testing::Test {
@@ -430,12 +431,11 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener004, TestSize.Level
 HWTEST_F(LocalAbilityManagerTest, OnStartAbility001, TestSize.Level1)
 {
     std::string deviceId = "";
-    int32_t addAbility = 1;
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
-    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, addAbility);
+    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
-    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, addAbility);
+    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     bool res = LocalAbilityManager::GetInstance().OnStartAbility(SAID);
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     delete sysAby;
@@ -744,7 +744,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus001, TestSize.Level1)
     EXPECT_TRUE(ret);
     LocalAbilityManager::GetInstance().RegisterOnDemandSystemAbility(SAID);
     vector<int32_t> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
-    EXPECT_EQ(res.size(), 1);
+    EXPECT_EQ(res.size(), STARTCODE);
 }
 
 /**
@@ -837,7 +837,7 @@ HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
     dependSa.push_back(-1);
     mockSa->SetDependSa(dependSa);
     mockSa->SetDependTimeout(200);
-    LocalAbilityManager::GetInstance().startTaskNum_ = 1;
+    LocalAbilityManager::GetInstance().startTaskNum_ = STARTCODE;
     LocalAbilityManager::GetInstance().StartSystemAbilityTask(mockSa);
     LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
     bool res = LocalAbilityManager::GetInstance().Run(SAID);
@@ -945,7 +945,7 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest003, TestSize.Level2)
     std::string deviceId = "";
     LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnRemoveSystemAbility(INVALID_SAID, deviceId);
-    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(1, data, reply, option);
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
     EXPECT_NE(result, ERR_NONE);
 }
@@ -958,13 +958,34 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest004, TestSize.Level2)
 {
     MessageParcel data;
     data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
-    data.WriteInt32(1);
+    data.WriteInt32(STARTCODE);
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
     LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
-    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(1, data, reply, option);
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
+    delete sysListener;
+    EXPECT_EQ(result, ERR_NULL_OBJECT);
+}
+/**
+ * @tc.name: OnRemoteRequest005
+ * @tc.desc: OnRemoteRequest005
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest005, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    data.WriteInt32(STARTCODE);
+    std::string eventStr = "test";
+    data.WriteString(eventStr);
+    MessageParcel reply;
+    MessageOption option;
+    std::string deviceId = "";
+    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
+    sysListener->OnRemoveSystemAbility(SAID, deviceId);
+    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
     EXPECT_EQ(result, ERR_NONE);
 }
