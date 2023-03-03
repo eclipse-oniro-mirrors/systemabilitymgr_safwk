@@ -73,6 +73,7 @@ ohos_executable("sa_main") {
       "c_utils:utils",
       "hiviewdfx_hilog_native:libhilog",
       "init:libbegetutil",
+      "samgr:samgr_common",
     ]
   }
 

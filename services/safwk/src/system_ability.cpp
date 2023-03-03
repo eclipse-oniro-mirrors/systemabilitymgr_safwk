@@ -34,6 +34,7 @@ const std::string TAG = "SystemAbility";
 SystemAbility::SystemAbility(bool runOnCreate)
 {
     isRunning_ = false;
+    abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunOnCreate_ = runOnCreate;
     isDistributed_ = false;
     dumpLevel_ = 0;
@@ -86,9 +87,29 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
 
     publishObj_ = systemAbility;
     ISystemAbilityManager::SAExtraProp saExtra(GetDistributed(), GetDumpLevel(), capability_, permission_);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
     HILOGI(TAG, "[PerformanceTest] SAFWK Publish SA:%{public}d result : %{public}d, spend:%{public}" PRId64 " ms",
         saId_, result, (GetTickCount() - begin));
+    if (result == ERR_OK) {
+        abilityState_ = SystemAbilityState::ACTIVE;
+        return true;
+    }
+    return false;
+}
+
+bool SystemAbility::CancelIdle()
+{
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    if (abilityState_ != SystemAbilityState::IDLE) {
+        return true;
+    }
+    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgrProxy == nullptr) {
+        HILOGE(TAG, "failed to get samgrProxy");
+        return false;
+    }
+    int32_t result = samgrProxy->CancelUnloadSystemAbility(saId_);
     return result == ERR_OK;
 }
 
@@ -109,29 +130,64 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
 void SystemAbility::Start()
 {
     HILOGD(TAG, "starting system ability...");
-    std::lock_guard<std::mutex> autoLock(abilityLock);
-    if (isRunning_) {
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    if (abilityState_ != SystemAbilityState::NOT_LOADED) {
         return;
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
     HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
-    OnStart();
+    std::unordered_map<std::string, std::string> startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
+    OnStart(startReason);
     isRunning_ = true;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+        saId_, (GetTickCount() - begin));
+}
+
+void SystemAbility::Idle(const std::unordered_map<std::string, std::string>& idleReason,
+    int32_t& delayTime)
+{
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    if (abilityState_ != SystemAbilityState::ACTIVE) {
+        HILOGE(TAG, "[PerformanceTest] SAFWK cannot idle systemAbilityId:%{public}d", saId_);
+        return;
+    }
+    HILOGD(TAG, "[PerformanceTest] SAFWK Idle systemAbilityId:%{public}d", saId_);
+    int64_t begin = GetTickCount();
+    delayTime = OnIdle(idleReason);
+    if (delayTime == 0) {
+        abilityState_ = SystemAbilityState::IDLE;
+    }
+    HILOGI(TAG, "[PerformanceTest] SAFWK Idle systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+        saId_, (GetTickCount() - begin));
+}
+
+void SystemAbility::Active(const std::unordered_map<std::string, std::string>& activeReason)
+{
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    if (abilityState_ != SystemAbilityState::IDLE) {
+        return;
+    }
+    HILOGD(TAG, "[PerformanceTest] SAFWK Active systemAbilityId:%{public}d", saId_);
+    int64_t begin = GetTickCount();
+    OnActive(activeReason);
+    abilityState_ = SystemAbilityState::ACTIVE;
+    HILOGI(TAG, "[PerformanceTest] SAFWK Active systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
 }
 
 void SystemAbility::Stop()
 {
     HILOGD(TAG, "stopping system ability...");
-    std::lock_guard<std::mutex> autoLock(abilityLock);
-    if (!isRunning_) {
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    if (abilityState_ == SystemAbilityState::NOT_LOADED) {
         return;
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
-    OnStop();
+    std::unordered_map<std::string, std::string> stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
+    OnStop(stopReason);
+    abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
@@ -200,6 +256,12 @@ bool SystemAbility::GetRunningStatus() const
     return isRunning_;
 }
 
+SystemAbilityState SystemAbility::GetAbilityState()
+{
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    return abilityState_;
+}
+
 void SystemAbility::SetDumpLevel(uint32_t dumpLevel)
 {
     dumpLevel_ = dumpLevel;
@@ -236,6 +298,7 @@ void SystemAbility::OnStart()
 // The details should be implemented by subclass
 void SystemAbility::OnStart(const std::unordered_map<std::string, std::string>& startReason)
 {
+    OnStart();
 }
 
 int32_t SystemAbility::OnIdle(const std::unordered_map<std::string, std::string>& idleReason)
@@ -259,6 +322,7 @@ void SystemAbility::OnStop()
 // The details should be implemented by subclass
 void SystemAbility::OnStop(const std::unordered_map<std::string, std::string>& stopReason)
 {
+    OnStop();
 }
 
 // The details should be implemented by subclass
