@@ -513,6 +513,30 @@ bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string
     return true;
 }
 
+bool LocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
+    const std::unordered_map<std::string, std::string>& activeReason)
+{
+    HILOGD(TAG, "active SA:%{public}d", systemAbilityId);
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        return false;
+    }
+    ability->Active(activeReason);
+    return true;
+}
+
+bool LocalAbilityManager::IdleAbility(int32_t systemAbilityId,
+    const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime)
+{
+    HILOGD(TAG, "idle SA:%{public}d", systemAbilityId);
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        return false;
+    }
+    ability->Idle(idleReason, delayTime);
+    return true;
+}
+
 bool LocalAbilityManager::InitializeSaProfiles(int32_t saId)
 {
     return (saId == DEFAULT_SAID) ? InitializeRunOnCreateSaProfiles() : InitializeOnDemandSaProfile(saId);

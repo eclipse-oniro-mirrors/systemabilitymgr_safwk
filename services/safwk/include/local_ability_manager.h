@@ -17,7 +17,7 @@
 #define LOCAL_ABILITY_MANAGER_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <list>
 #include <unistd.h>
 #include <condition_variable>
@@ -53,6 +53,10 @@ public:
     void StartOndemandSystemAbility(int32_t systemAbilityId);
     void StopOndemandSystemAbility(int32_t systemAbilityId);
     bool StartAbility(int32_t systemAbilityId, const std::string& eventStr) override;
+    bool ActiveAbility(int32_t systemAbilityId,
+        const std::unordered_map<std::string, std::string>& activeReason) override;
+    bool IdleAbility(int32_t systemAbilityId, const std::unordered_map<std::string, std::string>& idleReason,
+        int32_t& delayTime) override;
     bool StopAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
     void SetStartReason(int32_t systemAbilityId, std::unordered_map<std::string, std::string> &event);

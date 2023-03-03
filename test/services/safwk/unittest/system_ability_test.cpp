@@ -42,6 +42,10 @@ public:
 
     bool StartAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     bool StopAbility(int32_t systemAbilityId, const std::string& eventStr) override;
+    bool ActiveAbility(int32_t systemAbilityId,
+        const std::unordered_map<std::string, std::string>& activeReason) override;
+    bool IdleAbility(int32_t systemAbilityId,
+        const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -79,6 +83,20 @@ bool MockLocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::s
 }
 
 bool MockLocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string& eventStr)
+{
+    DTEST_LOG << "said : " << systemAbilityId <<std::endl;
+    return true;
+}
+
+bool MockLocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
+    const std::unordered_map<std::string, std::string>& activeReason)
+{
+    DTEST_LOG << "said : " << systemAbilityId <<std::endl;
+    return true;
+}
+
+bool MockLocalAbilityManager::IdleAbility(int32_t systemAbilityId,
+    const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime)
 {
     DTEST_LOG << "said : " << systemAbilityId <<std::endl;
     return true;
@@ -153,7 +171,7 @@ HWTEST_F(SystemAbilityTest, Publish002, TestSize.Level2)
     sysAby->StopAbility(-1);
     sysAby->Start();
     sysAby->Stop();
-    EXPECT_FALSE(sysAby->isRunning_);
+    EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::NOT_LOADED);
 }
 
 /**

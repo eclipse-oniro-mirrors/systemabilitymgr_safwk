@@ -59,6 +59,12 @@ return #className; \
 public: \
 virtual std::string GetClassName() = 0;
 
+enum class SystemAbilityState {
+    NOT_LOADED = 0,
+    ACTIVE,
+    IDLE,
+};
+
 class SystemAbility {
     DECLARE_BASE_SYSTEM_ABILITY(SystemAbility);
 
@@ -71,7 +77,7 @@ protected:
     virtual void OnDump();
     virtual void OnStart();
     virtual void OnStart(const std::unordered_map<std::string, std::string>& startReason);
-    virtual int OnIdle(const std::unordered_map<std::string, std::string>& idleReason);
+    virtual int32_t OnIdle(const std::unordered_map<std::string, std::string>& idleReason);
     virtual void OnActive(const std::unordered_map<std::string, std::string>& activeReason);
     virtual void OnStop();
     virtual void OnStop(const std::unordered_map<std::string, std::string>& stopReason);
@@ -80,6 +86,7 @@ protected:
 
     sptr<IRemoteObject> GetSystemAbility(int32_t systemAbilityId);
     bool Publish(sptr<IRemoteObject> systemAbility);
+    bool CancelIdle();
     void StopAbility(int32_t systemAbilityId);
 
     SystemAbility(bool runOnCreate = false);
@@ -88,6 +95,8 @@ protected:
 
 private:
     void Start();
+    void Idle(const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime);
+    void Active(const std::unordered_map<std::string, std::string>& activeReason);
     void Stop();
     void SADump();
     int32_t GetSystemAbilitId() const;
@@ -104,6 +113,7 @@ private:
     void SetDependTimeout(int dependTimeout);
     int GetDependTimeout() const;
     bool GetRunningStatus() const;
+    SystemAbilityState GetAbilityState();
     void SetCapability(const std::u16string& capability);
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
@@ -119,10 +129,11 @@ private:
     unsigned int dumpLevel_;
     int dependTimeout_;
     bool isRunning_;
+    SystemAbilityState abilityState_;
     std::u16string capability_;
     sptr<IRemoteObject> publishObj_;
     std::u16string permission_;
-    std::mutex abilityLock;
+    std::recursive_mutex abilityLock;
 };
 }
 
