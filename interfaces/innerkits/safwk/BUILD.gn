@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Huawei Device Co., Ltd.
+# Copyright (c) 2021-2023 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -63,5 +63,29 @@ ohos_shared_library("system_ability_fwk") {
   relative_install_dir = "platformsdk"
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"
+}
+ohos_rust_shared_library("system_ability_fwk_rust") {
+  sources = [
+    "rust/src/lib.rs",
+    "rust/src/sa_binding.rs",
+    "rust/src/safwk/macros.rs",
+    "rust/src/safwk/mod.rs",
+    "rust/src/safwk/r_system_ability.rs",
+  ]
+
+  deps = [
+    "//base/hiviewdfx/hilog/interfaces/rust:hilog_rust",
+    "//foundation/communication/ipc/interfaces/innerkits/rust:ipc_rust",
+    "//foundation/systemabilitymgr/safwk/services/safwk:system_ability_fwk_c",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/rust:rust_samgr",
+  ]
+
+  crate_name = "system_ability_fwk_rust"
+  crate_type = "dylib"
+
+  install_images = [ system_base_dir ]
+  relative_install_dir = "chipset-pub-sdk"
+  subsystem_name = "systemabilitymgr"
+  part_name = "safwk"
 }
 ################################################################################

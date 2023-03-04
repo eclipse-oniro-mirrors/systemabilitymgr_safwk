@@ -24,6 +24,34 @@ config("config_safwk") {
   ]
 }
 
+config("libsafwk_c_private_config") {
+  cflags_cc = [ "-O2" ]
+}
+
+ohos_shared_library("system_ability_fwk_c") {
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/c_wrapper/include",
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
+  ]
+  sources = [ "//foundation/systemabilitymgr/safwk/services/safwk/c_wrapper/source/c_system_ability.cpp" ]
+
+  configs = [ ":libsafwk_c_private_config" ]
+
+  deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hiviewdfx_hilog_native:libhilog",
+  ]
+
+  output_extension = "so"
+  install_images = [ system_base_dir ]
+  relative_install_dir = "chipset-pub-sdk"
+  subsystem_name = "systemabilitymgr"
+  part_name = "safwk"
+}
+
 ohos_executable("sa_main") {
   install_enable = true
   sources = [ "src/main.cpp" ]
@@ -35,7 +63,10 @@ ohos_executable("sa_main") {
 
   ldflags = [ "-rdynamic" ]
 
-  deps = [ "../../interfaces/innerkits/safwk:system_ability_fwk" ]
+  deps = [
+    "../../interfaces/innerkits/safwk:system_ability_fwk",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk_rust",
+  ]
 
   if (is_standard_system) {
     external_deps = [
