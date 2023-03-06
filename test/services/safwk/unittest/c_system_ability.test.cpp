@@ -161,6 +161,19 @@ HWTEST_F(CSystemAbilityTest, MakeAndRegisterAbility002, TestSize.Level3)
 }
 
 /**
+ * @tc.name: MakeAndRegisterAbility003
+ * @tc.desc: Check MakeAndRegisterAbility
+ * @tc.type: FUNC
+ */
+HWTEST_F(CSystemAbilityTest, MakeAndRegisterAbility003, TestSize.Level3)
+{
+    auto cSystemability = new (std::nothrow) CSystemAbilityInner(nullptr);
+    const void *userData = "test";
+    bool res = MakeAndRegisterAbility(cSystemability, userData);
+    EXPECT_EQ(res, false);
+}
+
+/**
  * @tc.name: DeleteNative001
  * @tc.desc: Check DeleteNative
  * @tc.type: FUNC
