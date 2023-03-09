@@ -29,7 +29,7 @@ struct CSystemAbilityInner {
     {
         userData_ = userData;
     };
-    CSystemAbilityInnerService *cSystemabilityInnerservice_;
+    CSystemAbilityInnerService *cSystemabilityInnerservice_ = nullptr;
 private:
     const void *userData_;
 };
