@@ -17,7 +17,7 @@
 #define LOCAL_ABILITY_MANAGER_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <list>
 #include <unistd.h>
 #include <condition_variable>
@@ -52,9 +52,18 @@ public:
     void ClearResource();
     void StartOndemandSystemAbility(int32_t systemAbilityId);
     void StopOndemandSystemAbility(int32_t systemAbilityId);
-    bool StartAbility(int32_t systemAbilityId) override;
-    bool StopAbility(int32_t systemAbilityId) override;
+    bool StartAbility(int32_t systemAbilityId, const std::string& eventStr) override;
+    bool ActiveAbility(int32_t systemAbilityId,
+        const std::unordered_map<std::string, std::string>& activeReason) override;
+    bool IdleAbility(int32_t systemAbilityId, const std::unordered_map<std::string, std::string>& idleReason,
+        int32_t& delayTime) override;
+    bool StopAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
+    void SetStartReason(int32_t systemAbilityId, std::unordered_map<std::string, std::string> &event);
+    void SetStopReason(int32_t systemAbilityId, std::unordered_map<std::string, std::string> &event);
+    std::unordered_map<std::string, std::string>& GetStartReason(int32_t systemAbilityId);
+    std::unordered_map<std::string, std::string>& GetStopReason(int32_t systemAbilityId);
+
 private:
     LocalAbilityManager();
     ~LocalAbilityManager() = default;
@@ -90,7 +99,8 @@ private:
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
     std::shared_mutex abilityMapLock_;
     sptr<LocalAbilityManager> localAbilityManager_;
-
+    std::map<int32_t, std::unordered_map<std::string, std::string>> saIdToStartReason_;
+    std::map<int32_t, std::unordered_map<std::string, std::string>> saIdToStopReason_;
     // Max task number in pool is 20.
     const int32_t MAX_TASK_NUMBER = 20;
     // Check dependent sa status every 50 ms, it equals 50000us.
@@ -98,8 +108,8 @@ private:
 
     sptr<ISystemAbilityStatusChange> statusChangeListener_;
     std::map<int32_t, std::list<int32_t>> listenerMap_;
+    std::mutex ReasonLock_;
     std::mutex listenerLock_;
-
     std::shared_ptr<ParseUtil> profileParser_;
 
     std::condition_variable startPhaseCV_;

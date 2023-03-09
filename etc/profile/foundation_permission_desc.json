@@ -59,6 +59,11 @@
             "name" : "ohos.permission.MANAGE_SECURE_SETTINGS",
             "said" : ["3301", "3308"],
             "description" : "Permission required for settingsdata to access SA."
+        },
+        {
+            "name" : "ohos.permission.STORAGE_MANAGER",
+            "said" : ["183"],
+            "description" : "Permission required for UPMS to create or delete files shared between applications."
         }
     ],
     "restart" : [

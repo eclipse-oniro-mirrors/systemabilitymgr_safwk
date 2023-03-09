@@ -14,14 +14,15 @@
  */
 
 
-#ifndef LOCAL_ABILITY_MANAGER_STUB_H_
-#define LOCAL_ABILITY_MANAGER_STUB_H_
+#ifndef LOCAL_ABILITY_MANAGER_STUB_H
+#define LOCAL_ABILITY_MANAGER_STUB_H
 
 #include <map>
 
 #include "ipc_object_stub.h"
 #include "refbase.h"
 #include "if_local_ability_manager.h"
+#include "nlohmann/json.hpp"
 
 namespace OHOS {
 class LocalAbilityManagerStub : public IRemoteStub<ILocalAbilityManager> {
@@ -36,6 +37,8 @@ protected:
 private:
     int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t StopAbilityInner(MessageParcel& data, MessageParcel& reply);
+    int32_t ActiveAbilityInner(MessageParcel& data, MessageParcel& reply);
+    int32_t IdleAbilityInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();
     static bool EnforceInterceToken(MessageParcel& data);
 

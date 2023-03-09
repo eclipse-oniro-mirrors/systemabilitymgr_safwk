@@ -36,7 +36,6 @@ using std::vector;
 
 namespace {
 const string TAG = "LocalAbilityManager";
-
 constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
 constexpr int32_t DEFAULT_SAID = -1;
@@ -481,9 +480,11 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
     }
 }
 
-bool LocalAbilityManager::StartAbility(int32_t systemAbilityId)
+bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::string& eventStr)
 {
     HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
+    std::unordered_map<std::string, std::string> startReason = ParseUtil::StringToMap(eventStr);
+    SetStartReason(systemAbilityId, startReason);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
     std::thread thread(task);
     thread.detach();
@@ -498,12 +499,38 @@ void LocalAbilityManager::StopOndemandSystemAbility(int32_t systemAbilityId)
     }
 }
 
-bool LocalAbilityManager::StopAbility(int32_t systemAbilityId)
+bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string& eventStr)
 {
     HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
+    std::unordered_map<std::string, std::string> stopReason = ParseUtil::StringToMap(eventStr);
+    SetStopReason(systemAbilityId, stopReason);
     auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
     std::thread thread(task);
     thread.detach();
+    return true;
+}
+
+bool LocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
+    const std::unordered_map<std::string, std::string>& activeReason)
+{
+    HILOGD(TAG, "active SA:%{public}d", systemAbilityId);
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        return false;
+    }
+    ability->Active(activeReason);
+    return true;
+}
+
+bool LocalAbilityManager::IdleAbility(int32_t systemAbilityId,
+    const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime)
+{
+    HILOGD(TAG, "idle SA:%{public}d", systemAbilityId);
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        return false;
+    }
+    ability->Idle(idleReason, delayTime);
     return true;
 }
 
@@ -726,6 +753,30 @@ bool LocalAbilityManager::AddLocalAbilityManager()
     }
     int32_t ret = samgrProxy->AddSystemProcess(procName_, localAbilityManager_);
     return ret == ERR_OK;
+}
+
+void LocalAbilityManager::SetStartReason(int32_t saId, std::unordered_map<std::string, std::string> &event)
+{
+    std::lock_guard<std::mutex> autoLock(ReasonLock_);
+    saIdToStartReason_[saId] = event;
+}
+
+void LocalAbilityManager::SetStopReason(int32_t saId, std::unordered_map<std::string, std::string> &event)
+{
+    std::lock_guard<std::mutex> autoLock(ReasonLock_);
+    saIdToStopReason_[saId] = event;
+}
+
+std::unordered_map<std::string, std::string>& LocalAbilityManager::GetStartReason(int32_t saId)
+{
+    std::lock_guard<std::mutex> autoLock(ReasonLock_);
+    return saIdToStartReason_[saId];
+}
+
+std::unordered_map<std::string, std::string>& LocalAbilityManager::GetStopReason(int32_t saId)
+{
+    std::lock_guard<std::mutex> autoLock(ReasonLock_);
+    return saIdToStopReason_[saId];
 }
 
 sptr<ISystemAbilityStatusChange> LocalAbilityManager::GetSystemAbilityStatusChange()

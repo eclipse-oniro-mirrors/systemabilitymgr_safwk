@@ -24,6 +24,7 @@
 #include "ipc_types.h"
 #include "message_option.h"
 #include "message_parcel.h"
+#include "parse_util.h"
 #include "safwk_log.h"
 #include "system_ability_definition.h"
 
@@ -40,6 +41,10 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         &LocalAbilityManagerStub::StartAbilityInner;
     memberFuncMap_[STOP_ABILITY_TRANSACTION] =
         &LocalAbilityManagerStub::StopAbilityInner;
+    memberFuncMap_[ACTIVE_ABILITY_TRANSACTION] =
+        &LocalAbilityManagerStub::ActiveAbilityInner;
+    memberFuncMap_[IDLE_ABILITY_TRANSACTION] =
+        &LocalAbilityManagerStub::IdleAbilityInner;
 }
 
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
@@ -68,8 +73,12 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
-
-    bool result = StartAbility(saId);
+    std::string eventStr = data.ReadString();
+    if (eventStr.empty()) {
+        HILOGW(TAG, "LocalAbilityManagerStub::StartAbilityInner read eventStr failed!");
+        return ERR_NULL_OBJECT;
+    }
+    bool result = StartAbility(saId, eventStr);
     HILOGI(TAG, "%{public}s to start ability", result ? "success" : "failed");
     return ERR_NONE;
 }
@@ -81,9 +90,52 @@ int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
-
-    bool result = StopAbility(saId);
+    std::string eventStr = data.ReadString();
+    if (eventStr.empty()) {
+        HILOGW(TAG, "LocalAbilityManagerStub::StopAbilityInner read eventStr failed!");
+        return ERR_NULL_OBJECT;
+    }
+    bool result = StopAbility(saId, eventStr);
     HILOGI(TAG, "%{public}s to stop ability", result ? "success" : "failed");
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::ActiveAbilityInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t saId = data.ReadInt32();
+    if (!CheckInputSysAbilityId(saId)) {
+        HILOGW(TAG, "read saId failed!");
+        return ERR_NULL_OBJECT;
+    }
+    nlohmann::json payload = ParseUtil::StringToJsonObj(data.ReadString());
+    std::unordered_map<std::string, std::string> activeReason = ParseUtil::JsonObjToMap(payload);
+    bool result = ActiveAbility(saId, activeReason);
+    if (!reply.WriteBool(result)) {
+        HILOGW(TAG, "ActiveAbilityInner Write result failed!");
+        return ERR_NULL_OBJECT;
+    }
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t saId = data.ReadInt32();
+    if (!CheckInputSysAbilityId(saId)) {
+        HILOGW(TAG, "read saId failed!");
+        return ERR_NULL_OBJECT;
+    }
+    nlohmann::json payload = ParseUtil::StringToJsonObj(data.ReadString());
+    std::unordered_map<std::string, std::string> idleReason = ParseUtil::JsonObjToMap(payload);
+    int32_t delayTime = 0;
+    bool result = IdleAbility(saId, idleReason, delayTime);
+    if (!reply.WriteBool(result)) {
+        HILOGW(TAG, "ActiveAbilityInner Write result failed!");
+        return ERR_NULL_OBJECT;
+    }
+    if (!reply.WriteInt32(delayTime)) {
+        HILOGW(TAG, "ActiveAbilityInner Write delayTime failed!");
+        return ERR_NULL_OBJECT;
+    }
     return ERR_NONE;
 }
 

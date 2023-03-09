@@ -19,6 +19,7 @@
 #include "errors.h"
 #include "local_ability_manager.h"
 #include "parameter.h"
+#include "parse_util.h"
 #include "safwk_log.h"
 #include "securec.h"
 #include "string_ex.h"
@@ -29,19 +30,26 @@ using std::string;
 
 namespace {
 const string TAG = "SaMain";
-
+const string START_SAID = "said";
+const string EVENT_TYPE = "eventId";
+const string EVENT_NAME = "name";
+const string EVENT_VALUE = "value";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_XML = "/system/usr/default.xml";
 // The pid name can be up to 16 bytes long, including the terminating null byte.
 // So need to set the max length of pid name to 15 bytes.
 constexpr size_t MAX_LEN_PID_NAME = 15;
-
+constexpr int ID_INDEX = 1;
+constexpr int NAME_INDEX = 2;
+constexpr int VALUE_INDEX = 3;
 constexpr int PROFILE_INDEX = 1;
-constexpr int SAID_INDEX = 2;
+constexpr int EVENT_INDEX = 2;
 constexpr int DEFAULT_SAID = -1;
 constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
+constexpr int PARTEVENT_NUM = 4;
+constexpr int MAX_LENGTH = 2000;
 }
 
 static void StartMemoryHook(const string& processName)
@@ -88,13 +96,33 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
 }
 
 // check argv size with SAID_INDEX before using the function
-static int32_t ParseSaId(char *argv[])
+static int32_t ParseArgv(char *argv[], std::unordered_map<std::string, std::string>& eventMap)
 {
-    string saIdStr(argv[SAID_INDEX]);
+    string eventStr(argv[EVENT_INDEX]);
+    HILOGI(TAG, "ParseArgv extraArgv eventStr:%{public}s!", eventStr.c_str());
     int32_t saId = DEFAULT_SAID;
-    if (!StrToInt(saIdStr, saId)) {
+    if (eventStr.size() > MAX_LENGTH) {
         return DEFAULT_SAID;
     }
+    std::size_t pos = eventStr.find("#");
+    std::vector<string> eventVec;
+    while (pos != std::string::npos) {
+        std::string eventPart = eventStr.substr(0, pos);
+        eventVec.push_back(eventPart);
+        eventStr = eventStr.substr(pos + 1, eventStr.size() - pos - 1);
+        pos = eventStr.find("#");
+    }
+    if (eventVec.size() != PARTEVENT_NUM) {
+        HILOGE(TAG, "eventVec size is not true");
+        return DEFAULT_SAID;
+    }
+    if (!StrToInt(eventVec[0], saId)) {
+        HILOGE(TAG, "eventVec[0] StrToInt said error");
+        return DEFAULT_SAID;
+    }
+    eventMap[EVENT_TYPE] = eventVec[ID_INDEX];
+    eventMap[EVENT_NAME] = eventVec[NAME_INDEX];
+    eventMap[EVENT_VALUE] = eventVec[VALUE_INDEX];
     return saId;
 }
 
@@ -125,11 +153,13 @@ int main(int argc, char *argv[])
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
     if (argc > ONDEMAND_LOAD) {
-        saId = ParseSaId(argv);
+        std::unordered_map<std::string, std::string> eventMap;
+        saId = ParseArgv(argv, eventMap);
         if (!CheckSaId(saId)) {
             HILOGE(TAG, "saId is invalid!");
             return 0;
         }
+        LocalAbilityManager::GetInstance().SetStartReason(saId, eventMap);
     }
     // Load default system abilities related shared libraries from specific format profile
     // when this process starts.

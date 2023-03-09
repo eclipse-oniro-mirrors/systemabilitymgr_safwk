@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef AUDIO_ABILITY_H_
-#define AUDIO_ABILITY_H_
+#ifndef AUDIO_ABILITY_H
+#define AUDIO_ABILITY_H
 
 #include <string>
 
@@ -49,4 +49,4 @@ protected:
 };
 }
 
-#endif // !defined(AUDIO_ABILITY_H_)
+#endif // !defined(AUDIO_ABILITY_H)
