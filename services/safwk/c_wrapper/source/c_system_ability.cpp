@@ -18,7 +18,9 @@
 #include "safwk_log.h"
 
 using namespace OHOS;
+namespace {
 const std::string TAG = "SystemAbility";
+}
 CSystemAbilityInner::CSystemAbilityInner(const void *userData)
     : userData_(userData)
 {
