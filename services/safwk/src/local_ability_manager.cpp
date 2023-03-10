@@ -19,6 +19,7 @@
 #include <cinttypes>
 #include <iostream>
 #include <sys/types.h>
+#include <thread>
 
 #include "datetime_ex.h"
 #include "errors.h"
@@ -51,7 +52,7 @@ const string DEFAULT_DIR = "/system/usr/";
 const string PREFIX = PROFILES_DIR;
 const string SUFFIX = "_trust.json";
 
-const string ONDEMAND_POOL = "SaOndemand";
+const string ONDEMAND_WORKER = "SaOndemand";
 const string INIT_POOL = "SaInit";
 
 enum {
@@ -67,14 +68,6 @@ LocalAbilityManager::LocalAbilityManager()
 {
     profileParser_ = std::make_shared<ParseUtil>();
     initPool_ = std::make_unique<ThreadPool>(INIT_POOL);
-    ondemandPool_ = std::make_unique<ThreadPool>(ONDEMAND_POOL);
-    ondemandPool_->Start(std::thread::hardware_concurrency());
-    ondemandPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
-}
-
-LocalAbilityManager::~LocalAbilityManager()
-{
-    ondemandPool_->Stop();
 }
 
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
@@ -454,6 +447,7 @@ bool LocalAbilityManager::GetRunningStatus(int32_t systemAbilityId)
 
 void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
 {
+    pthread_setname_np(pthread_self(), ONDEMAND_WORKER.c_str());
     HILOGD(TAG, "[PerformanceTest] SAFWK ondemand LoadSaLib systemAbilityId:%{public}d library", systemAbilityId);
     int64_t begin = GetTickCount();
     bool isExist = profileParser_->LoadSaLib(systemAbilityId);
@@ -492,12 +486,14 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::strin
     std::unordered_map<std::string, std::string> startReason = ParseUtil::StringToMap(eventStr);
     SetStartReason(systemAbilityId, startReason);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
-    ondemandPool_->AddTask(task);
+    std::thread thread(task);
+    thread.detach();
     return true;
 }
 
 void LocalAbilityManager::StopOndemandSystemAbility(int32_t systemAbilityId)
 {
+    pthread_setname_np(pthread_self(), ONDEMAND_WORKER.c_str());
     if (!OnStopAbility(systemAbilityId)) {
         HILOGE(TAG, "failed to stop ability:%{public}d", systemAbilityId);
     }
@@ -509,7 +505,8 @@ bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string
     std::unordered_map<std::string, std::string> stopReason = ParseUtil::StringToMap(eventStr);
     SetStopReason(systemAbilityId, stopReason);
     auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
-    ondemandPool_->AddTask(task);
+    std::thread thread(task);
+    thread.detach();
     return true;
 }
 

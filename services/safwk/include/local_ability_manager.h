@@ -66,7 +66,8 @@ public:
 
 private:
     LocalAbilityManager();
-    ~LocalAbilityManager();
+    ~LocalAbilityManager() = default;
+
     bool AddLocalAbilityManager();
     void RegisterOnDemandSystemAbility(int32_t saId);
     void FindAndStartPhaseTasks();
@@ -119,8 +120,6 @@ private:
 
     // Thread pool used to start system abilities in parallel.
     std::unique_ptr<ThreadPool> initPool_;
-    // Thread pool used to start ondemand system abilities in parallel.
-    std::unique_ptr<ThreadPool> ondemandPool_;
 };
 }
 #endif
