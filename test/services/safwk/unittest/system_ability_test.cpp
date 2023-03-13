@@ -340,7 +340,7 @@ HWTEST_F(SystemAbilityTest, Active002, TestSize.Level2)
 
 /**
  * @tc.name: GetLibPath001
- * @tc.desc: Check GetLibPath
+ * @tc.desc: Check GetLibPath,cover function
  * @tc.type: FUNC
  * @tc.require:I6LSSX
  */
@@ -353,7 +353,7 @@ HWTEST_F(SystemAbilityTest, GetLibPath001, TestSize.Level2)
 
 /**
  * @tc.name: IsRunOnCreate001
- * @tc.desc: Check IsRunOnCreate
+ * @tc.desc: Check IsRunOnCreate,cover function
  * @tc.type: FUNC
  * @tc.require:I6LSSX
  */
@@ -366,7 +366,7 @@ HWTEST_F(SystemAbilityTest, IsRunOnCreate001, TestSize.Level2)
 
 /**
  * @tc.name: OnIdle001
- * @tc.desc: Check OnIdle
+ * @tc.desc: Check OnIdle,cover function
  * @tc.type: FUNC
  * @tc.require:I6LSSX
  */

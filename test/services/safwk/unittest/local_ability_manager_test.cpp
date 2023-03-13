@@ -36,7 +36,6 @@ namespace {
     constexpr int MUT_SAID = 9999;
     constexpr int INVALID_SAID = -1;
     constexpr int STARTCODE = 1;
-    constexpr int STARTCODE = 1;
 }
 
 class LocalAbilityManagerTest : public testing::Test {
@@ -435,9 +434,7 @@ HWTEST_F(LocalAbilityManagerTest, OnStartAbility001, TestSize.Level1)
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
-    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
-    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     bool res = LocalAbilityManager::GetInstance().OnStartAbility(SAID);
     LocalAbilityManager::GetInstance().abilityMap_.clear();
@@ -748,7 +745,6 @@ HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus001, TestSize.Level1)
     LocalAbilityManager::GetInstance().RegisterOnDemandSystemAbility(SAID);
     vector<int32_t> res = LocalAbilityManager::GetInstance().CheckDependencyStatus(dependSa);
     EXPECT_EQ(res.size(), STARTCODE);
-    EXPECT_EQ(res.size(), STARTCODE);
 }
 
 /**
@@ -841,7 +837,6 @@ HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
     dependSa.push_back(-1);
     mockSa->SetDependSa(dependSa);
     mockSa->SetDependTimeout(200);
-    LocalAbilityManager::GetInstance().startTaskNum_ = STARTCODE;
     LocalAbilityManager::GetInstance().startTaskNum_ = STARTCODE;
     LocalAbilityManager::GetInstance().StartSystemAbilityTask(mockSa);
     LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
@@ -951,7 +946,6 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest003, TestSize.Level2)
     LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnRemoveSystemAbility(INVALID_SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
-    int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
     EXPECT_NE(result, ERR_NONE);
 }
@@ -965,7 +959,6 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest004, TestSize.Level2)
 {
     MessageParcel data;
     data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
-    data.WriteInt32(STARTCODE);
     data.WriteInt32(STARTCODE);
     MessageParcel reply;
     MessageOption option;
@@ -1007,8 +1000,7 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest005, TestSize.Level2)
 HWTEST_F(LocalAbilityManagerTest, StartAbilityInner001, TestSize.Level2)
 {
     MessageParcel data;
-    int32_t codeInvalid = 0;
-    data.WriteInt32(codeInvalid);
+    data.WriteInt32(INVALID_SAID);
     MessageParcel reply;
     int32_t ret = LocalAbilityManager::GetInstance().StartAbilityInner(data, reply);
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
@@ -1055,8 +1047,7 @@ HWTEST_F(LocalAbilityManagerTest, StartAbilityInner003, TestSize.Level2)
 HWTEST_F(LocalAbilityManagerTest, StopAbilityInner001, TestSize.Level2)
 {
     MessageParcel data;
-    int32_t codeInvalid = 0;
-    data.WriteInt32(codeInvalid);
+    data.WriteInt32(INVALID_SAID);
     MessageParcel reply;
     int32_t ret = LocalAbilityManager::GetInstance().StopAbilityInner(data, reply);
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
@@ -1103,8 +1094,7 @@ HWTEST_F(LocalAbilityManagerTest, StopAbilityInner003, TestSize.Level2)
 HWTEST_F(LocalAbilityManagerTest, ActiveAbilityInner001, TestSize.Level2)
 {
     MessageParcel data;
-    int32_t codeInvalid = 0;
-    data.WriteInt32(codeInvalid);
+    data.WriteInt32(INVALID_SAID);
     MessageParcel reply;
     int32_t ret = LocalAbilityManager::GetInstance().ActiveAbilityInner(data, reply);
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
@@ -1112,7 +1102,7 @@ HWTEST_F(LocalAbilityManagerTest, ActiveAbilityInner001, TestSize.Level2)
 
 /**
  * @tc.name: ActiveAbilityInner002
- * @tc.desc: test ActiveAbilityInner with invalid SaID
+ * @tc.desc: test ActiveAbilityInner with valid SaID
  * @tc.type: FUNC
  * @tc.require:I6LSSX
  */
@@ -1134,8 +1124,7 @@ HWTEST_F(LocalAbilityManagerTest, ActiveAbilityInner002, TestSize.Level2)
 HWTEST_F(LocalAbilityManagerTest, IdleAbilityInner001, TestSize.Level2)
 {
     MessageParcel data;
-    int32_t codeInvalid = 0;
-    data.WriteInt32(codeInvalid);
+    data.WriteInt32(INVALID_SAID);
     MessageParcel reply;
     int32_t ret = LocalAbilityManager::GetInstance().IdleAbilityInner(data, reply);
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
@@ -1143,7 +1132,7 @@ HWTEST_F(LocalAbilityManagerTest, IdleAbilityInner001, TestSize.Level2)
 
 /**
  * @tc.name: IdleAbilityInner002
- * @tc.desc: test IdleAbilityInner with invalid SaID
+ * @tc.desc: test IdleAbilityInner with valid SaID
  * @tc.type: FUNC
  * @tc.require:I6LSSX
  */
