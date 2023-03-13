@@ -949,6 +949,7 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest003, TestSize.Level2)
     delete sysListener;
     EXPECT_NE(result, ERR_NONE);
 }
+
 /**
  * @tc.name: OnRemoteRequest004
  * @tc.desc: OnRemoteRequest004
@@ -988,6 +989,160 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest005, TestSize.Level2)
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
     EXPECT_EQ(result, ERR_NONE);
+}
+
+/**
+ * @tc.name: StartAbilityInner001
+ * @tc.desc: test StartAbilityInner with invalid SaID
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, StartAbilityInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(INVALID_SAID);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().StartAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: StartAbilityInner002
+ * @tc.desc: test StartAbilityInner with data.ReadString() is empty
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, StartAbilityInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(STARTCODE);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().StartAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: StartAbilityInner003
+ * @tc.desc: test StartAbilityInner with data.ReadString() is not  empty
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, StartAbilityInner003, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(STARTCODE);
+    std::string eventStr = "test";
+    data.WriteString(eventStr);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().StartAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
+}
+
+/**
+ * @tc.name: StopAbilityInner001
+ * @tc.desc: test StopAbilityInner with invalid SaID
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, StopAbilityInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(INVALID_SAID);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().StopAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: StopAbilityInner002
+ * @tc.desc: test StopAbilityInner with data.ReadString() is empty
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, StopAbilityInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(STARTCODE);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().StopAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: StopAbilityInner003
+ * @tc.desc: test StopAbilityInner with data.ReadString() is empty
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, StopAbilityInner003, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(STARTCODE);
+    std::string eventStr = "test";
+    data.WriteString(eventStr);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().StopAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
+}
+
+/**
+ * @tc.name: ActiveAbilityInner001
+ * @tc.desc: test ActiveAbilityInner with invalid SaID
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, ActiveAbilityInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(INVALID_SAID);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().ActiveAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: ActiveAbilityInner002
+ * @tc.desc: test ActiveAbilityInner with valid SaID
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, ActiveAbilityInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(STARTCODE);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().ActiveAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
+}
+
+/**
+ * @tc.name: IdleAbilityInner001
+ * @tc.desc: test IdleAbilityInner with invalid SaID
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, IdleAbilityInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(INVALID_SAID);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().IdleAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: IdleAbilityInner002
+ * @tc.desc: test IdleAbilityInner with valid SaID
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(LocalAbilityManagerTest, IdleAbilityInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInt32(STARTCODE);
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().IdleAbilityInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
 }
 } // namespace SAFWK
 } // namespace OHOS
