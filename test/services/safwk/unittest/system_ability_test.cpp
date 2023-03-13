@@ -30,6 +30,7 @@ namespace OHOS {
 namespace SAFWK {
 namespace {
     constexpr int32_t SAID = 1489;
+    const std::string TEST_STRING = "test";
     const std::string TEST_RESOURCE_PATH = "/data/test/resource/samgr/profile/";
     constexpr int32_t LISTENER_ID = 1488;
     constexpr int32_t MOCK_DEPEND_TIMEOUT = 1000;
@@ -199,6 +200,182 @@ HWTEST_F(SystemAbilityTest, GetSystemAbility001, TestSize.Level2)
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sptr<IRemoteObject> obj = sysAby->GetSystemAbility(-1);
     EXPECT_TRUE(obj == nullptr);
+}
+
+/**
+ * @tc.name: CancelIdle001
+ * @tc.desc: test CancelIdle with abilityState_ is not SystemAbilityState::IDLE
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, CancelIdle001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::NOT_LOADED;
+    int32_t ret = sysAby->CancelIdle();
+    EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.name: CancelIdle002
+ * @tc.desc: test CancelIdle with abilityState_ is SystemAbilityState::IDLE
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, CancelIdle002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::IDLE;
+    int32_t ret = sysAby->CancelIdle();
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: Start001
+ * @tc.desc: test Start with abilityState_ is not SystemAbilityState::NOT_LOADED
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Start001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::IDLE;
+    sysAby->Start();
+    EXPECT_FALSE(sysAby->isRunning_);
+}
+
+/**
+ * @tc.name: Start002
+ * @tc.desc: test Start with is SystemAbilityState::NOT_LOADED
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Start002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::NOT_LOADED;
+    sysAby->Start();
+    EXPECT_TRUE(sysAby->isRunning_);
+}
+
+/**
+ * @tc.name: Idle001
+ * @tc.desc: test Idle with abilityState_ is not SystemAbilityState::ACTIVE
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Idle001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::IDLE;
+    std::unordered_map<std::string, std::string> idleReason;
+    int32_t delayTime = 123;
+    sysAby->Idle(idleReason, delayTime);
+    EXPECT_EQ(sysAby->abilityState_,  SystemAbilityState::IDLE);
+}
+
+/**
+ * @tc.name: Idle002
+ * @tc.desc: test Idle with abilityState_ is SystemAbilityState::ACTIVE and delayTime is 0
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Idle002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::ACTIVE;
+    std::unordered_map<std::string, std::string> idleReason;
+    idleReason[TEST_STRING] = TEST_STRING;
+    int32_t noDelayTime = 0;
+    sysAby->Idle(idleReason, noDelayTime);
+    EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
+}
+
+/**
+ * @tc.name: Idle003
+ * @tc.desc: test Idle with abilityState_ is SystemAbilityState::ACTIVE and delayTime is 0
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Idle003, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::ACTIVE;
+    std::unordered_map<std::string, std::string> idleReason;
+    idleReason[TEST_STRING] = TEST_STRING;
+    int32_t delayTime = 123;
+    sysAby->Idle(idleReason, delayTime);
+    EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
+}
+
+/**
+ * @tc.name: Active001
+ * @tc.desc: test Active with abilityState_ is not SystemAbilityState::IDLE
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Active001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::ACTIVE;
+    std::unordered_map<std::string, std::string> activeReason;
+    sysAby->Active(activeReason);
+    EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
+}
+
+/**
+ * @tc.name: Active002
+ * @tc.desc: test Active with abilityState_ is SystemAbilityState::IDLE
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, Active002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->abilityState_ = SystemAbilityState::IDLE;
+    std::unordered_map<std::string, std::string> activeReason;
+    sysAby->Active(activeReason);
+    EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
+}
+
+/**
+ * @tc.name: GetLibPath001
+ * @tc.desc: Check GetLibPath
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, GetLibPath001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->libPath_ = TEST_RESOURCE_PATH;
+    EXPECT_EQ(sysAby->libPath_, TEST_RESOURCE_PATH);
+}
+
+/**
+ * @tc.name: IsRunOnCreate001
+ * @tc.desc: Check IsRunOnCreate
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, IsRunOnCreate001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->isRunOnCreate_ = true;
+    EXPECT_TRUE(sysAby->isRunOnCreate_);
+}
+
+/**
+ * @tc.name: OnIdle001
+ * @tc.desc: Check OnIdle
+ * @tc.type: FUNC
+ * @tc.require:I6LSSX
+ */
+HWTEST_F(SystemAbilityTest, OnIdle001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    std::unordered_map<std::string, std::string> idleReason;
+    int32_t ret = sysAby->OnIdle(idleReason);
+    EXPECT_EQ(ret, 0);
 }
 }
 }
