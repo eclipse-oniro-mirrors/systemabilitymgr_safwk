@@ -92,6 +92,7 @@ protected:
     SystemAbility(bool runOnCreate = false);
     SystemAbility(int32_t systemAbilityId, bool runOnCreate = false);
     virtual ~SystemAbility();
+    SystemAbilityState GetAbilityState();
 
 private:
     void Start();
@@ -113,7 +114,6 @@ private:
     void SetDependTimeout(int dependTimeout);
     int GetDependTimeout() const;
     bool GetRunningStatus() const;
-    SystemAbilityState GetAbilityState();
     void SetCapability(const std::u16string& capability);
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
