@@ -31,6 +31,8 @@ namespace SAFWK {
 namespace {
     constexpr int32_t SAID = 1489;
     const std::string TEST_STRING = "test";
+    const std::string EVENT_NAME = "name";
+    const std::string EVENT_ID = "eventId";
     const std::string TEST_RESOURCE_PATH = "/data/test/resource/samgr/profile/";
     constexpr int32_t LISTENER_ID = 1488;
     constexpr int32_t MOCK_DEPEND_TIMEOUT = 1000;
@@ -285,7 +287,8 @@ HWTEST_F(SystemAbilityTest, Idle002, TestSize.Level2)
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
     std::unordered_map<std::string, std::string> idleReason;
-    idleReason[TEST_STRING] = TEST_STRING;
+    idleReason[EVENT_ID] = TEST_STRING;
+    idleReason[EVENT_NAME] = TEST_STRING;
     int32_t noDelayTime = 0;
     sysAby->Idle(idleReason, noDelayTime);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
@@ -302,7 +305,8 @@ HWTEST_F(SystemAbilityTest, Idle003, TestSize.Level2)
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
     std::unordered_map<std::string, std::string> idleReason;
-    idleReason[TEST_STRING] = TEST_STRING;
+    idleReason[EVENT_ID] = TEST_STRING;
+    idleReason[EVENT_NAME] = TEST_STRING;
     int32_t delayTime = 123;
     sysAby->Idle(idleReason, delayTime);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
@@ -334,6 +338,8 @@ HWTEST_F(SystemAbilityTest, Active002, TestSize.Level2)
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
     std::unordered_map<std::string, std::string> activeReason;
+    activeReason[EVENT_ID] = TEST_STRING;
+    activeReason[EVENT_NAME] = TEST_STRING;
     sysAby->Active(activeReason);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
 }
@@ -374,6 +380,8 @@ HWTEST_F(SystemAbilityTest, OnIdle001, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     std::unordered_map<std::string, std::string> idleReason;
+    idleReason[EVENT_ID] = TEST_STRING;
+    idleReason[EVENT_NAME] = TEST_STRING;
     int32_t ret = sysAby->OnIdle(idleReason);
     EXPECT_EQ(ret, 0);
 }
