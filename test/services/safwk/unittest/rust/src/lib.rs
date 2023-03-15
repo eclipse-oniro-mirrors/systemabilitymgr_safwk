@@ -24,7 +24,7 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     tag: "rustSA"
 };
 use ipc_rust::{
-    IRemoteBroker, IRemoteObj, RemoteStub, Result,
+    IRemoteBroker, IRemoteObj, RemoteStub, IpcResult, IpcStatusCode,
     RemoteObj, define_remote_object, MsgParcel, BorrowedMsgParcel
 };
 
@@ -42,13 +42,13 @@ pub enum ITestCode {
 /// Function between proxy and stub of ITestService
 pub trait ITest: IRemoteBroker {
     /// Test echo_str 
-    fn echo_str(&self, value: &str) -> Result<String>;
+    fn echo_str(&self, value: &str) -> IpcResult<String>;
     /// Test request_concurent
-    fn request_concurent(&self, is_async: bool) -> Result<bool>;
+    fn request_concurent(&self, is_async: bool) -> IpcResult<bool>;
 }
 
 fn on_remote_request(stub: &dyn ITest, code: u32, data: &BorrowedMsgParcel,
-    reply: &mut BorrowedMsgParcel) -> Result<()> {
+    reply: &mut BorrowedMsgParcel) -> IpcResult<()> {
     info!(LOG_LABEL,"on_remote_reuqest in Rust TestStub, code: {}", code);
     match code {
         1 => {
@@ -62,7 +62,7 @@ fn on_remote_request(stub: &dyn ITest, code: u32, data: &BorrowedMsgParcel,
             reply.write(&value)?;
             Ok(())
         }
-        _ => Err(-1)
+        _ => Err(IpcStatusCode::Failed)
     }
 }
 
@@ -75,21 +75,21 @@ define_remote_object!(
 
 // Make RemoteStub<TestStub> object can call ITest function directly.
 impl ITest for RemoteStub<TestStub> {
-    fn echo_str(&self, value: &str) -> Result<String> {
+    fn echo_str(&self, value: &str) -> IpcResult<String> {
         // self will be convert to TestStub automatic because RemoteStub<TestStub>
         // implement the Deref trait
         info!(LOG_LABEL,"echo_str");
         self.0.echo_str(value)
     }
 
-    fn request_concurent(&self, is_async: bool) -> Result<bool> {
+    fn request_concurent(&self, is_async: bool) -> IpcResult<bool> {
         info!(LOG_LABEL,"request_concurent");
         self.0.request_concurent(is_async)
     }
 }
 
 impl ITest for TestProxy {
-    fn echo_str(&self, value: &str) -> Result<String> {
+    fn echo_str(&self, value: &str) -> IpcResult<String> {
         info!(LOG_LABEL,"TestProxy echo_str");
         let mut data = MsgParcel::new().expect("MsgParcel should success");
         data.write(value)?;
@@ -99,7 +99,7 @@ impl ITest for TestProxy {
         Ok(ret)
     }
 
-    fn request_concurent(&self, is_async: bool) -> Result<bool> {
+    fn request_concurent(&self, is_async: bool) -> IpcResult<bool> {
         info!(LOG_LABEL,"TestProxy request_concurent");
         let data = MsgParcel::new().expect("MsgParcel should success");
         let reply =

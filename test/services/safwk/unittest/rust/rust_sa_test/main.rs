@@ -25,7 +25,7 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     tag: "rustSA"
 };
 use ipc_rust::{
-    IRemoteBroker, Result, RemoteObj
+    IRemoteBroker, IpcResult, RemoteObj
 };
 use system_ability_fwk_rust::{
     define_system_ability, RSystemAbility, ISystemAbility, IMethod
@@ -42,12 +42,12 @@ pub const TEST_SERVICE_ID: i32 = 1494;
 pub struct TestService;
 
 impl ITest for TestService {
-    fn echo_str(&self, value: &str) -> Result<String> {
+    fn echo_str(&self, value: &str) -> IpcResult<String> {
         info!(LOG_LABEL,"TestService echo_str: {}", value);
         Ok(String::from(value))
     }
 
-    fn request_concurent(&self, is_async: bool) -> Result<bool> {
+    fn request_concurent(&self, is_async: bool) -> IpcResult<bool> {
         info!(LOG_LABEL,"TestService request_concurent: {}", is_async);
         Ok(true)
     }
