@@ -17,7 +17,6 @@
 
 #include <system_ability.h>
 #include <c_system_ability.h>
-class CSystemAbilityInnerService;
 struct CSystemAbilityInner {
     CSystemAbilityInner(const void *userData);
     ~CSystemAbilityInner();
