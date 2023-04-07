@@ -34,6 +34,7 @@ const string START_SAID = "said";
 const string EVENT_TYPE = "eventId";
 const string EVENT_NAME = "name";
 const string EVENT_VALUE = "value";
+const string EVENT_EXTRA_DATA_ID = "extraDataId";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_XML = "/system/usr/default.xml";
@@ -43,12 +44,13 @@ constexpr size_t MAX_LEN_PID_NAME = 15;
 constexpr int ID_INDEX = 1;
 constexpr int NAME_INDEX = 2;
 constexpr int VALUE_INDEX = 3;
+constexpr int EXTRA_DATA_ID_INDEX = 4;
 constexpr int PROFILE_INDEX = 1;
 constexpr int EVENT_INDEX = 2;
 constexpr int DEFAULT_SAID = -1;
 constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
-constexpr int PARTEVENT_NUM = 4;
+constexpr int PARTEVENT_NUM = 5;
 constexpr int MAX_LENGTH = 2000;
 }
 
@@ -96,7 +98,7 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
 }
 
 // check argv size with SAID_INDEX before using the function
-static int32_t ParseArgv(char *argv[], std::unordered_map<std::string, std::string>& eventMap)
+static int32_t ParseArgv(char *argv[], nlohmann::json& eventMap)
 {
     string eventStr(argv[EVENT_INDEX]);
     HILOGI(TAG, "ParseArgv extraArgv eventStr:%{public}s!", eventStr.c_str());
@@ -120,9 +122,11 @@ static int32_t ParseArgv(char *argv[], std::unordered_map<std::string, std::stri
         HILOGE(TAG, "eventVec[0] StrToInt said error");
         return DEFAULT_SAID;
     }
-    eventMap[EVENT_TYPE] = eventVec[ID_INDEX];
+    eventMap[EVENT_TYPE] = atoi(eventVec[ID_INDEX].c_str());
     eventMap[EVENT_NAME] = eventVec[NAME_INDEX];
     eventMap[EVENT_VALUE] = eventVec[VALUE_INDEX];
+    eventMap[EVENT_EXTRA_DATA_ID] = atoi(eventVec[EXTRA_DATA_ID_INDEX].c_str());
+    HILOGD(TAG, "ParseArgv extraDataId :%{public}d!", atoi(eventVec[EXTRA_DATA_ID_INDEX].c_str()));
     return saId;
 }
 
@@ -153,7 +157,7 @@ int main(int argc, char *argv[])
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
     if (argc > ONDEMAND_LOAD) {
-        std::unordered_map<std::string, std::string> eventMap;
+        nlohmann::json eventMap;
         saId = ParseArgv(argv, eventMap);
         if (!CheckSaId(saId)) {
             HILOGE(TAG, "saId is invalid!");
