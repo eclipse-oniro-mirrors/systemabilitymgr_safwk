@@ -13,8 +13,8 @@
 
 import("//build/test.gni")
 
-ohos_rust_shared_library("sa_test") {
-  sources = [ "./src/lib.rs" ]
+ohos_rust_shared_library("audio_rust_ipc") {
+  sources = [ "./audio_rust_sa/lib.rs" ]
 
   deps = [
     "../../../../../../../../base/hiviewdfx/hilog/interfaces/rust:hilog_rust",
@@ -22,23 +22,57 @@ ohos_rust_shared_library("sa_test") {
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
   ]
 
-  crate_name = "sa_test"
+  crate_name = "audio_rust_ipc"
   crate_type = "dylib"
 
   subsystem_name = "systemabilitymgr"
   part_name = "safwk"
 }
 
-ohos_rust_shared_library("rust_service_test") {
-  sources = [ "./rust_sa_test/main.rs" ]
+ohos_rust_shared_library("audio_rust_sa") {
+  sources = [ "./audio_rust_sa/audio.rs" ]
   deps = [
-    ":sa_test",
+    ":audio_rust_ipc",
+    "../../../../../../../../base/hiviewdfx/hilog/interfaces/rust:hilog_rust",
+    "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
+    "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/rust:rust_samgr",
+  ]
+
+  crate_name = "audio_rust_sa"
+  crate_type = "dylib"
+  subsystem_name = "systemabilitymgr"
+  part_name = "safwk"
+}
+
+ohos_rust_shared_library("listen_rust_ipc") {
+  sources = [ "./listen_rust_sa/lib.rs" ]
+
+  deps = [
     "../../../../../../../../base/hiviewdfx/hilog/interfaces/rust:hilog_rust",
     "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
   ]
 
-  crate_name = "rust_service_test"
+  crate_name = "listen_rust_ipc"
+  crate_type = "dylib"
+
+  subsystem_name = "systemabilitymgr"
+  part_name = "safwk"
+}
+
+ohos_rust_shared_library("listen_rust_sa") {
+  sources = [ "./listen_rust_sa/listen.rs" ]
+  deps = [
+    ":audio_rust_ipc",
+    ":listen_rust_ipc",
+    "../../../../../../../../base/hiviewdfx/hilog/interfaces/rust:hilog_rust",
+    "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
+    "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/rust:rust_samgr",
+  ]
+
+  crate_name = "listen_rust_sa"
   crate_type = "dylib"
   subsystem_name = "systemabilitymgr"
   part_name = "safwk"
