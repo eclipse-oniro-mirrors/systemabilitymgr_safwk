@@ -22,7 +22,7 @@
 
 #include "iremote_object.h"
 #include "refbase.h"
-
+class CSystemAbilityInnerService;
 namespace OHOS {
 #define REGISTER_SYSTEM_ABILITY_BY_ID(abilityClassName, systemAbilityId, runOnCreate) \
     const bool abilityClassName##_##RegisterResult = \
@@ -119,7 +119,8 @@ private:
     void SetPermission(const std::u16string& defPerm);
 
     friend class LocalAbilityManager;
-
+    friend class ::CSystemAbilityInnerService;
+    
 private:
     int32_t saId_ = 0;
     std::string libPath_;
