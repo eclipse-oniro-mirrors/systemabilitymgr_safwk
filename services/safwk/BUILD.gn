@@ -43,6 +43,7 @@ ohos_shared_library("system_ability_fwk_c") {
   external_deps = [
     "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_single",
   ]
 
   output_extension = "so"
@@ -60,6 +61,7 @@ ohos_executable("sa_main") {
     ":config_safwk",
     "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
   ]
+  configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
 
   ldflags = [ "-rdynamic" ]
 

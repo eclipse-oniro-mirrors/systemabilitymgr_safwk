@@ -15,6 +15,54 @@ import("//build/test.gni")
 
 module_output_path = "safwk/safwk"
 
+config("system_config") {
+  include_dirs =
+      [ "//foundation/systemabilitymgr/samgr/services/lsamgr/include" ]
+}
+
+config("system_ability_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
+  ]
+}
+
+config("system_ability_all_deps_config") {
+  include_dirs =
+      [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk" ]
+}
+
+ohos_static_library("system_ability_fwk_tdd") {
+  sources = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager.cpp",
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_stub.cpp",
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/system_ability.cpp",
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/system_ability_ondemand_reason.cpp",
+  ]
+
+  configs = [
+    ":system_config",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
+
+  public_configs = [ ":system_ability_config" ]
+  all_dependent_configs = [ ":system_ability_all_deps_config" ]
+  if (is_standard_system) {
+    external_deps = [
+      "c_utils:utils",
+      "hitrace_native:hitrace_meter",
+      "hiviewdfx_hilog_native:libhilog",
+      "ipc:ipc_single",
+      "samgr:samgr_common",
+      "samgr:samgr_proxy",
+    ]
+  }
+
+  part_name = "safwk"
+  subsystem_name = "systemabilitymgr"
+}
+
 ohos_unittest("LocalAbilityManagerTest") {
   module_out_path = module_output_path
   resource_config_file =
@@ -37,7 +85,7 @@ ohos_unittest("LocalAbilityManagerTest") {
       [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
   deps = [
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    ":system_ability_fwk_tdd",
     "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability:listen_test",
@@ -81,7 +129,7 @@ ohos_unittest("SystemAbilityTest") {
       [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
   deps = [
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+    ":system_ability_fwk_tdd",
     "//third_party/googletest:gtest_main",
   ]
 
