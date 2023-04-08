@@ -21,7 +21,10 @@
 #include <vector>
 
 #include "iremote_object.h"
+#include "nlohmann/json.hpp"
 #include "refbase.h"
+#include "system_ability_ondemand_reason.h"
+
 class CSystemAbilityInnerService;
 namespace OHOS {
 #define REGISTER_SYSTEM_ABILITY_BY_ID(abilityClassName, systemAbilityId, runOnCreate) \
@@ -76,11 +79,11 @@ public:
 protected:
     virtual void OnDump();
     virtual void OnStart();
-    virtual void OnStart(const std::unordered_map<std::string, std::string>& startReason);
-    virtual int32_t OnIdle(const std::unordered_map<std::string, std::string>& idleReason);
-    virtual void OnActive(const std::unordered_map<std::string, std::string>& activeReason);
+    virtual void OnStart(const SystemAbilityOnDemandReason& startReason);
+    virtual int32_t OnIdle(const SystemAbilityOnDemandReason& idleReason);
+    virtual void OnActive(const SystemAbilityOnDemandReason& activeReason);
     virtual void OnStop();
-    virtual void OnStop(const std::unordered_map<std::string, std::string>& stopReason);
+    virtual void OnStop(const SystemAbilityOnDemandReason& stopReason);
     virtual void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
     virtual void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
@@ -96,8 +99,8 @@ protected:
 
 private:
     void Start();
-    void Idle(const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime);
-    void Active(const std::unordered_map<std::string, std::string>& activeReason);
+    void Idle(const SystemAbilityOnDemandReason& idleReason, int32_t& delayTime);
+    void Active(const SystemAbilityOnDemandReason& activeReason);
     void Stop();
     void SADump();
     int32_t GetSystemAbilitId() const;
@@ -117,6 +120,8 @@ private:
     void SetCapability(const std::u16string& capability);
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
+    SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
+    void GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason);
 
     friend class LocalAbilityManager;
     friend class ::CSystemAbilityInnerService;

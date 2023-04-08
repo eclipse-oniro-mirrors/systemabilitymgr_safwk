@@ -54,15 +54,15 @@ public:
     void StopOndemandSystemAbility(int32_t systemAbilityId);
     bool StartAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     bool ActiveAbility(int32_t systemAbilityId,
-        const std::unordered_map<std::string, std::string>& activeReason) override;
-    bool IdleAbility(int32_t systemAbilityId, const std::unordered_map<std::string, std::string>& idleReason,
+        const nlohmann::json& activeReason) override;
+    bool IdleAbility(int32_t systemAbilityId, const nlohmann::json& idleReason,
         int32_t& delayTime) override;
     bool StopAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
-    void SetStartReason(int32_t systemAbilityId, std::unordered_map<std::string, std::string> &event);
-    void SetStopReason(int32_t systemAbilityId, std::unordered_map<std::string, std::string> &event);
-    std::unordered_map<std::string, std::string>& GetStartReason(int32_t systemAbilityId);
-    std::unordered_map<std::string, std::string>& GetStopReason(int32_t systemAbilityId);
+    void SetStartReason(int32_t systemAbilityId, const nlohmann::json& event);
+    void SetStopReason(int32_t systemAbilityId, const nlohmann::json& event);
+    nlohmann::json& GetStartReason(int32_t systemAbilityId);
+    nlohmann::json& GetStopReason(int32_t systemAbilityId);
 
 private:
     LocalAbilityManager();
@@ -99,8 +99,8 @@ private:
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
     std::shared_mutex abilityMapLock_;
     sptr<LocalAbilityManager> localAbilityManager_;
-    std::map<int32_t, std::unordered_map<std::string, std::string>> saIdToStartReason_;
-    std::map<int32_t, std::unordered_map<std::string, std::string>> saIdToStopReason_;
+    std::map<int32_t, nlohmann::json> saIdToStartReason_;
+    std::map<int32_t, nlohmann::json> saIdToStopReason_;
     // Max task number in pool is 20.
     const int32_t MAX_TASK_NUMBER = 20;
     // Check dependent sa status every 50 ms, it equals 50000us.

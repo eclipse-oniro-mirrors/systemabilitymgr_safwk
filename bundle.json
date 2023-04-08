@@ -46,7 +46,8 @@
                     "header": {
                         "header_base": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
                         "header_files": [
-                            "system_ability.h"
+                            "system_ability.h",
+                            "system_ability_ondemand_reason.h"
                         ]
                     },
                     "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk"

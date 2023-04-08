@@ -28,6 +28,7 @@
 #include "iservice_registry.h"
 #include "safwk_log.h"
 #include "string_ex.h"
+#include "system_ability_ondemand_reason.h"
 
 namespace OHOS {
 using std::u16string;
@@ -483,7 +484,7 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
 bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::string& eventStr)
 {
     HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
-    std::unordered_map<std::string, std::string> startReason = ParseUtil::StringToMap(eventStr);
+    nlohmann::json startReason = ParseUtil::StringToJsonObj(eventStr);
     SetStartReason(systemAbilityId, startReason);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
     std::thread thread(task);
@@ -501,8 +502,8 @@ void LocalAbilityManager::StopOndemandSystemAbility(int32_t systemAbilityId)
 
 bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string& eventStr)
 {
-    HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
-    std::unordered_map<std::string, std::string> stopReason = ParseUtil::StringToMap(eventStr);
+    HILOGI(TAG, "[PerformanceTest] SAFWK received stop systemAbilityId:%{public}d request", systemAbilityId);
+    nlohmann::json stopReason = ParseUtil::StringToJsonObj(eventStr);
     SetStopReason(systemAbilityId, stopReason);
     auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
     std::thread thread(task);
@@ -511,26 +512,28 @@ bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string
 }
 
 bool LocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
-    const std::unordered_map<std::string, std::string>& activeReason)
+    const nlohmann::json& activeReason)
 {
     HILOGD(TAG, "active SA:%{public}d", systemAbilityId);
     auto ability = GetAbility(systemAbilityId);
     if (ability == nullptr) {
         return false;
     }
-    ability->Active(activeReason);
+    SystemAbilityOnDemandReason onDemandActiveReason = ability->JsonToOnDemandReason(activeReason);
+    ability->Active(onDemandActiveReason);
     return true;
 }
 
 bool LocalAbilityManager::IdleAbility(int32_t systemAbilityId,
-    const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime)
+    const nlohmann::json& idleReason, int32_t& delayTime)
 {
     HILOGD(TAG, "idle SA:%{public}d", systemAbilityId);
     auto ability = GetAbility(systemAbilityId);
     if (ability == nullptr) {
         return false;
     }
-    ability->Idle(idleReason, delayTime);
+    SystemAbilityOnDemandReason onDemandIdleReason = ability->JsonToOnDemandReason(idleReason);
+    ability->Idle(onDemandIdleReason, delayTime);
     return true;
 }
 
@@ -755,25 +758,25 @@ bool LocalAbilityManager::AddLocalAbilityManager()
     return ret == ERR_OK;
 }
 
-void LocalAbilityManager::SetStartReason(int32_t saId, std::unordered_map<std::string, std::string> &event)
+void LocalAbilityManager::SetStartReason(int32_t saId, const nlohmann::json& event)
 {
     std::lock_guard<std::mutex> autoLock(ReasonLock_);
     saIdToStartReason_[saId] = event;
 }
 
-void LocalAbilityManager::SetStopReason(int32_t saId, std::unordered_map<std::string, std::string> &event)
+void LocalAbilityManager::SetStopReason(int32_t saId, const nlohmann::json& event)
 {
     std::lock_guard<std::mutex> autoLock(ReasonLock_);
     saIdToStopReason_[saId] = event;
 }
 
-std::unordered_map<std::string, std::string>& LocalAbilityManager::GetStartReason(int32_t saId)
+nlohmann::json& LocalAbilityManager::GetStartReason(int32_t saId)
 {
     std::lock_guard<std::mutex> autoLock(ReasonLock_);
     return saIdToStartReason_[saId];
 }
 
-std::unordered_map<std::string, std::string>& LocalAbilityManager::GetStopReason(int32_t saId)
+nlohmann::json& LocalAbilityManager::GetStopReason(int32_t saId)
 {
     std::lock_guard<std::mutex> autoLock(ReasonLock_);
     return saIdToStopReason_[saId];

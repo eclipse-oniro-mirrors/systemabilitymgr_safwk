@@ -46,9 +46,9 @@ public:
     bool StartAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     bool StopAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     bool ActiveAbility(int32_t systemAbilityId,
-        const std::unordered_map<std::string, std::string>& activeReason) override;
+        const nlohmann::json& activeReason) override;
     bool IdleAbility(int32_t systemAbilityId,
-        const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime) override;
+        const nlohmann::json& idleReason, int32_t& delayTime) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -92,14 +92,14 @@ bool MockLocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::st
 }
 
 bool MockLocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
-    const std::unordered_map<std::string, std::string>& activeReason)
+    const nlohmann::json& activeReason)
 {
     DTEST_LOG << "said : " << systemAbilityId <<std::endl;
     return true;
 }
 
 bool MockLocalAbilityManager::IdleAbility(int32_t systemAbilityId,
-    const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime)
+    const nlohmann::json& idleReason, int32_t& delayTime)
 {
     DTEST_LOG << "said : " << systemAbilityId <<std::endl;
     return true;
@@ -270,7 +270,7 @@ HWTEST_F(SystemAbilityTest, Idle001, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
-    std::unordered_map<std::string, std::string> idleReason;
+    SystemAbilityOnDemandReason idleReason;
     int32_t delayTime = 123;
     sysAby->Idle(idleReason, delayTime);
     EXPECT_EQ(sysAby->abilityState_,  SystemAbilityState::IDLE);
@@ -286,9 +286,8 @@ HWTEST_F(SystemAbilityTest, Idle002, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
-    std::unordered_map<std::string, std::string> idleReason;
-    idleReason[EVENT_ID] = TEST_STRING;
-    idleReason[EVENT_NAME] = TEST_STRING;
+    SystemAbilityOnDemandReason idleReason;
+    idleReason.SetId(OnDemandReasonId::DEVICE_ONLINE);
     int32_t noDelayTime = 0;
     sysAby->Idle(idleReason, noDelayTime);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
@@ -304,9 +303,8 @@ HWTEST_F(SystemAbilityTest, Idle003, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
-    std::unordered_map<std::string, std::string> idleReason;
-    idleReason[EVENT_ID] = TEST_STRING;
-    idleReason[EVENT_NAME] = TEST_STRING;
+    SystemAbilityOnDemandReason idleReason;
+    idleReason.SetId(OnDemandReasonId::DEVICE_ONLINE);
     int32_t delayTime = 123;
     sysAby->Idle(idleReason, delayTime);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
@@ -322,7 +320,7 @@ HWTEST_F(SystemAbilityTest, Active001, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
-    std::unordered_map<std::string, std::string> activeReason;
+    SystemAbilityOnDemandReason activeReason;
     sysAby->Active(activeReason);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
 }
@@ -337,9 +335,8 @@ HWTEST_F(SystemAbilityTest, Active002, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
-    std::unordered_map<std::string, std::string> activeReason;
-    activeReason[EVENT_ID] = TEST_STRING;
-    activeReason[EVENT_NAME] = TEST_STRING;
+    SystemAbilityOnDemandReason activeReason;
+    activeReason.SetId(OnDemandReasonId::DEVICE_ONLINE);
     sysAby->Active(activeReason);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
 }
@@ -379,9 +376,7 @@ HWTEST_F(SystemAbilityTest, IsRunOnCreate001, TestSize.Level2)
 HWTEST_F(SystemAbilityTest, OnIdle001, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
-    std::unordered_map<std::string, std::string> idleReason;
-    idleReason[EVENT_ID] = TEST_STRING;
-    idleReason[EVENT_NAME] = TEST_STRING;
+    SystemAbilityOnDemandReason idleReason;
     int32_t ret = sysAby->OnIdle(idleReason);
     EXPECT_EQ(ret, 0);
 }
