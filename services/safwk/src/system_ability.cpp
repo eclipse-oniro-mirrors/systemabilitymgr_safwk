@@ -29,6 +29,10 @@
 namespace OHOS {
 namespace {
 const std::string TAG = "SystemAbility";
+constexpr const char* EVENT_ID = "eventId";
+constexpr const char* NAME = "name";
+constexpr const char* VALUE = "value";
+constexpr const char* EXTRA_DATA_ID = "extraDataId";
 }
 
 SystemAbility::SystemAbility(bool runOnCreate)
@@ -127,6 +131,51 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
     HILOGI(TAG, "%{public}s to remove ability", (ret == ERR_OK) ? "success" : "failed");
 }
 
+SystemAbilityOnDemandReason SystemAbility::JsonToOnDemandReason(const nlohmann::json& reasonJson)
+{
+    SystemAbilityOnDemandReason onDemandStartReason;
+    if (reasonJson.contains(EVENT_ID) && reasonJson[EVENT_ID].is_number()) {
+        onDemandStartReason.SetId(reasonJson[EVENT_ID]);
+    }
+    if (reasonJson.contains(NAME) && reasonJson[NAME].is_string()) {
+        onDemandStartReason.SetName(reasonJson[NAME]);
+    }
+    if (reasonJson.contains(VALUE) && reasonJson[VALUE].is_string()) {
+        onDemandStartReason.SetValue(reasonJson[VALUE]);
+    }
+    if (reasonJson.contains(EXTRA_DATA_ID) && reasonJson[EXTRA_DATA_ID].is_number()) {
+        onDemandStartReason.SetExtraDataId(reasonJson[EXTRA_DATA_ID]);
+    }
+    return onDemandStartReason;
+}
+
+void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason)
+{
+    if (!onDemandStartReason.HasExtraData()) {
+        return;
+    }
+    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgrProxy == nullptr) {
+        HILOGE(TAG, "failed to get samgrProxy");
+        return;
+    }
+    HILOGI(TAG, "get extra data id: %{public}lld", onDemandStartReason.GetExtraDataId());
+    MessageParcel extraDataParcel;
+    int32_t ret = samgrProxy->GetOnDemandReasonExtraData(onDemandStartReason.GetExtraDataId(), extraDataParcel);
+    if (ret != ERR_OK) {
+        HILOGE(TAG, "get extra data failed");
+        return;
+    }
+    auto extraData = extraDataParcel.ReadParcelable<OnDemandReasonExtraData>();
+    if (extraData == nullptr) {
+        HILOGE(TAG, "read extra data failed");
+        return;
+    }
+    onDemandStartReason.SetExtraData(*extraData);
+    HILOGD(TAG, "get extra data: %{public}d, %{public}s", onDemandStartReason.GetExtraData().GetCode(),
+        onDemandStartReason.GetExtraData().GetData().c_str());
+}
+
 void SystemAbility::Start()
 {
     HILOGD(TAG, "starting system ability...");
@@ -137,14 +186,16 @@ void SystemAbility::Start()
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
     HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
-    std::unordered_map<std::string, std::string> startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
-    OnStart(startReason);
+    nlohmann::json startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
+    SystemAbilityOnDemandReason onDemandStartReason = JsonToOnDemandReason(startReason);
+    GetOnDemandReasonExtraData(onDemandStartReason);
+    OnStart(onDemandStartReason);
     isRunning_ = true;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
 }
 
-void SystemAbility::Idle(const std::unordered_map<std::string, std::string>& idleReason,
+void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
     int32_t& delayTime)
 {
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
@@ -162,7 +213,7 @@ void SystemAbility::Idle(const std::unordered_map<std::string, std::string>& idl
         saId_, (GetTickCount() - begin));
 }
 
-void SystemAbility::Active(const std::unordered_map<std::string, std::string>& activeReason)
+void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
 {
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     if (abilityState_ != SystemAbilityState::IDLE) {
@@ -185,8 +236,9 @@ void SystemAbility::Stop()
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
-    std::unordered_map<std::string, std::string> stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
-    OnStop(stopReason);
+    nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
+    SystemAbilityOnDemandReason onDemandStopReason = JsonToOnDemandReason(stopReason);
+    OnStop(onDemandStopReason);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
@@ -296,22 +348,22 @@ void SystemAbility::OnStart()
 }
 
 // The details should be implemented by subclass
-void SystemAbility::OnStart(const std::unordered_map<std::string, std::string>& startReason)
+void SystemAbility::OnStart(const SystemAbilityOnDemandReason& startReason)
 {
     OnStart();
 }
 
-int32_t SystemAbility::OnIdle(const std::unordered_map<std::string, std::string>& idleReason)
+int32_t SystemAbility::OnIdle(const SystemAbilityOnDemandReason& idleReason)
 {
-    HILOGD(TAG, "OnIdle system ability, idle reason %{public}s, %{public}s",
-        idleReason.at("eventId").c_str(), idleReason.at("name").c_str());
+    HILOGD(TAG, "OnIdle system ability, idle reason %{public}d, %{public}s, %{public}s",
+        idleReason.GetId(), idleReason.GetName().c_str(), idleReason.GetValue().c_str());
     return 0;
 }
 
-void SystemAbility::OnActive(const std::unordered_map<std::string, std::string>& activeReason)
+void SystemAbility::OnActive(const SystemAbilityOnDemandReason& activeReason)
 {
-    HILOGD(TAG, "OnActive system ability, active reason %{public}s, %{public}s",
-        activeReason.at("eventId").c_str(), activeReason.at("name").c_str());
+    HILOGD(TAG, "OnActive system ability, active reason %{public}d, %{public}s, %{public}s",
+        activeReason.GetId(), activeReason.GetName().c_str(), activeReason.GetValue().c_str());
 }
 
 // The details should be implemented by subclass
@@ -320,7 +372,7 @@ void SystemAbility::OnStop()
 }
 
 // The details should be implemented by subclass
-void SystemAbility::OnStop(const std::unordered_map<std::string, std::string>& stopReason)
+void SystemAbility::OnStop(const SystemAbilityOnDemandReason& stopReason)
 {
     OnStop();
 }

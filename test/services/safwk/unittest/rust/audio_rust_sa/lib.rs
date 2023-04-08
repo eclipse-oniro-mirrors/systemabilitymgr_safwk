@@ -33,16 +33,16 @@ pub const FIRST_CALL_TRANSACTION: isize = 0x00000001;
 
 /// Function code of ITest
 pub enum ITestCode {
-    /// echo_str code
-    CodeEchoStr = FIRST_CALL_TRANSACTION,
+    /// unload code
+    CodeUnLoad = FIRST_CALL_TRANSACTION,
     /// request_concurent code
     CodeRequestConcurrent,
 }
 
 /// Function between proxy and stub of ITestService
 pub trait ITest: IRemoteBroker {
-    /// Test echo_str 
-    fn echo_str(&self, value: &str) -> IpcResult<String>;
+    /// Test unload 
+    fn unload(&self) -> IpcResult<String>;
     /// Test request_concurent
     fn request_concurent(&self, is_async: bool) -> IpcResult<bool>;
 }
@@ -53,7 +53,7 @@ fn on_remote_request(stub: &dyn ITest, code: u32, data: &BorrowedMsgParcel,
     match code {
         1 => {
             let value: String = data.read().expect("should have a string");
-            let value = stub.echo_str(&value)?;
+            stub.unload()?;
             reply.write(&value)?;
             Ok(())
         }
@@ -75,11 +75,11 @@ define_remote_object!(
 
 // Make RemoteStub<TestStub> object can call ITest function directly.
 impl ITest for RemoteStub<TestStub> {
-    fn echo_str(&self, value: &str) -> IpcResult<String> {
+    fn unload(&self) -> IpcResult<String>{
         // self will be convert to TestStub automatic because RemoteStub<TestStub>
         // implement the Deref trait
-        info!(LOG_LABEL,"echo_str");
-        self.0.echo_str(value)
+        info!(LOG_LABEL,"ITest_unload");
+        self.0.unload()
     }
 
     fn request_concurent(&self, is_async: bool) -> IpcResult<bool> {
@@ -89,12 +89,13 @@ impl ITest for RemoteStub<TestStub> {
 }
 
 impl ITest for TestProxy {
-    fn echo_str(&self, value: &str) -> IpcResult<String> {
-        info!(LOG_LABEL,"TestProxy echo_str");
+    fn unload(&self) -> IpcResult<String> {
+        info!(LOG_LABEL,"TestProxy unload");
         let mut data = MsgParcel::new().expect("MsgParcel should success");
+        let value: &str = "unload test";
         data.write(value)?;
         let reply =
-            self.remote.send_request(ITestCode::CodeEchoStr as u32, &data, false)?;
+            self.remote.send_request(ITestCode::CodeUnLoad as u32, &data, false)?;
         let ret: String = reply.read().expect("need reply value");
         Ok(ret)
     }

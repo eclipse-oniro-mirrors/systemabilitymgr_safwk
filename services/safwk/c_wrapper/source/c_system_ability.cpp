@@ -48,6 +48,8 @@ void CSystemAbilityInnerService::OnStart()
         return;
     }
     onStartcallback_(cSystemability_);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    abilityState_ = SystemAbilityState::ACTIVE;
 }
 
 void CSystemAbilityInnerService::OnStop()

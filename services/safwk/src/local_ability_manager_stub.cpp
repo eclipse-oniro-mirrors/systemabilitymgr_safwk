@@ -107,8 +107,7 @@ int32_t LocalAbilityManagerStub::ActiveAbilityInner(MessageParcel& data, Message
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
-    nlohmann::json payload = ParseUtil::StringToJsonObj(data.ReadString());
-    std::unordered_map<std::string, std::string> activeReason = ParseUtil::JsonObjToMap(payload);
+    nlohmann::json activeReason = ParseUtil::StringToJsonObj(data.ReadString());
     bool result = ActiveAbility(saId, activeReason);
     if (!reply.WriteBool(result)) {
         HILOGW(TAG, "ActiveAbilityInner Write result failed!");
@@ -124,8 +123,7 @@ int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
-    nlohmann::json payload = ParseUtil::StringToJsonObj(data.ReadString());
-    std::unordered_map<std::string, std::string> idleReason = ParseUtil::JsonObjToMap(payload);
+    nlohmann::json idleReason = ParseUtil::StringToJsonObj(data.ReadString());
     int32_t delayTime = 0;
     bool result = IdleAbility(saId, idleReason, delayTime);
     if (!reply.WriteBool(result)) {

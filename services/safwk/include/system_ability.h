@@ -21,8 +21,11 @@
 #include <vector>
 
 #include "iremote_object.h"
+#include "nlohmann/json.hpp"
 #include "refbase.h"
+#include "system_ability_ondemand_reason.h"
 
+class CSystemAbilityInnerService;
 namespace OHOS {
 #define REGISTER_SYSTEM_ABILITY_BY_ID(abilityClassName, systemAbilityId, runOnCreate) \
     const bool abilityClassName##_##RegisterResult = \
@@ -114,41 +117,41 @@ protected:
     /**
      * OnStart, The user needs to override onstart, initialize and publish SA.
      *
-     * @param startReason, The reason for pulling SA. 
+     * @param startReason, The reason for start SA.
      * @return Returns void.
      */
-    virtual void OnStart(const std::unordered_map<std::string, std::string>& startReason);
+    virtual void OnStart(const SystemAbilityOnDemandReason& startReason);
 
     /**
      * OnIdle, The user needs to override OnIdle, OnIdle is a callback function when uninstalling SA.
      *
      * @param idleReason, The reason for unload SA.
-     * @return Returning 0s agree to uninstall.
+     * @return Returns void.
      */
-    virtual int32_t OnIdle(const std::unordered_map<std::string, std::string>& idleReason);
+    virtual int32_t OnIdle(const SystemAbilityOnDemandReason& idleReason);
 
     /**
-     * OnActive, The user needs to override OnActive, OnActive is a callback function when Call CancelIdle.
+     * OnActive, The user needs to override OnActive, OnActive is a callback function when CancelIdle.
      *
      * @param activeReason, The reason for active SA.
-     * @return void.
+     * @return Returns void.
      */
-    virtual void OnActive(const std::unordered_map<std::string, std::string>& activeReason);
+    virtual void OnActive(const SystemAbilityOnDemandReason& activeReason);
 
     /**
-     * OnStop, The user needs to override OnActive, Onstop is called when the process is uninstalled.
+     * OnStop, The user needs to override OnStop, Onstop is called when the SA is uninstalled.
      *
-     * @return void.
+     * @return Returns void.
      */
     virtual void OnStop();
 
     /**
-     * OnStop, The user needs to override OnActive, Onstop is called when the SA is uninstalled.
+     * OnStop, The user needs to override OnStop, Onstop is called when the SA is uninstalled.
      *
      * @param stopReason, The reason for stop SA.
-     * @return void.
+     * @return Returns void.
      */
-    virtual void OnStop(const std::unordered_map<std::string, std::string>& stopReason);
+    virtual void OnStop(const SystemAbilityOnDemandReason& stopReason);
 
     /**
      * OnAddSystemAbility, OnAddSystemAbility will be called when the listening SA starts.
@@ -212,8 +215,8 @@ protected:
 
 private:
     void Start();
-    void Idle(const std::unordered_map<std::string, std::string>& idleReason, int32_t& delayTime);
-    void Active(const std::unordered_map<std::string, std::string>& activeReason);
+    void Idle(const SystemAbilityOnDemandReason& idleReason, int32_t& delayTime);
+    void Active(const SystemAbilityOnDemandReason& activeReason);
     void Stop();
     void SADump();
     int32_t GetSystemAbilitId() const;
@@ -233,9 +236,12 @@ private:
     void SetCapability(const std::u16string& capability);
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
+    SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
+    void GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason);
 
     friend class LocalAbilityManager;
-
+    friend class ::CSystemAbilityInnerService;
+    
 private:
     int32_t saId_ = 0;
     std::string libPath_;
