@@ -56,6 +56,11 @@ const string SUFFIX = "_trust.json";
 const string ONDEMAND_WORKER = "SaOndemand";
 const string INIT_POOL = "SaInit";
 
+constexpr const char* EVENT_ID = "eventId";
+constexpr const char* NAME = "name";
+constexpr const char* VALUE = "value";
+constexpr const char* EXTRA_DATA_ID = "extraDataId";
+
 enum {
     BOOT_START = 1,
     CORE_START = 2,
@@ -519,7 +524,7 @@ bool LocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
     if (ability == nullptr) {
         return false;
     }
-    SystemAbilityOnDemandReason onDemandActiveReason = ability->JsonToOnDemandReason(activeReason);
+    SystemAbilityOnDemandReason onDemandActiveReason = JsonToOnDemandReason(activeReason);
     ability->Active(onDemandActiveReason);
     return true;
 }
@@ -532,9 +537,27 @@ bool LocalAbilityManager::IdleAbility(int32_t systemAbilityId,
     if (ability == nullptr) {
         return false;
     }
-    SystemAbilityOnDemandReason onDemandIdleReason = ability->JsonToOnDemandReason(idleReason);
+    SystemAbilityOnDemandReason onDemandIdleReason = JsonToOnDemandReason(idleReason);
     ability->Idle(onDemandIdleReason, delayTime);
     return true;
+}
+
+SystemAbilityOnDemandReason LocalAbilityManager::JsonToOnDemandReason(const nlohmann::json& reasonJson)
+{
+    SystemAbilityOnDemandReason onDemandStartReason;
+    if (reasonJson.contains(EVENT_ID) && reasonJson[EVENT_ID].is_number()) {
+        onDemandStartReason.SetId(reasonJson[EVENT_ID]);
+    }
+    if (reasonJson.contains(NAME) && reasonJson[NAME].is_string()) {
+        onDemandStartReason.SetName(reasonJson[NAME]);
+    }
+    if (reasonJson.contains(VALUE) && reasonJson[VALUE].is_string()) {
+        onDemandStartReason.SetValue(reasonJson[VALUE]);
+    }
+    if (reasonJson.contains(EXTRA_DATA_ID) && reasonJson[EXTRA_DATA_ID].is_number()) {
+        onDemandStartReason.SetExtraDataId(reasonJson[EXTRA_DATA_ID]);
+    }
+    return onDemandStartReason;
 }
 
 bool LocalAbilityManager::InitializeSaProfiles(int32_t saId)
