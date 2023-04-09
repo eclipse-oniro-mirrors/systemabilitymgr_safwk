@@ -27,6 +27,7 @@
 #include "thread_pool.h"
 #include "parse_util.h"
 #include "single_instance.h"
+#include "system_ability_ondemand_reason.h"
 #include "system_ability_status_change_stub.h"
 
 namespace OHOS {
@@ -63,6 +64,7 @@ public:
     void SetStopReason(int32_t systemAbilityId, const nlohmann::json& event);
     nlohmann::json& GetStartReason(int32_t systemAbilityId);
     nlohmann::json& GetStopReason(int32_t systemAbilityId);
+    SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
 
 private:
     LocalAbilityManager();

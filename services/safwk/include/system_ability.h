@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "iremote_object.h"
-#include "nlohmann/json.hpp"
 #include "refbase.h"
 #include "system_ability_ondemand_reason.h"
 
@@ -120,7 +119,6 @@ private:
     void SetCapability(const std::u16string& capability);
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
-    SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
     void GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason);
 
     friend class LocalAbilityManager;

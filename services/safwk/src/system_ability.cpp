@@ -23,16 +23,13 @@
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "local_ability_manager.h"
+#include "nlohmann/json.hpp"
 #include "safwk_log.h"
 #include "string_ex.h"
 
 namespace OHOS {
 namespace {
 const std::string TAG = "SystemAbility";
-constexpr const char* EVENT_ID = "eventId";
-constexpr const char* NAME = "name";
-constexpr const char* VALUE = "value";
-constexpr const char* EXTRA_DATA_ID = "extraDataId";
 }
 
 SystemAbility::SystemAbility(bool runOnCreate)
@@ -131,24 +128,6 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
     HILOGI(TAG, "%{public}s to remove ability", (ret == ERR_OK) ? "success" : "failed");
 }
 
-SystemAbilityOnDemandReason SystemAbility::JsonToOnDemandReason(const nlohmann::json& reasonJson)
-{
-    SystemAbilityOnDemandReason onDemandStartReason;
-    if (reasonJson.contains(EVENT_ID) && reasonJson[EVENT_ID].is_number()) {
-        onDemandStartReason.SetId(reasonJson[EVENT_ID]);
-    }
-    if (reasonJson.contains(NAME) && reasonJson[NAME].is_string()) {
-        onDemandStartReason.SetName(reasonJson[NAME]);
-    }
-    if (reasonJson.contains(VALUE) && reasonJson[VALUE].is_string()) {
-        onDemandStartReason.SetValue(reasonJson[VALUE]);
-    }
-    if (reasonJson.contains(EXTRA_DATA_ID) && reasonJson[EXTRA_DATA_ID].is_number()) {
-        onDemandStartReason.SetExtraDataId(reasonJson[EXTRA_DATA_ID]);
-    }
-    return onDemandStartReason;
-}
-
 void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason)
 {
     if (!onDemandStartReason.HasExtraData()) {
@@ -187,7 +166,8 @@ void SystemAbility::Start()
     int64_t begin = GetTickCount();
     HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
     nlohmann::json startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
-    SystemAbilityOnDemandReason onDemandStartReason = JsonToOnDemandReason(startReason);
+    SystemAbilityOnDemandReason onDemandStartReason =
+        LocalAbilityManager::GetInstance().JsonToOnDemandReason(startReason);
     GetOnDemandReasonExtraData(onDemandStartReason);
     OnStart(onDemandStartReason);
     isRunning_ = true;
@@ -237,7 +217,8 @@ void SystemAbility::Stop()
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
-    SystemAbilityOnDemandReason onDemandStopReason = JsonToOnDemandReason(stopReason);
+    SystemAbilityOnDemandReason onDemandStopReason =
+        LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
     OnStop(onDemandStopReason);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
