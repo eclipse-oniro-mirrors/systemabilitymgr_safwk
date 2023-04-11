@@ -55,7 +55,7 @@ ohos_shared_library("system_ability_fwk") {
       "c_utils:utils",
       "hitrace_native:hitrace_meter",
       "hiviewdfx_hilog_native:libhilog",
-      "ipc:ipc_single",
+      "ipc:ipc_core",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
     ]
