@@ -18,6 +18,7 @@ import("//build/ohos_var.gni")
 
 config("system_ability_config") {
   visibility = [ ":*" ]
+  visibility += [ "//foundation/ability/ability_runtime/test/moduletest/ability_record_test/*" ]
   include_dirs = [
     "../../../services/safwk/include",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
