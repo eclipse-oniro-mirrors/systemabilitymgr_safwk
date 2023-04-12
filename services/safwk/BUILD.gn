@@ -63,7 +63,11 @@ ohos_executable("sa_main") {
   ]
   configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
 
-  ldflags = [ "-rdynamic" ]
+  ldflags = [
+    "-rdynamic",
+    "-Wl,-z,max-page-size=4096",
+    "-Wl,-z,separate-code",
+  ]
 
   deps = [
     "../../interfaces/innerkits/safwk:system_ability_fwk",
