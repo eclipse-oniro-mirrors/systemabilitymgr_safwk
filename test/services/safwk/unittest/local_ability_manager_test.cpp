@@ -36,6 +36,8 @@ namespace {
     constexpr int MUT_SAID = 9999;
     constexpr int INVALID_SAID = -1;
     constexpr int STARTCODE = 1;
+    constexpr uint32_t BOOTPHASE = 1;
+    constexpr uint32_t OTHERPHASE = 3;
 }
 
 class LocalAbilityManagerTest : public testing::Test {
@@ -258,7 +260,7 @@ HWTEST_F(LocalAbilityManagerTest, InitSystemAbilityProfiles002, TestSize.Level3)
 {
     string profilePath = "/system/usr/profile_audio.xml";
     bool res = LocalAbilityManager::GetInstance().InitSystemAbilityProfiles(profilePath, SAID);
-    EXPECT_TRUE(res);
+    EXPECT_FALSE(res);
 }
 
 /**
@@ -590,7 +592,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfiles002, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles001, TestSize.Level1)
 {
     LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
-    bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles();
+    bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles(OTHERPHASE);
     EXPECT_FALSE(res);
 }
 
@@ -603,7 +605,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles002, TestSize.L
 {
     std::string profilePath = "/system/usr/profile_audio.xml";
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
-    bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles();
+    bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles(OTHERPHASE);
     EXPECT_TRUE(res);
 }
 
@@ -618,7 +620,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles003, TestSize.L
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
-    bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles();
+    bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles(OTHERPHASE);
     delete mockSa;
     EXPECT_TRUE(res);
 }
@@ -703,7 +705,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked004, TestSize.L
 {
     SaProfile saProfile;
     saProfile.saId = SAID;
-    saProfile.bootPhase = "BootStartPhase";
+    saProfile.bootPhase = BOOTPHASE;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
@@ -721,7 +723,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked005, TestSize.L
 {
     SaProfile saProfile;
     saProfile.saId = SAID;
-    saProfile.bootPhase = "BootStartPhase";
+    saProfile.bootPhase = BOOTPHASE;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
@@ -839,7 +841,7 @@ HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
     mockSa->SetDependTimeout(200);
     LocalAbilityManager::GetInstance().startTaskNum_ = STARTCODE;
     LocalAbilityManager::GetInstance().StartSystemAbilityTask(mockSa);
-    LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
+    LocalAbilityManager::GetInstance().StartPhaseTasks(OTHERPHASE, systemAbilityList);
     bool res = LocalAbilityManager::GetInstance().Run(SAID);
     delete mockSa;
     EXPECT_FALSE(res);
@@ -854,7 +856,7 @@ HWTEST_F(LocalAbilityManagerTest, AddLocalAbilityManager001, TestSize.Level3)
 {
     std::list<SystemAbility*> systemAbilityList;
     systemAbilityList.push_back(nullptr);
-    LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
+    LocalAbilityManager::GetInstance().StartPhaseTasks(OTHERPHASE, systemAbilityList);
     LocalAbilityManager::GetInstance().procName_ = u"";
     bool res = LocalAbilityManager::GetInstance().AddLocalAbilityManager();
     EXPECT_FALSE(res);
