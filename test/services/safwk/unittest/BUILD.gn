@@ -79,6 +79,7 @@ ohos_unittest("LocalAbilityManagerTest") {
     "./c_system_ability.test.cpp",
     "./local_ability_manager_test.cpp",
     "./mock_sa_realize.cpp",
+    "./system_ability_ondemand_reason_test.cpp",
   ]
 
   configs =
