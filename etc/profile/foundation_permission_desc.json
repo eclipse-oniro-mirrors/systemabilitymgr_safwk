@@ -64,6 +64,11 @@
             "name" : "ohos.permission.STORAGE_MANAGER",
             "said" : ["183"],
             "description" : "Permission required for UPMS to create or delete files shared between applications."
+        },
+        {
+            "name" : "ohos.permission.ABILITY_BACKGROUND_COMMUNICATION",
+            "said" : "403",
+            "description" : "Permission required for FMS to communicate in the background."
         }
     ],
     "restart" : [
