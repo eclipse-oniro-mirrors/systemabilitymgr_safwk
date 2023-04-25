@@ -69,6 +69,9 @@
             "name" : "ohos.permission.PROXY_AUTHORIZATION_URI",
             "said" : ["180"],
             "description" : "Permission required for Grant Uri permission between applications."
+            "name" : "ohos.permission.ABILITY_BACKGROUND_COMMUNICATION",
+            "said" : "403",
+            "description" : "Permission required for FMS to communicate in the background."
         }
     ],
     "restart" : [
