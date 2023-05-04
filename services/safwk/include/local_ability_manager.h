@@ -73,7 +73,7 @@ private:
     bool AddLocalAbilityManager();
     void RegisterOnDemandSystemAbility(int32_t saId);
     void FindAndStartPhaseTasks();
-    void StartPhaseTasks(uint32_t bootPhase, const std::list<SystemAbility*>& startTasks);
+    void StartPhaseTasks(const std::list<SystemAbility*>& startTasks);
     void CheckTrustSa(const std::string& path, const std::string& process, const std::list<SaProfile>& saInfos);
     sptr<ISystemAbilityStatusChange> GetSystemAbilityStatusChange();
     void FindAndNotifyAbilityListeners(int32_t systemAbilityId, const std::string& deviceId, int32_t code);
