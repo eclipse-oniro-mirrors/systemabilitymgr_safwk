@@ -43,8 +43,6 @@ constexpr int32_t DEFAULT_SAID = -1;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 
-const string BOOT_START_PHASE = "BootStartPhase";
-const string CORE_START_PHASE = "CoreStartPhase";
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 4; // .xml length
 
@@ -96,11 +94,6 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
         ret = CheckSystemAbilityManagerReady();
         if (!ret) {
             HILOGE(TAG, "CheckSystemAbilityManagerReady failed! will exit");
-            return;
-        }
-        ret = InitializeSaProfiles(saId);
-        if (!ret) {
-            HILOGE(TAG, "InitializeSaProfiles failed! will exit");
             return;
         }
         ret = Run(saId);
@@ -189,19 +182,15 @@ bool LocalAbilityManager::InitSystemAbilityProfiles(const std::string& profilePa
     if (isExist) {
         CheckTrustSa(path, process, saInfos);
     }
-    begin = GetTickCount();
+    return InitializeSaProfiles(saId);
+}
+
+bool LocalAbilityManager::InitializeSaProfiles(int32_t saId)
+{
     if (saId != DEFAULT_SAID) {
-        HILOGD(TAG, "[PerformanceTest] SAFWK LoadSaLib systemAbilityId:%{public}d", saId);
-        bool result = profileParser_->LoadSaLib(saId);
-        HILOGI(TAG, "[PerformanceTest] SAFWK LoadSaLib systemAbilityId:%{public}d finished, spend:%{public}"
-            PRId64 " ms", saId, (GetTickCount() - begin));
-        return result;
+        return InitializeOnDemandSaProfile(saId);
     } else {
-        HILOGD(TAG, "[PerformanceTest] SAFWK load all libraries");
-        profileParser_->OpenSo();
-        HILOGI(TAG, "[PerformanceTest] SAFWK load all libraries finished, spend:%{public}" PRId64 " ms",
-            (GetTickCount() - begin));
-        return true;
+        return InitializeRunOnCreateSaProfiles(BOOT_START);
     }
 }
 
@@ -560,32 +549,17 @@ SystemAbilityOnDemandReason LocalAbilityManager::JsonToOnDemandReason(const nloh
     return onDemandStartReason;
 }
 
-bool LocalAbilityManager::InitializeSaProfiles(int32_t saId)
-{
-    return (saId == DEFAULT_SAID) ? InitializeRunOnCreateSaProfiles() : InitializeOnDemandSaProfile(saId);
-}
-
-bool LocalAbilityManager::InitializeRunOnCreateSaProfiles()
-{
-    HILOGD(TAG, "initializing run-on-create sa profiles...");
-    auto& saProfileList = profileParser_->GetAllSaProfiles();
-    if (saProfileList.empty()) {
-        HILOGW(TAG, "sa profile is empty");
-        return false;
-    }
-
-    for (const auto& saProfile : saProfileList) {
-        if (!InitializeSaProfilesInnerLocked(saProfile)) {
-            HILOGW(TAG, "SA:%{public}d init fail", saProfile.saId);
-            continue;
-        }
-    }
-    return true;
-}
-
 bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
 {
-    HILOGD(TAG, "initializing ondemand sa profile...");
+    int64_t begin = GetTickCount();
+    HILOGD(TAG, "[PerformanceTest] SAFWK LoadSaLib systemAbilityId:%{public}d", saId);
+    bool result = profileParser_->LoadSaLib(saId);
+    HILOGI(TAG, "[PerformanceTest] SAFWK LoadSaLib systemAbilityId:%{public}d finished, spend:%{public}"
+        PRId64 " ms", saId, (GetTickCount() - begin));
+    if (!result) {
+        HILOGW(TAG, "[PerformanceTest] LoadSaLib failed, Said:{public}%d", saId);
+        return false;
+    }
     SaProfile saProfile;
     bool ret = profileParser_->GetProfile(saId, saProfile);
     if (ret) {
@@ -596,7 +570,7 @@ bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
 
 bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saProfile)
 {
-    std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
+    std::unique_lock<std::shared_mutex> readLock(abilityMapLock_);
     auto iterProfile = abilityMap_.find(saProfile.saId);
     if (iterProfile == abilityMap_.end()) {
         HILOGW(TAG, "SA:%{public}d not found", saProfile.saId);
@@ -607,13 +581,7 @@ bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saPro
         HILOGW(TAG, "SA:%{public}d is null", saProfile.saId);
         return false;
     }
-    uint32_t phase = OTHER_START;
-    if (saProfile.bootPhase == BOOT_START_PHASE) {
-        phase = BOOT_START;
-    } else if (saProfile.bootPhase == CORE_START_PHASE) {
-        phase = CORE_START;
-    }
-    auto& saList = abilityPhaseMap_[phase];
+    auto& saList = abilityPhaseMap_[saProfile.bootPhase];
     saList.emplace_back(systemAbility);
     return true;
 }
@@ -722,7 +690,10 @@ void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& syste
             initPool_->AddTask(task);
         }
     }
+}
 
+void LocalAbilityManager::WaitForTasks()
+{
     int64_t begin = GetTickCount();
     HILOGD(TAG, "start waiting for all tasks!");
     std::unique_lock<std::mutex> lck(startPhaseLock_);
@@ -737,13 +708,43 @@ void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& syste
 
 void LocalAbilityManager::FindAndStartPhaseTasks()
 {
-    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-    for (uint32_t startType = BOOT_START; startType <= OTHER_START; ++startType) {
-        auto iter = abilityPhaseMap_.find(startType);
+    for (uint32_t bootPhase = BOOT_START; bootPhase <= OTHER_START; ++bootPhase) {
+        auto iter = abilityPhaseMap_.find(bootPhase);
         if (iter != abilityPhaseMap_.end()) {
             StartPhaseTasks(iter->second);
+            InitializeRunOnCreateSaProfiles(bootPhase + 1);
+            WaitForTasks();
+        } else {
+            InitializeRunOnCreateSaProfiles(bootPhase + 1);
         }
     }
+}
+
+bool LocalAbilityManager::InitializeRunOnCreateSaProfiles(uint32_t bootPhase)
+{
+    if (bootPhase > OTHER_START) {
+        return false;
+    }
+    int64_t begin = GetTickCount();
+    HILOGD(TAG, "[PerformanceTest] SAFWK load phase %{public}d libraries", bootPhase);
+    profileParser_->OpenSo(bootPhase);
+    HILOGI(TAG, "[PerformanceTest] SAFWK load phase %{public}d libraries finished, spend:%{public}" PRId64 " ms",
+        bootPhase, (GetTickCount() - begin));
+    auto& saProfileList = profileParser_->GetAllSaProfiles();
+    if (saProfileList.empty()) {
+        HILOGW(TAG, "sa profile is empty");
+        return false;
+    }
+    for (const auto& saProfile : saProfileList) {
+        if (saProfile.bootPhase != bootPhase) {
+            continue;
+        }
+        if (!InitializeSaProfilesInnerLocked(saProfile)) {
+            HILOGW(TAG, "SA:%{public}d init fail", saProfile.saId);
+            continue;
+        }
+    }
+    return true;
 }
 
 bool LocalAbilityManager::Run(int32_t saId)

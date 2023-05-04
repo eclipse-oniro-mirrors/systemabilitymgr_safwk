@@ -79,7 +79,7 @@ private:
     void FindAndNotifyAbilityListeners(int32_t systemAbilityId, const std::string& deviceId, int32_t code);
     void NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId,
         const std::string& deviceId, int32_t code);
-
+    void WaitForTasks();
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {
     public:
         void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
@@ -88,8 +88,8 @@ private:
 
     bool CheckAndGetProfilePath(const std::string& profilePath, std::string& realProfilePath);
     bool InitializeSaProfiles(int32_t saId);
-    bool InitializeRunOnCreateSaProfiles();
     bool InitializeOnDemandSaProfile(int32_t saId);
+    bool InitializeRunOnCreateSaProfiles(uint32_t bootPhase);
     bool InitializeSaProfilesInnerLocked(const SaProfile& saProfile);
     bool Run(int32_t saId);
     bool NeedRegisterOnDemand(const SaProfile& saProfile, int32_t saId);
