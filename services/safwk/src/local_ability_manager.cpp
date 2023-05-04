@@ -675,7 +675,7 @@ bool LocalAbilityManager::NeedRegisterOnDemand(const SaProfile& saProfile, int32
         (saId != DEFAULT_SAID && saProfile.saId != saId);
 }
 
-void LocalAbilityManager::StartPhaseTasks(uint32_t bootPhase, const std::list<SystemAbility*>& systemAbilityList)
+void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& systemAbilityList)
 {
     if (systemAbilityList.empty()) {
         return;
@@ -711,7 +711,7 @@ void LocalAbilityManager::FindAndStartPhaseTasks()
     for (uint32_t bootPhase = BOOT_START; bootPhase <= OTHER_START; ++bootPhase) {
         auto iter = abilityPhaseMap_.find(bootPhase);
         if (iter != abilityPhaseMap_.end()) {
-            StartPhaseTasks(bootPhase, iter->second);
+            StartPhaseTasks(iter->second);
             InitializeRunOnCreateSaProfiles(bootPhase + 1);
             WaitForTasks();
         } else {
