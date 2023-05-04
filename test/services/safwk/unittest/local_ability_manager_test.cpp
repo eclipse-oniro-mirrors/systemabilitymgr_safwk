@@ -841,7 +841,7 @@ HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
     mockSa->SetDependTimeout(200);
     LocalAbilityManager::GetInstance().startTaskNum_ = STARTCODE;
     LocalAbilityManager::GetInstance().StartSystemAbilityTask(mockSa);
-    LocalAbilityManager::GetInstance().StartPhaseTasks(OTHERPHASE, systemAbilityList);
+    LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
     bool res = LocalAbilityManager::GetInstance().Run(SAID);
     delete mockSa;
     EXPECT_FALSE(res);
@@ -856,7 +856,7 @@ HWTEST_F(LocalAbilityManagerTest, AddLocalAbilityManager001, TestSize.Level3)
 {
     std::list<SystemAbility*> systemAbilityList;
     systemAbilityList.push_back(nullptr);
-    LocalAbilityManager::GetInstance().StartPhaseTasks(OTHERPHASE, systemAbilityList);
+    LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
     LocalAbilityManager::GetInstance().procName_ = u"";
     bool res = LocalAbilityManager::GetInstance().AddLocalAbilityManager();
     EXPECT_FALSE(res);
