@@ -153,6 +153,7 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
     onDemandStartReason.SetExtraData(*extraData);
     HILOGD(TAG, "get extra data: %{public}d, %{public}s", onDemandStartReason.GetExtraData().GetCode(),
         onDemandStartReason.GetExtraData().GetData().c_str());
+    delete extraData;
 }
 
 void SystemAbility::Start()
