@@ -18,7 +18,6 @@ config("ondemand_ability_config") {
   include_dirs = [
     "include",
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
-    "//utils/system/safwk/native/include",
   ]
 }
 
