@@ -25,6 +25,7 @@
                 "hitrace_native",
                 "hiviewdfx_hilog_native",
                 "ipc",
+                "init",
                 "samgr",
                 "c_utils"
             ],
