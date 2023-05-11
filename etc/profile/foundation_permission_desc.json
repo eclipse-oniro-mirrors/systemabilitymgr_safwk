@@ -26,19 +26,9 @@
             "description" : "Permission required for telephony to access AbillityManagerService."
         },
         {
-            "name" : "ohos.permission.MANAGE_DISPOSED_APP_STATUS",
-            "said" : "180",
-            "description" : "Permission required for AMS to get the disposed app status."
-        },
-        {
             "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
             "said" : "180",
             "description" : "Permission required for AMS to get the information from BMS."
-        },
-        {
-            "name" : "ohos.permission.INSTALL_BUNDLE",
-            "said" : "180",
-            "description" : "Permission required for AMS to start free install app."
         },
         {
             "name" : "ohos.permission.READ_DFX_SYSEVENT",
