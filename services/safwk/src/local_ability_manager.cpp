@@ -706,16 +706,26 @@ void LocalAbilityManager::WaitForTasks()
     HILOGI(TAG, "start tasks finished and spend %{public}" PRId64 " ms", (end - begin));
 }
 
-void LocalAbilityManager::FindAndStartPhaseTasks()
+void LocalAbilityManager::FindAndStartPhaseTasks(int32_t saId)
 {
-    for (uint32_t bootPhase = BOOT_START; bootPhase <= OTHER_START; ++bootPhase) {
-        auto iter = abilityPhaseMap_.find(bootPhase);
-        if (iter != abilityPhaseMap_.end()) {
-            StartPhaseTasks(iter->second);
-            InitializeRunOnCreateSaProfiles(bootPhase + 1);
-            WaitForTasks();
-        } else {
-            InitializeRunOnCreateSaProfiles(bootPhase + 1);
+    if (saId == DEFAULT_SAID) {
+        for (uint32_t bootPhase = BOOT_START; bootPhase <= OTHER_START; ++bootPhase) {
+            auto iter = abilityPhaseMap_.find(bootPhase);
+            if (iter != abilityPhaseMap_.end()) {
+                StartPhaseTasks(iter->second);
+                InitializeRunOnCreateSaProfiles(bootPhase + 1);
+                WaitForTasks();
+            } else {
+                InitializeRunOnCreateSaProfiles(bootPhase + 1);
+            }
+        }
+    } else {
+        for (uint32_t bootPhase = BOOT_START; bootPhase <= OTHER_START; ++bootPhase) {
+            auto iter = abilityPhaseMap_.find(bootPhase);
+            if (iter != abilityPhaseMap_.end()) {
+                StartPhaseTasks(iter->second);
+                WaitForTasks();
+            }
         }
     }
 }
@@ -762,7 +772,7 @@ bool LocalAbilityManager::Run(int32_t saId)
     initPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
 
     RegisterOnDemandSystemAbility(saId);
-    FindAndStartPhaseTasks();
+    FindAndStartPhaseTasks(saId);
     initPool_->Stop();
     return true;
 }
