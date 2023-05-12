@@ -128,6 +128,11 @@
             "name" : "mkdir window",
             "said" : "4606",
             "description" : "Create window directory for window_manager to save window params at /data/service/el1/public/window/"
+        },
+        {
+            "name" : "mkdir common_event_service",
+            "said" : "3299",
+            "description" : "Create common_event_service directory for common_event_service to save data file at /data/service/el1/public/common_event_service"
         }
     ],
     "bootevents" : [
