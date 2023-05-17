@@ -380,5 +380,62 @@ HWTEST_F(SystemAbilityTest, OnIdle001, TestSize.Level2)
     int32_t ret = sysAby->OnIdle(idleReason);
     EXPECT_EQ(ret, 0);
 }
+
+/**
+ * @tc.name: GetCapability001
+ * @tc.desc: Check GetCapability, cover function
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(SystemAbilityTest, GetCapability001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->OnDump();
+    std::u16string capability;
+    auto ret = sysAby->GetCapability();
+    EXPECT_EQ(ret, capability);
+}
+
+/**
+ * @tc.name: GetAbilityState001
+ * @tc.desc: Check GetAbilityState, cover function
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(SystemAbilityTest, GetAbilityState001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    SystemAbilityState ret = sysAby->GetAbilityState();
+    EXPECT_EQ(ret, SystemAbilityState::NOT_LOADED);
+}
+
+/**
+ * @tc.name: IsRunOnCreate002
+ * @tc.desc: Check IsRunOnCreate, cover function
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(SystemAbilityTest, IsRunOnCreate002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    bool ret = sysAby->IsRunOnCreate();
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: GetLibPath002
+ * @tc.desc: Check GetLibPath, cover function
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    SystemAbilityOnDemandReason onDemandStartReason;
+    sysAby->GetOnDemandReasonExtraData(onDemandStartReason);
+    std::string capability;
+    auto ret = sysAby->GetLibPath();
+    EXPECT_EQ(ret, capability);
+}
 }
 }

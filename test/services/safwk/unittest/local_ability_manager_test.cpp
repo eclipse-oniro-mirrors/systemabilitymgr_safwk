@@ -38,6 +38,10 @@ namespace {
     constexpr int STARTCODE = 1;
     constexpr uint32_t BOOTPHASE = 1;
     constexpr uint32_t OTHERPHASE = 3;
+    constexpr const char* EVENT_ID = "eventId";
+    constexpr const char* NAME = "name";
+    constexpr const char* VALUE = "value";
+    constexpr const char* EXTRA_DATA_ID = "extraDataId";
 }
 
 class LocalAbilityManagerTest : public testing::Test {
@@ -223,6 +227,25 @@ HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath002, TestSize.Level1)
     string profilePath = TEST_RESOURCE_PATH + "test_trust_all_allow.json";
     string realProfilePath = "";
     bool res = LocalAbilityManager::GetInstance().CheckAndGetProfilePath(profilePath, realProfilePath);
+    EXPECT_FALSE(res);
+}
+
+/**
+ * @tc.name: CheckAndGetProfilePath003
+ * @tc.desc: test CheckAndGetProfilePath, with invalid profilepath length
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath003, TestSize.Level2)
+{
+    string profilePath;
+    for (; profilePath.size() <= PATH_MAX;) {
+        profilePath = profilePath + TEST_RESOURCE_PATH;
+    }
+    string realProfilePath = "";
+    bool res = LocalAbilityManager::GetInstance().CheckAndGetProfilePath(profilePath, realProfilePath);
+    // cover ClearResource
+    LocalAbilityManager::GetInstance().ClearResource();
     EXPECT_FALSE(res);
 }
 
@@ -1145,6 +1168,77 @@ HWTEST_F(LocalAbilityManagerTest, IdleAbilityInner002, TestSize.Level2)
     MessageParcel reply;
     int32_t ret = LocalAbilityManager::GetInstance().IdleAbilityInner(data, reply);
     EXPECT_EQ(ret, ERR_NONE);
+}
+
+/**
+ * @tc.name: OnStopAbility001
+ * @tc.desc: test OnStopAbility, cover function with valid SaID
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(LocalAbilityManagerTest, OnStopAbility001, TestSize.Level2)
+{
+    int32_t systemAbilityId = 1;
+    bool ret = LocalAbilityManager::GetInstance().OnStopAbility(systemAbilityId);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: ActiveAbility001
+ * @tc.desc: test ActiveAbility, cover function with valid SaID
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(LocalAbilityManagerTest, ActiveAbility001, TestSize.Level2)
+{
+    int32_t systemAbilityId = 1;
+    nlohmann::json activeReason;
+    bool ret = LocalAbilityManager::GetInstance().ActiveAbility(systemAbilityId, activeReason);
+    // cover StartPhaseTasks
+    std::list<SystemAbility*> systemAbilityList;
+    LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: IdleAbility001
+ * @tc.desc: test IdleAbility, cover function
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(LocalAbilityManagerTest, IdleAbility001, TestSize.Level2)
+{
+    int32_t systemAbilityId = 1;
+    nlohmann::json activeReason;
+    int32_t delayTime = 0;
+    bool ret = LocalAbilityManager::GetInstance().IdleAbility(systemAbilityId, activeReason, delayTime);
+    // cover WaitForTasks
+    LocalAbilityManager::GetInstance().WaitForTasks();
+    // cover FindAndStartPhaseTasks
+    LocalAbilityManager::GetInstance().FindAndStartPhaseTasks(systemAbilityId);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: JsonToOnDemandReason001
+ * @tc.desc: test JsonToOnDemandReason, with assignments
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(LocalAbilityManagerTest, JsonToOnDemandReason001, TestSize.Level2)
+{
+    SystemAbilityOnDemandReason onDemandStartReason;
+    nlohmann::json reasonJson;
+    reasonJson[EVENT_ID] = 1;
+    reasonJson[NAME] = "test";
+    reasonJson[VALUE] = "test";
+    reasonJson[EXTRA_DATA_ID] = 1;
+    onDemandStartReason.SetId(reasonJson[EVENT_ID]);
+    onDemandStartReason.SetName(reasonJson[NAME]);
+    onDemandStartReason.SetValue(reasonJson[VALUE]);
+    onDemandStartReason.SetExtraDataId(reasonJson[EXTRA_DATA_ID]);
+    SystemAbilityOnDemandReason ret = LocalAbilityManager::GetInstance().JsonToOnDemandReason(reasonJson);
+    EXPECT_EQ(ret.extraDataId_, onDemandStartReason.extraDataId_);
 }
 } // namespace SAFWK
 } // namespace OHOS
