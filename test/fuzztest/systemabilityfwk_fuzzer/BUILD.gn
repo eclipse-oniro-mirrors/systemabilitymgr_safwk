@@ -30,7 +30,7 @@ config("safwk_fuzz_test_config") {
 ohos_fuzztest("SystemAbilityFwkFuzzTest") {
   module_out_path = module_output_path
 
-  fuzz_config_file = "${safwk_dir}/test/fuzztest/safwk_fuzzer"
+  fuzz_config_file = "${safwk_dir}/test/fuzztest/systemabilityfwk_fuzzer"
 
   configs = [ ":safwk_fuzz_test_config" ]
 
