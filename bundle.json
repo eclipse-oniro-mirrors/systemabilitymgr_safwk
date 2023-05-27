@@ -52,6 +52,13 @@
                         ]
                     },
                     "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk"
+                },
+                {
+                    "header": {
+                        "header_base": [],
+                        "header_files": []
+                    },
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk_rust"
                 }
             ],
             "test": [
