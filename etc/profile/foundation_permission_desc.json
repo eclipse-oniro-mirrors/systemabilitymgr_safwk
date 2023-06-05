@@ -123,6 +123,11 @@
             "name" : "mkdir common_event_service",
             "said" : "3299",
             "description" : "Create common_event_service directory for common_event_service to save data file at /data/service/el1/public/common_event_service"
+        },
+        {
+            "name" : "mkdir app_exit_reason",
+            "said" : "180",
+            "description" : "Create app_exit_reason directory for ability_manager_service to save data file at /data/service/el1/public/database/app_exit_reason"
         }
     ],
     "bootevents" : [
