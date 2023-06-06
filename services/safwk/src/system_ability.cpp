@@ -39,7 +39,7 @@ SystemAbility::SystemAbility(bool runOnCreate)
     isRunOnCreate_ = runOnCreate;
     isDistributed_ = false;
     dumpLevel_ = 0;
-    // timeout for waiting dependency ready, which configed in xml, with DEFAULT_DEPENDENCY_TIMEOUT(6s) by default
+    // timeout for waiting dependency ready, which configed in json, with DEFAULT_DEPENDENCY_TIMEOUT(6s) by default
     dependTimeout_ = DEFAULT_DEPENDENCY_TIMEOUT;
     capability_ = u"";
 }

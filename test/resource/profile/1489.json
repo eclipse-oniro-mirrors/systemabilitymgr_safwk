@@ -1,0 +1,12 @@
+{
+    "process": "mydemo",
+    "systemability": [
+        {
+            "name": 1489,
+            "libpath": "mydemo.z.so",
+            "run-on-create": true,
+            "distributed": true,
+            "dump-level": 1
+        }
+    ]
+}

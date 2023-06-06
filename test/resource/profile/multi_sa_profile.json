@@ -1,0 +1,30 @@
+{
+    "process": "test",
+    "systemability": [
+        {
+            "name": 9999,
+            "libpath": "liboos_ability.z.so",
+            "run-on-create": true,
+            "distributed": false,
+            "dump-level": 1
+        },{
+            "name": 9998,
+            "libpath": "liboos_ability.z.so",
+            "run-on-create": true,
+            "distributed": false,
+            "dump-level": 1
+        },{
+            "name": 9997,
+            "libpath": "liboos_ability.z.so",
+            "run-on-create": true,
+            "distributed": false,
+            "dump-level": 1
+        },{
+            "name": 9997,
+            "libpath": "liboos_ability.z.so",
+            "run-on-create": true,
+            "distributed": false,
+            "dump-level": 1
+        }
+    ]
+}

@@ -84,7 +84,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckTrustSa001, TestSize.Level1)
      * @tc.expected: step1. return true when load multi-sa profile
      */
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles
-        (TEST_RESOURCE_PATH + "multi_sa_profile.xml");
+        (TEST_RESOURCE_PATH + "multi_sa_profile.json");
     EXPECT_TRUE(ret);
     /**
      * @tc.steps: step2. CheckTrustSa with not all allow
@@ -111,7 +111,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckTrustSa002, TestSize.Level1)
      * @tc.expected: step1. return true when load multi-sa profile
      */
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles
-        (TEST_RESOURCE_PATH + "multi_sa_profile.xml");
+        (TEST_RESOURCE_PATH + "multi_sa_profile.json");
     EXPECT_TRUE(ret);
     /**
      * @tc.steps: step2. CheckTrustSa with all allow
@@ -132,7 +132,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckTrustSa002, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess001, TestSize.Level2)
 {
-    LocalAbilityManager::GetInstance().DoStartSAProcess("profile_audio.xml", SAID);
+    LocalAbilityManager::GetInstance().DoStartSAProcess("profile_audio.json", SAID);
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     EXPECT_TRUE(sm != nullptr);
     auto ability = sm->GetSystemAbility(SAID);
@@ -146,7 +146,7 @@ HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess001, TestSize.Level2)
  */
 HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess002, TestSize.Level2)
 {
-    string profilePath = "/system/usr/profile_audio.xml";
+    string profilePath = "/system/usr/profile_audio.json";
     LocalAbilityManager::GetInstance().DoStartSAProcess(profilePath, SAID);
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     auto ability = sm->GetSystemAbility(SAID);
@@ -160,7 +160,7 @@ HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess002, TestSize.Level2)
  */
 HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess003, TestSize.Level2)
 {
-    string profilePath = "/system/usr/profile_audio.xml";
+    string profilePath = "/system/usr/profile_audio.json";
     int32_t invalidSaid = -2;
     LocalAbilityManager::GetInstance().DoStartSAProcess(profilePath, invalidSaid);
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -175,7 +175,7 @@ HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess003, TestSize.Level2)
  */
 HWTEST_F(LocalAbilityManagerTest, GetTraceTag001, TestSize.Level1)
 {
-    string profilePath = "/system/usr/profile_audio.xml";
+    string profilePath = "/system/usr/profile_audio.json";
     string traceTag = LocalAbilityManager::GetInstance().GetTraceTag(profilePath);
     EXPECT_EQ(traceTag, "profile_audio");
 }
@@ -211,7 +211,7 @@ HWTEST_F(LocalAbilityManagerTest, GetTraceTag003, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath001, TestSize.Level3)
 {
-    string profilePath = "/system/usr/profile_audio.xml";
+    string profilePath = "/system/usr/profile_audio.json";
     string realProfilePath = "";
     bool res = LocalAbilityManager::GetInstance().CheckAndGetProfilePath(profilePath, realProfilePath);
     EXPECT_TRUE(res);
@@ -219,7 +219,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath001, TestSize.Level3)
 
 /**
  * @tc.name: CheckAndGetProfilePath002
- * @tc.desc:  CheckAndGetProfilePath, xmlDoc dir is not matched!
+ * @tc.desc:  CheckAndGetProfilePath, Doc dir is not matched!
  * @tc.type: FUNC
  */
 HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath002, TestSize.Level1)
@@ -281,7 +281,7 @@ HWTEST_F(LocalAbilityManagerTest, InitSystemAbilityProfiles001, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, InitSystemAbilityProfiles002, TestSize.Level3)
 {
-    string profilePath = "/system/usr/profile_audio.xml";
+    string profilePath = "/system/usr/profile_audio.json";
     bool res = LocalAbilityManager::GetInstance().InitSystemAbilityProfiles(profilePath, SAID);
     EXPECT_FALSE(res);
 }
@@ -293,7 +293,7 @@ HWTEST_F(LocalAbilityManagerTest, InitSystemAbilityProfiles002, TestSize.Level3)
  */
 HWTEST_F(LocalAbilityManagerTest, InitSystemAbilityProfiles003, TestSize.Level3)
 {
-    string profilePath = "/system/usr/profile_audio.xml";
+    string profilePath = "/system/usr/profile_audio.json";
     int32_t defaultId = -1;
     bool res = LocalAbilityManager::GetInstance().InitSystemAbilityProfiles(profilePath, defaultId);
     EXPECT_TRUE(res);
@@ -323,7 +323,7 @@ HWTEST_F(LocalAbilityManagerTest, AddAbility002, TestSize.Level3)
 {
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles
-        (TEST_RESOURCE_PATH + "multi_sa_profile.xml");
+        (TEST_RESOURCE_PATH + "multi_sa_profile.json");
     EXPECT_TRUE(ret);
     LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
     bool res = LocalAbilityManager::GetInstance().AddAbility(sysAby);
@@ -558,7 +558,7 @@ HWTEST_F(LocalAbilityManagerTest, GetRunningStatus002, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, StartOndemandSystemAbility001, TestSize.Level1)
 {
-    std::string profilePath = "/system/usr/profile_audio.xml";
+    std::string profilePath = "/system/usr/profile_audio.json";
     LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     LocalAbilityManager::GetInstance().StartOndemandSystemAbility(SAID);
@@ -572,7 +572,7 @@ HWTEST_F(LocalAbilityManagerTest, StartOndemandSystemAbility001, TestSize.Level1
  */
 HWTEST_F(LocalAbilityManagerTest, StartOndemandSystemAbility002, TestSize.Level1)
 {
-    std::string profilePath = "/system/usr/profile_audio.xml";
+    std::string profilePath = "/system/usr/profile_audio.json";
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
@@ -626,7 +626,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles001, TestSize.L
  */
 HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles002, TestSize.Level1)
 {
-    std::string profilePath = "/system/usr/profile_audio.xml";
+    std::string profilePath = "/system/usr/profile_audio.json";
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles(OTHERPHASE);
     EXPECT_TRUE(res);
@@ -639,7 +639,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles002, TestSize.L
  */
 HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles003, TestSize.Level1)
 {
-    std::string profilePath = "/system/usr/profile_audio.xml";
+    std::string profilePath = "/system/usr/profile_audio.json";
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
@@ -655,7 +655,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles003, TestSize.L
  */
 HWTEST_F(LocalAbilityManagerTest, InitializeOnDemandSaProfile001, TestSize.Level1)
 {
-    std::string profilePath = "/system/usr/profile_audio.xml";
+    std::string profilePath = "/system/usr/profile_audio.json";
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     bool res = LocalAbilityManager::GetInstance().InitializeOnDemandSaProfile(SAID);
@@ -762,7 +762,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked005, TestSize.L
  */
 HWTEST_F(LocalAbilityManagerTest, CheckDependencyStatus001, TestSize.Level1)
 {
-    std::string profilePath = "/system/usr/profile_audio.xml";
+    std::string profilePath = "/system/usr/profile_audio.json";
     vector<int32_t> dependSa;
     dependSa.push_back(1499);
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
