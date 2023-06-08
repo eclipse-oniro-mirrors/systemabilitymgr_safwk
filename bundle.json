@@ -22,6 +22,7 @@
         "ram": "7130KB",
         "deps": {
             "components": [
+                "hilog_native",
                 "hitrace_native",
                 "hiviewdfx_hilog_native",
                 "ipc",
@@ -52,11 +53,18 @@
                         ]
                     },
                     "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk"
+                },
+                {
+                    "header": {
+                        "header_base": [],
+                        "header_files": []
+                    },
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk_rust"
                 }
             ],
             "test": [
                 "//foundation/systemabilitymgr/safwk/test:unittest",
-                "//foundation/systemabilitymgr/safwk/test/fuzztest/safwk_fuzzer:fuzztest"
+                "//foundation/systemabilitymgr/safwk/test/fuzztest/systemabilityfwk_fuzzer:fuzztest"
             ]
         }
     }

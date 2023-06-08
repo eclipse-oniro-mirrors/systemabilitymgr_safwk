@@ -64,6 +64,7 @@ ohos_shared_library("system_ability_fwk") {
 
   install_images = [ system_base_dir ]
   relative_install_dir = "platformsdk"
+  innerapi_tags = [ "platformsdk_indirect" ]
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"
 }
@@ -78,10 +79,13 @@ ohos_rust_shared_library("system_ability_fwk_rust") {
   ]
 
   deps = [
-    "//base/hiviewdfx/hilog/interfaces/rust:hilog_rust",
-    "//foundation/communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "//foundation/systemabilitymgr/safwk/services/safwk:system_ability_fwk_c",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/rust:rust_samgr",
+  ]
+
+  external_deps = [
+    "hilog_native:hilog_rust",
+    "ipc:ipc_rust",
+    "samgr:rust_samgr",
   ]
 
   crate_name = "system_ability_fwk_rust"
