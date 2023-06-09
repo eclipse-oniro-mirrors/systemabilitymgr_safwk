@@ -44,7 +44,7 @@ constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
-constexpr int32_t SUFFIX_LENGTH = 4; // .xml length
+constexpr int32_t SUFFIX_LENGTH = 5; // .json length
 
 const string PROFILES_DIR = "/system/profile/";
 const string DEFAULT_DIR = "/system/usr/";

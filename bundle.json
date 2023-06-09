@@ -1,5 +1,5 @@
 {
-    "name": "@ohos/systemabilitymgr_safwk",
+    "name": "@ohos/safwk",
     "description": "system ability framework",
     "homePage": "https://gitee.com/openharmony",
     "version": "3.1",
@@ -29,8 +29,7 @@
                 "init",
                 "samgr",
                 "c_utils"
-            ],
-            "third_party": [ "libxml2" ]
+            ]
         },
         "build": {
             "group_type": {

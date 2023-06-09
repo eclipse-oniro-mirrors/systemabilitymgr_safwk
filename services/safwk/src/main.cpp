@@ -37,7 +37,7 @@ const string EVENT_VALUE = "value";
 const string EVENT_EXTRA_DATA_ID = "extraDataId";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
-constexpr auto DEFAULT_XML = "/system/usr/default.xml";
+constexpr auto DEFAULT_JSON = "/system/usr/default.json";
 // The pid name can be up to 16 bytes long, including the terminating null byte.
 // So need to set the max length of pid name to 15 bytes.
 constexpr size_t MAX_LEN_PID_NAME = 15;
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
         }
         HILOGI(TAG, "Set process name to %{public}s", argv[0]);
     };
-    // Load ondemand system abilities related shared libraries from specific xml-format profile
+    // Load ondemand system abilities related shared libraries from specific json-format profile
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
     if (argc > ONDEMAND_LOAD) {
@@ -167,11 +167,10 @@ int main(int argc, char *argv[])
     }
     // Load default system abilities related shared libraries from specific format profile
     // when this process starts.
-    string profilePath(DEFAULT_XML);
+    string profilePath(DEFAULT_JSON);
     if (argc > DEFAULT_LOAD) {
         string filePath(argv[PROFILE_INDEX]);
-        if (filePath.empty() || (filePath.find(".xml") == string::npos
-            && filePath.find(".json") == string::npos)) {
+        if (filePath.empty() || filePath.find(".json") == string::npos) {
             HILOGE(TAG, "profile file path is invalid!");
             return 0;
         }

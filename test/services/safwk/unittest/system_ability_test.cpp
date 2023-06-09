@@ -139,7 +139,7 @@ HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility002, TestSize.Level2)
 {
-    bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(TEST_RESOURCE_PATH + "1489.xml");
+    bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(TEST_RESOURCE_PATH + "1489.json");
     EXPECT_EQ(ret, true);
     bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));
     EXPECT_EQ(res, true);
