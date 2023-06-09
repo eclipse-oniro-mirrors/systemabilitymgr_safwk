@@ -21,7 +21,7 @@
             "description" : "permission required for telephony to read contacts info."
         },
         {
-            "name" : "ohos.permission.PERMISSION_START_ABILITIES_FROM_BACKGROUND",
+            "name" : "ohos.permission.START_ABILITIES_FROM_BACKGROUND",
             "said" : "4005",
             "description" : "Permission required for telephony to access AbillityManagerService."
         },
