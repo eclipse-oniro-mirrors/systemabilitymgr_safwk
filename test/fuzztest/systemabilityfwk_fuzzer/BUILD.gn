@@ -38,6 +38,7 @@ ohos_fuzztest("SystemAbilityFwkFuzzTest") {
     "${safwk_dir}/test/services/safwk/unittest/sa_mock_permission.cpp",
     "${safwk_services_dir}/local_ability_manager.cpp",
     "${safwk_services_dir}/local_ability_manager_stub.cpp",
+    "${safwk_services_dir}/local_ability_task_handler.cpp",
     "${safwk_services_dir}/system_ability.cpp",
     "${safwk_services_dir}/system_ability_ondemand_reason.cpp",
     "systemabilityfwk_fuzzer.cpp",
