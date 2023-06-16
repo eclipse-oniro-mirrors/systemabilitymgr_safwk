@@ -22,6 +22,8 @@
         "ram": "7130KB",
         "deps": {
             "components": [
+                "hilog",
+                "hitrace",
                 "hilog_native",
                 "hitrace_native",
                 "hiviewdfx_hilog_native",
