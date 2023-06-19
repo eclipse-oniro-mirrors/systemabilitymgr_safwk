@@ -37,13 +37,13 @@ const std::string TAG = "LocalAbilityManagerStub";
 
 LocalAbilityManagerStub::LocalAbilityManagerStub()
 {
-    memberFuncMap_[START_ABILITY_TRANSACTION] =
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::START_ABILITY_TRANSACTION)] =
         &LocalAbilityManagerStub::StartAbilityInner;
-    memberFuncMap_[STOP_ABILITY_TRANSACTION] =
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::STOP_ABILITY_TRANSACTION)] =
         &LocalAbilityManagerStub::StopAbilityInner;
-    memberFuncMap_[ACTIVE_ABILITY_TRANSACTION] =
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::ACTIVE_ABILITY_TRANSACTION)] =
         &LocalAbilityManagerStub::ActiveAbilityInner;
-    memberFuncMap_[IDLE_ABILITY_TRANSACTION] =
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IDLE_ABILITY_TRANSACTION)] =
         &LocalAbilityManagerStub::IdleAbilityInner;
 }
 
