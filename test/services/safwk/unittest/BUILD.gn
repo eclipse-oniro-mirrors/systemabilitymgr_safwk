@@ -51,8 +51,8 @@ ohos_static_library("system_ability_fwk_tdd") {
   if (is_standard_system) {
     external_deps = [
       "c_utils:utils",
-      "hitrace_native:hitrace_meter",
-      "hiviewdfx_hilog_native:libhilog",
+      "hilog:libhilog",
+      "hitrace:hitrace_meter",
       "ipc:ipc_single",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
@@ -101,7 +101,7 @@ ohos_unittest("LocalAbilityManagerTest") {
 
   external_deps = [
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
@@ -143,7 +143,7 @@ ohos_unittest("SystemAbilityTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_common",
   ]

@@ -24,9 +24,6 @@
             "components": [
                 "hilog",
                 "hitrace",
-                "hilog_native",
-                "hitrace_native",
-                "hiviewdfx_hilog_native",
                 "ipc",
                 "init",
                 "samgr",
