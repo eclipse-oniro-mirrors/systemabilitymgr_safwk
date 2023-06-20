@@ -55,8 +55,8 @@ ohos_shared_library("system_ability_fwk") {
   if (is_standard_system) {
     external_deps = [
       "c_utils:utils",
-      "hitrace_native:hitrace_meter",
-      "hiviewdfx_hilog_native:libhilog",
+      "hilog:libhilog",
+      "hitrace:hitrace_meter",
       "ipc:ipc_core",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
@@ -84,7 +84,7 @@ ohos_rust_shared_library("system_ability_fwk_rust") {
   ]
 
   external_deps = [
-    "hilog_native:hilog_rust",
+    "hilog:hilog_rust",
     "ipc:ipc_rust",
     "samgr:rust_samgr",
   ]
