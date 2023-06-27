@@ -1184,6 +1184,21 @@ HWTEST_F(LocalAbilityManagerTest, OnStopAbility001, TestSize.Level2)
 }
 
 /**
+ * @tc.name: OnStopAbility002
+ * @tc.desc: test OnStopAbility with said is in abilityMap_
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerTest, OnStopAbility002, TestSize.Level2)
+{
+    MockSaRealize *mockSa = new MockSaRealize(SAID, false);
+    mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    bool ret = LocalAbilityManager::GetInstance().OnStopAbility(SAID);
+    EXPECT_TRUE(ret);
+}
+
+/**
  * @tc.name: ActiveAbility001
  * @tc.desc: test ActiveAbility, cover function with valid SaID
  * @tc.type: FUNC
@@ -1198,6 +1213,22 @@ HWTEST_F(LocalAbilityManagerTest, ActiveAbility001, TestSize.Level2)
     std::list<SystemAbility*> systemAbilityList;
     LocalAbilityManager::GetInstance().StartPhaseTasks(systemAbilityList);
     EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: ActiveAbility002
+ * @tc.desc: test ActiveAbility with sa is existed
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerTest, ActiveAbility002, TestSize.Level2)
+{
+    nlohmann::json activeReason;
+    MockSaRealize *mockSa = new MockSaRealize(SAID, false);
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    mockSa->abilityState_ = SystemAbilityState::ACTIVE;
+    bool ret = LocalAbilityManager::GetInstance().ActiveAbility(SAID, activeReason);
+    EXPECT_TRUE(ret);
 }
 
 /**
@@ -1220,6 +1251,23 @@ HWTEST_F(LocalAbilityManagerTest, IdleAbility001, TestSize.Level2)
 }
 
 /**
+ * @tc.name: IdleAbility002
+ * @tc.desc: test IdleAbility with sa is existed
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerTest, IdleAbility002, TestSize.Level2)
+{
+    nlohmann::json idleReason;
+    MockSaRealize *mockSa = new MockSaRealize(SAID, false);
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    mockSa->abilityState_ = SystemAbilityState::IDLE;
+    int delayTime = 0;
+    bool ret = LocalAbilityManager::GetInstance().IdleAbility(SAID, idleReason, delayTime);
+    EXPECT_TRUE(ret);
+}
+
+/**
  * @tc.name: JsonToOnDemandReason001
  * @tc.desc: test JsonToOnDemandReason, with assignments
  * @tc.type: FUNC
@@ -1239,6 +1287,21 @@ HWTEST_F(LocalAbilityManagerTest, JsonToOnDemandReason001, TestSize.Level2)
     onDemandStartReason.SetExtraDataId(reasonJson[EXTRA_DATA_ID]);
     SystemAbilityOnDemandReason ret = LocalAbilityManager::GetInstance().JsonToOnDemandReason(reasonJson);
     EXPECT_EQ(ret.extraDataId_, onDemandStartReason.extraDataId_);
+}
+
+/**
+ * @tc.name: FindAndNotifyAbilityListeners001
+ * @tc.desc: test FindAndNotifyAbilityListeners with listenerMap_ is empty
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerTest, FindAndNotifyAbilityListeners001, TestSize.Level2)
+{
+    int32_t code = 1;
+    std::string deviceId = "";
+    LocalAbilityManager::GetInstance().listenerMap_.clear();
+    LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, code);
+    EXPECT_TRUE(LocalAbilityManager::GetInstance().listenerMap_.empty());
 }
 } // namespace SAFWK
 } // namespace OHOS
