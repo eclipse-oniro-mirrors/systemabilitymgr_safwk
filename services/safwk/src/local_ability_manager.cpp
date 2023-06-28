@@ -19,13 +19,13 @@
 #include <cinttypes>
 #include <iostream>
 #include <sys/types.h>
+#include <thread>
 
 #include "datetime_ex.h"
 #include "errors.h"
 #include "hitrace_meter.h"
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
-#include "local_ability_task_handler.h"
 #include "safwk_log.h"
 #include "string_ex.h"
 #include "system_ability_ondemand_reason.h"
@@ -86,7 +86,6 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
     {
         std::string traceTag = GetTraceTag(realProfilePath);
         HITRACE_METER_NAME(HITRACE_TAG_SAMGR, traceTag);
-        LocalAbilityTaskHandler::GetInstance().Init(saId != DEFAULT_SAID);
         bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
         if (!ret) {
             HILOGE(TAG, "InitSystemAbilityProfiles no right profile, will exit");
@@ -482,7 +481,8 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::strin
     nlohmann::json startReason = ParseUtil::StringToJsonObj(eventStr);
     SetStartReason(systemAbilityId, startReason);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
-    LocalAbilityTaskHandler::GetInstance().PostTask(task);
+    std::thread thread(task);
+    thread.detach();
     return true;
 }
 
@@ -500,7 +500,8 @@ bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string
     nlohmann::json stopReason = ParseUtil::StringToJsonObj(eventStr);
     SetStopReason(systemAbilityId, stopReason);
     auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
-    LocalAbilityTaskHandler::GetInstance().PostTask(task);
+    std::thread thread(task);
+    thread.detach();
     return true;
 }
 
