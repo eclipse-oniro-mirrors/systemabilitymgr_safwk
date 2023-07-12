@@ -52,7 +52,7 @@ ohos_rust_shared_library("listen_rust_ipc") {
     "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
   ]
-  eexternal_deps = [ "hilog:hilog_rust" ]
+  external_deps = [ "hilog:hilog_rust" ]
 
   crate_name = "listen_rust_ipc"
   crate_type = "dylib"
