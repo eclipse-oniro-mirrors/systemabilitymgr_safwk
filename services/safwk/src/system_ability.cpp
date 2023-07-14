@@ -79,6 +79,8 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
         return false;
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK Publish systemAbilityId:%{public}d", saId_);
+    // Avoid automatic destruction of system ability caused by failure of publishing ability
+    publishObj_ = systemAbility;
     int64_t begin = GetTickCount();
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
@@ -86,7 +88,6 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
         return false;
     }
 
-    publishObj_ = systemAbility;
     ISystemAbilityManager::SAExtraProp saExtra(GetDistributed(), GetDumpLevel(), capability_, permission_);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
