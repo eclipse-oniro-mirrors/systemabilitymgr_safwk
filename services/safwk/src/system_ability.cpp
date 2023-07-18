@@ -159,10 +159,13 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
 
 void SystemAbility::Start()
 {
+    // Ensure that the lifecycle is sequentially called by SAMGR
     HILOGD(TAG, "starting system ability...");
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    if (abilityState_ != SystemAbilityState::NOT_LOADED) {
-        return;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (abilityState_ != SystemAbilityState::NOT_LOADED) {
+            return;
+        }
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
@@ -172,6 +175,7 @@ void SystemAbility::Start()
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(startReason);
     GetOnDemandReasonExtraData(onDemandStartReason);
     OnStart(onDemandStartReason);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
@@ -180,14 +184,17 @@ void SystemAbility::Start()
 void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
     int32_t& delayTime)
 {
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    if (abilityState_ != SystemAbilityState::ACTIVE) {
-        HILOGE(TAG, "[PerformanceTest] SAFWK cannot idle systemAbilityId:%{public}d", saId_);
-        return;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (abilityState_ != SystemAbilityState::ACTIVE) {
+            HILOGI(TAG, "cannot idle systemAbilityId:%{public}d", saId_);
+            return;
+        }
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK Idle systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
     delayTime = OnIdle(idleReason);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     if (delayTime == 0) {
         abilityState_ = SystemAbilityState::IDLE;
     }
@@ -197,13 +204,17 @@ void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
 
 void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
 {
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    if (abilityState_ != SystemAbilityState::IDLE) {
-        return;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (abilityState_ != SystemAbilityState::IDLE) {
+            HILOGI(TAG, "cannot active systemAbilityId:%{public}d", saId_);
+            return;
+        }
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK Active systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
     OnActive(activeReason);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::ACTIVE;
     HILOGI(TAG, "[PerformanceTest] SAFWK Active systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
@@ -212,9 +223,11 @@ void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
 void SystemAbility::Stop()
 {
     HILOGD(TAG, "stopping system ability...");
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    if (abilityState_ == SystemAbilityState::NOT_LOADED) {
-        return;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (abilityState_ == SystemAbilityState::NOT_LOADED) {
+            return;
+        }
     }
     HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
     int64_t begin = GetTickCount();
@@ -222,6 +235,7 @@ void SystemAbility::Stop()
     SystemAbilityOnDemandReason onDemandStopReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
     OnStop(onDemandStopReason);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
     HILOGI(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
