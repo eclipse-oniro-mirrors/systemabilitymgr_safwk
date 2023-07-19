@@ -31,6 +31,7 @@ using std::string;
 namespace {
 const string TAG = "SaMain";
 const string START_SAID = "said";
+const string PARAM_PREFIX_U = "-u";
 const string EVENT_TYPE = "eventId";
 const string EVENT_NAME = "name";
 const string EVENT_VALUE = "value";
@@ -153,10 +154,28 @@ int main(int argc, char *argv[])
         }
         HILOGI(TAG, "Set process name to %{public}s", argv[0]);
     };
+
+    // find update list
+    bool checkOnDemand = true;
+    string updateList;
+    for (int i = 0; i < argc - 1; ++i) {
+        if (PARAM_PREFIX_U.compare(argv[i]) == 0) {
+            if (i == EVENT_INDEX) {
+                checkOnDemand = false;
+            }
+            updateList = argv[i + 1];
+            break;
+        }
+    }
+
+    if (!updateList.empty()) {
+        LocalAbilityManager::GetInstance().SetUpdateList(updateList);
+    }
+
     // Load ondemand system abilities related shared libraries from specific json-format profile
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
-    if (argc > ONDEMAND_LOAD) {
+    if (checkOnDemand && argc > ONDEMAND_LOAD) {
         nlohmann::json eventMap;
         saId = ParseArgv(argv, eventMap);
         if (!CheckSaId(saId)) {
