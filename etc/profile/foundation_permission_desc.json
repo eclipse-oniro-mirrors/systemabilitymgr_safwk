@@ -74,6 +74,26 @@
             "name" : "ohos.permission.LISTEN_BUNDLE_CHANGE",
             "said" : "403",
             "description" : "Permission required for FMS to listen bundle change."
+        },
+        {
+            "name" : "ohos.permission.GET_TELEPHONY_STATE",
+            "said" : "4005",
+            "description" : "Permission required for telephony to get lock state of sim card."
+        },
+        {
+            "name" : "ohos.permission.CONNECT_CELLULAR_CALL_SERVICE",
+            "said" : "4005",
+            "description" : "Permission required for telephony to connect cellular call service."
+        },
+        {
+            "name" : "ohos.permission.SEND_MESSAGES",
+            "said" : "4005",
+            "description" : "Permission required for telephony to send reject call sms."
+        },
+        {
+            "name" : "ohos.permission.SET_TELEPHONY_STATE",
+            "said" : "4005",
+            "description" : "Permission required for telephony to update call state."
         }
     ],
     "restart" : [
