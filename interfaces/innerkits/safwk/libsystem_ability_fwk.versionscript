@@ -30,6 +30,7 @@
     *GetInstance*;
     *SetStartReason*;
     *DoStartSAProcess*;
+    *SetUpdateList*;
     *marshalling*;
     *OnDemandReasonExtraData*;
   local:

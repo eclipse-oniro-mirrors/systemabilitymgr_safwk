@@ -74,6 +74,13 @@ LocalAbilityManager::LocalAbilityManager()
     initPool_ = std::make_unique<ThreadPool>(INIT_POOL);
 }
 
+void LocalAbilityManager::SetUpdateList(const std::string& updateList)
+{
+    std::vector<std::string> updateVec;
+    SplitStr(updateList, " ", updateVec);
+    profileParser_->SetUpdateList(updateVec);
+}
+
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
     startBegin_ = GetTickCount();
