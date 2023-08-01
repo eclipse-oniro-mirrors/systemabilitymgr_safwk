@@ -64,7 +64,10 @@ ohos_shared_library("system_ability_fwk") {
 
   install_images = [ system_base_dir ]
   relative_install_dir = "platformsdk"
-  innerapi_tags = [ "platformsdk_indirect" ]
+  innerapi_tags = [
+    "platformsdk_indirect",
+    "sasdk",
+  ]
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"
 }
