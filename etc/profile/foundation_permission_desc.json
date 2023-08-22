@@ -94,6 +94,11 @@
             "name" : "ohos.permission.SET_TELEPHONY_STATE",
             "said" : "4005",
             "description" : "Permission required for telephony to update call state."
+        },
+        {
+            "name" : "ohos.permission.VIBRATE",
+            "said" : "4005",
+            "description" : "Permission required for telephony to vibrate."
         }
     ],
     "restart" : [
