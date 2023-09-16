@@ -68,7 +68,11 @@ int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
 
 int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageParcel& reply)
 {
-    int32_t saId = data.ReadInt32();
+    int32_t saId = -1;
+    bool ret = data.ReadInt32(saId);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
     if (!CheckInputSysAbilityId(saId)) {
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
@@ -85,7 +89,11 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
 
 int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessageParcel& reply)
 {
-    int32_t saId = data.ReadInt32();
+    int32_t saId = -1;
+    bool ret = data.ReadInt32(saId);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
     if (!CheckInputSysAbilityId(saId)) {
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
@@ -102,7 +110,11 @@ int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessagePa
 
 int32_t LocalAbilityManagerStub::ActiveAbilityInner(MessageParcel& data, MessageParcel& reply)
 {
-    int32_t saId = data.ReadInt32();
+    int32_t saId = -1;
+    bool ret = data.ReadInt32(saId);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
     if (!CheckInputSysAbilityId(saId)) {
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
@@ -118,7 +130,11 @@ int32_t LocalAbilityManagerStub::ActiveAbilityInner(MessageParcel& data, Message
 
 int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessageParcel& reply)
 {
-    int32_t saId = data.ReadInt32();
+    int32_t saId = -1;
+    bool ret = data.ReadInt32(saId);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
     if (!CheckInputSysAbilityId(saId)) {
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
