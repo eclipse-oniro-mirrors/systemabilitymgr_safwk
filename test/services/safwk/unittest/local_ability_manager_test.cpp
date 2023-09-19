@@ -916,7 +916,7 @@ HWTEST_F(LocalAbilityManagerTest, FoundationRestart001, TestSize.Level3)
         cfg.push_back(ch);
     }
     foundationCfg.close();
-    EXPECT_TRUE(cfg.find("critical") == std::string::npos);
+    EXPECT_TRUE(cfg.find("critical") != std::string::npos);
 }
 
 /**
