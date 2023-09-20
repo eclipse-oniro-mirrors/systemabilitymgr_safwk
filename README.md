@@ -34,7 +34,7 @@ The System Ability Framework (safwk) component defines how to implement system a
 
 ### How to Use
 
-A system ability is implemented by using a XXX.cfg, a profile.xml, and a libXXX.z.so. The init process starts the SystemAbility process by executing the corresponding XXX.cfg file.
+A system ability is implemented by using a XXX.cfg, a profile.json, and a libXXX.z.so. The init process starts the SystemAbility process by executing the corresponding XXX.cfg file.
 
 **Implementing a System Ability in C++**
 
@@ -156,22 +156,23 @@ void ListenAbility::OnStop()
 
 Configure the profile of the system ability so that the system ability can be loaded and registered. The configuration procedure is as follows:
 
-Create a folder named **sa_profile** in the root directory of the subsystem. Then, create two files in this folder, including an XML file prefixed with the service ID of the system ability and a **BUILD.gn** file.
+Create a folder named **sa_profile** in the root directory of the subsystem. Then, create two files in this folder, including an json file prefixed with the service ID of the system ability and a **BUILD.gn** file.
 
-Sample *serviceid*.xml file:
+Sample *serviceid*.json file:
 
 ```
-<?xml version="1.0" encoding="UTF-8"?>
-<info>
-    <process>listen_test</process>
-    <systemability>
-    <name>serviceid</name>
-    <libpath>/system/lib64/liblistentest.z.so</libpath>
-    <run-on-create>true</run-on-create>
-    <distributed>false</distributed>
-    <dump-level>1</dump-level>
-</systemability>
-</info>
+{
+    "process": "listen_test",
+    "systemability": [
+        {
+            "name": serviceid,
+            "libpath": "liblisten_test.z.so",
+            "run-on-create": true,
+            "distributed": true,
+            "dump_level": 1
+        }
+    ]
+}
 ```
 
 Sample **BUILD.gn** file:
@@ -180,7 +181,7 @@ Sample **BUILD.gn** file:
 import("//build/ohos/sa_profile/sa_profile.gni")
 ohos_sa_profile("xxx_sa_profile") {
     sources = [
-        "serviceid.xml"
+        "serviceid.json"
     ]
     subsystem_name = "systemabilitymgr"
 }
@@ -188,7 +189,7 @@ ohos_sa_profile("xxx_sa_profile") {
 
 >**NOTE**
 >1.  Set **process** to the name of the process where the system ability will run. This parameter is mandatory.
->2.  The *serviceid*.xml file can contain only one **systemability** node. Multiple **systemability** nodes will cause a build failure.
+>2.  The *serviceid*.json file can contain only one **systemability** node. Multiple **systemability** nodes will cause a build failure.
 >3.  Set **name** to the service ID registered in the code for the system ability. This parameter is mandatory.
 >4.  Set **libpath** to the path for loading the system ability. This parameter is mandatory.
 >5.  Set **run-on-create** to **true** if you want to register this system ability with the Samgr component immediately after the process is started. Set it to **false** if you want the system ability to start only when it is accessed. This parameter is mandatory.
@@ -197,7 +198,7 @@ ohos_sa_profile("xxx_sa_profile") {
 >8.  **dump-level** specifies the level supported by the system dumper. The default value is **1**.
 >9. In the **BUILD.gn** file, set **subsystem_name** to the subsystem name, and add the list of system abilities to be configured for the subsystem in **sources**. Multiple system abilities can be configured.
 
-After the preceding steps are complete, an XML file named by the process will be generated in the **out**, for example, **out\...\system\profile\listen_test.xml**.
+After the preceding steps are complete, an json file named by the process will be generated in the **out**, for example, **out\...\system\profile\listen_test.json**.
 
 **6. Configure the .cfg file.**
 
@@ -214,7 +215,7 @@ The .cfg file contains the native process startup policy provided by Linux. Duri
     ],
 	"services" : [{
             "name" : "listen_test",
-            "path" : ["/system/bin/sa_main", "/system/profile/listen_test.xml"],
+            "path" : ["/system/bin/sa_main", "/system/profile/listen_test.json"],
             "uid" : "system",
             "gid" : ["system", "shell"]
         }

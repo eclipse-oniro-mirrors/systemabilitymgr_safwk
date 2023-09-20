@@ -53,7 +53,7 @@
 
 ### 使用说明<a name="section129654513264"></a>
 
-SystemAbility实现一般采用XXX.cfg + profile.xml + libXXX.z.so的方式由init进程执行对应的XXX.cfg文件拉起相关SystemAbility进程。
+SystemAbility实现一般采用XXX.cfg + profile.json + libXXX.z.so的方式由init进程执行对应的XXX.cfg文件拉起相关SystemAbility进程。
 
 **C++实现SystemAbility**
 
@@ -175,22 +175,23 @@ void ListenAbility::OnStop()
 
 以c++实现的SA必须配置相关System Ability的profile配置文件才会完成SA的加载注册逻辑，否则没有编写profile配置的System Ability不会完成注册。配置方法如下：
 
-在子系统的根目录新建一个以sa\_profile为名的文件夹，然后在此文件夹中新建两个文件：一个以serviceId为前缀的xml文件，另外一个为BUILD.gn文件。
+在子系统的根目录新建一个以sa\_profile为名的文件夹，然后在此文件夹中新建两个文件：一个以serviceId为前缀的json文件，另外一个为BUILD.gn文件。
 
-serviceid.xml：
+serviceid.json：
 
 ```
-<?xml version="1.0" encoding="UTF-8"?>
-<info>
-    <process>listen_test</process>
-    <systemability>
-    <name>serviceid</name>
-    <libpath>/system/lib64/liblistentest.z.so</libpath>
-    <run-on-create>true</run-on-create>
-    <distributed>false</distributed>
-    <dump-level>1</dump-level>
-</systemability>
-</info>
+{
+    "process": "listen_test",
+    "systemability": [
+        {
+            "name": serviceid,
+            "libpath": "liblisten_test.z.so",
+            "run-on-create": true,
+            "distributed": true,
+            "dump_level": 1
+        }
+    ]
+}
 ```
 
 BUILD.gn：
@@ -199,7 +200,7 @@ BUILD.gn：
 import("//build/ohos/sa_profile/sa_profile.gni")
 ohos_sa_profile("xxx_sa_profile") {
     sources = [
-        "serviceid.xml"
+        "serviceid.json"
     ]
     subsystem_name = "systemabilitymgr"
 }
@@ -216,7 +217,7 @@ ohos_sa_profile("xxx_sa_profile") {
 >8.  dump-level：表示systemdumper支持的level等级，默认配置1。
 >9. BUILD.gn中subsystem\_name为相应部件名称；sources表示当前子系统需要配置的SystemAbility列表，可支持配置多个SystemAbility。
 
-以上步骤完成后，全量编译代码后会在out路径向生成一个以进程名为前缀的xml文件listen\_test.xml；路径为：out\\...\\system\\profile\\listen\_test.xml。
+以上步骤完成后，全量编译代码后会在out路径向生成一个以进程名为前缀的json文件listen\_test.json；路径为：out\\...\\system\\profile\\listen\_test.json。
 
 -   **6. cfg配置文件**
 
@@ -233,7 +234,7 @@ cfg配置文件为linux提供的native进程拉起策略，开机启动阶段由
     ],
 	"services" : [{
             "name" : "listen_test",
-            "path" : ["/system/bin/sa_main", "/system/profile/listen_test.xml"],
+            "path" : ["/system/bin/sa_main", "/system/profile/listen_test.json"],
             "uid" : "system",
             "gid" : ["system", "shell"]
         }
