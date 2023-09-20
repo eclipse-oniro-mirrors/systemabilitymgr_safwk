@@ -184,7 +184,7 @@ serviceid.json：
     "process": "listen_test",
     "systemability": [
         {
-            "name": 1494,
+            "name": serviceid,
             "libpath": "liblisten_test.z.so",
             "run-on-create": true,
             "distributed": true,
