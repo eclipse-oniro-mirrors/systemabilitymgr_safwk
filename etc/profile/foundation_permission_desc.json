@@ -160,6 +160,11 @@
             "description" : "Create common_event_service directory for common_event_service to save data file at /data/service/el1/public/database/common_event_service"
         },
         {
+            "name" : "mkdir auto_startup_service",
+            "said" : "180",
+            "description" : "Create auto_start_up_service directory for auto_startup_service to save data file at /data/service/el1/public/database/auto_startup_service"
+        },
+        {
             "name" : "mkdir app_exit_reason",
             "said" : "180",
             "description" : "Create app_exit_reason directory for ability_manager_service to save data file at /data/service/el1/public/database/app_exit_reason"
