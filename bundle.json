@@ -36,7 +36,8 @@
                     "//foundation/systemabilitymgr/safwk/etc/profile:foundation_cfg",
                     "//foundation/systemabilitymgr/safwk/etc/profile:foundation_trust",
                     "//foundation/systemabilitymgr/safwk/services/safwk:sa_main",
-                    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk"
+                    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
+                    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/dynamic_cache:dynamic_cache"
                 ],
                 "fwk_group": [],
                 "service_group": []
@@ -58,6 +59,15 @@
                         "header_files": []
                     },
                     "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk_rust"
+                },
+                {
+                    "header": {
+                        "header_base": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/dynamic_cache/include",
+                        "header_files": [
+                            "dynamic_cache.h"
+                        ]
+                    },
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/dynamic_cache:dynamic_cache"
                 }
             ],
             "test": [
