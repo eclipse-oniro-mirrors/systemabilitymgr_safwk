@@ -6,7 +6,7 @@
             "description" : "Invoke AccessToken::PrivacyKit::AddPermissionUsedRecord interface should have own this permission."
         },
         {
-            "name" : "ohos.permission.MICROPHONE",
+            "name" : "ohos.permission.MANAGE_AUDIO_CONFIG",
             "said" : "4005",
             "description" : "permission required for telephony to set microphone mute."
         },
