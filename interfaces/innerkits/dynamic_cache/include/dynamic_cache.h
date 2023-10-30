@@ -38,21 +38,30 @@ public:
         char waterLine[128] = {0};
         string defaultValue = "default";
         GetParameter(key_.c_str(), defaultValue.c_str(), waterLine, waterLineLength);
-        std::lock_guard<std::mutex> autoLock(queryCacheLock_);
-        if (localPara_.count(key_) != 0 && cacheMap_.count(query) != 0 &&
-            defaultValue != string(waterLine) && string(waterLine) == localPara_[key_]) {
-            HILOGD("DynamicCache QueryResult Return Cache");
-            return cacheMap_[query];
+        {
+            std::lock_guard<std::mutex> autoLock(queryCacheLock_);
+            if (localPara_.count(key_) != 0 && cacheMap_.count(query) != 0 &&
+                defaultValue != string(waterLine) && string(waterLine) == localPara_[key_]) {
+                HILOGD("DynamicCache QueryResult Return Cache");
+                return cacheMap_[query];
+            }
         }
         HILOGD("DynamicCache QueryResult Recompute");
         Result res = Recompute(query, code);
-        localPara_[key_] = waterLine;
-        cacheMap_[query] = res;
+        if (res == nullptr) {
+            return nullptr;
+        }
+        {
+            std::lock_guard<std::mutex> autoLock(queryCacheLock_);
+            localPara_[key_] = waterLine;
+            cacheMap_[query] = res;
+        }
         return res;
     }
 
     void ClearCache()
     {
+        std::lock_guard<std::mutex> autoLock(queryCacheLock_);
         cacheMap_.clear();
     }
 
