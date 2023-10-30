@@ -149,10 +149,43 @@ ohos_unittest("SystemAbilityTest") {
   ]
 }
 
+ohos_unittest("SystemAbilityMgrCacheTest") {
+  module_out_path = module_output_path
+
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
+
+  include_dirs =
+      [ "//foundation/systemabilitymgr/safwk/services/dynamic_cache/include" ]
+
+  sources = [ "./system_ability_manager_cache_test.cpp" ]
+
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  deps = [
+    ":system_ability_fwk_tdd",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  if (target_cpu == "arm") {
+    cflags = [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "init:libbegetutil",
+    "ipc:ipc_single",
+    "safwk:dynamic_cache",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [
     ":LocalAbilityManagerTest",
+    ":SystemAbilityMgrCacheTest",
     ":SystemAbilityTest",
   ]
 }
