@@ -1,12 +1,17 @@
 {
     "permissions" : [
         {
+            "name" : "ohos.permission.MANAGE_HAP_TOKENID",
+            "said" : "3503",
+            "description" : "Invoke AccessToken::AccessTokenKit::AllocHapToken interface should have own this permission."
+        },
+        {
             "name" : "ohos.permission.PERMISSION_USED_STATS",
             "said" : "3299",
             "description" : "Invoke AccessToken::PrivacyKit::AddPermissionUsedRecord interface should have own this permission."
         },
         {
-            "name" : "ohos.permission.MICROPHONE",
+            "name" : "ohos.permission.MANAGE_AUDIO_CONFIG",
             "said" : "4005",
             "description" : "permission required for telephony to set microphone mute."
         },
@@ -99,6 +104,11 @@
             "name" : "ohos.permission.VIBRATE",
             "said" : "4005",
             "description" : "Permission required for telephony to vibrate."
+        },
+        {
+            "name" : "ohos.permission.UPDATE_CONFIGURATION",
+            "said" : "501",
+            "description" : "Permission required for APPMS to update configuration when pointer device status change."
         }
     ],
     "restart" : [
