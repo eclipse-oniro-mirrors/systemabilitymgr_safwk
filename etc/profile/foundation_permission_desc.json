@@ -136,6 +136,11 @@
             "name" : "reset device_usage_stats_service",
             "said" : "180",
             "description" : "device_usage_stats_service rely on AMS, need to restart"
+        },
+        {
+            "name" : "start bootanimation",
+            "said" : "180",
+            "description" : "AMS need to start bootanimation when restart"
         }
     ],
     "mkdir" : [
