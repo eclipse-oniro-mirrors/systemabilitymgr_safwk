@@ -104,6 +104,11 @@
             "name" : "ohos.permission.UPDATE_CONFIGURATION",
             "said" : "501",
             "description" : "Permission required for APPMS to update configuration when pointer device status change."
+        },
+        {
+            "name" : "ohos.permission.REPORT_RESOURCE_SCHEDULE_EVENT",
+            "said" : "1901",
+            "description" : "Permission required for AMS to report resource schedule event to RSS."
         }
     ],
     "restart" : [
