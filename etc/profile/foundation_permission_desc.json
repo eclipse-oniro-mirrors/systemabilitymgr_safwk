@@ -114,6 +114,11 @@
             "name" : "ohos.permission.REPORT_RESOURCE_SCHEDULE_EVENT",
             "said" : "1901",
             "description" : "Permission required for AMS to report resource schedule event to RSS."
+        },
+        {
+            "name" : "ohos.permission.START_INVISIBLE_ABILITY",
+            "said" : "180",
+            "description" : "Permission required for AMS to start LAUNCHER."
         }
     ],
     "restart" : [
