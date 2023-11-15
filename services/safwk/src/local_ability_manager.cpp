@@ -857,4 +857,17 @@ void LocalAbilityManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t s
     GetInstance().FindAndNotifyAbilityListeners(systemAbilityId, deviceId,
         ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY);
 }
+
+bool LocalAbilityManager::SendStrategyToSA(int32_t type, int32_t systemAbilityId, int32_t level, std::string& action)
+{
+    HILOGD(TAG, "SendStrategyToSA: %{public}d", systemAbilityId);
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        HILOGW(TAG, "failed to get systemAbility %{public}d", systemAbilityId);
+        return false;
+    }
+    ability->OnDeviceLevelChanged(type, level, action);
+    return true;
+}
+
 }

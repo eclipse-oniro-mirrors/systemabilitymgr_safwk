@@ -45,6 +45,8 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         &LocalAbilityManagerStub::ActiveAbilityInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IDLE_ABILITY_TRANSACTION)] =
         &LocalAbilityManagerStub::IdleAbilityInner;
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SEND_STRATEGY_TO_SA_TRANSACTION)] =
+        &LocalAbilityManagerStub::SendStrategyToSAInner;
 }
 
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
@@ -150,6 +152,41 @@ int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "ActiveAbilityInner Write delayTime failed!");
         return ERR_NULL_OBJECT;
     }
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::SendStrategyToSAInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t type = -1;
+    bool ret = data.ReadInt32(type);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
+    int32_t saId = -1;
+    ret = data.ReadInt32(saId);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
+    if (!CheckInputSysAbilityId(saId)) {
+        HILOGW(TAG, "read saId failed!");
+        return ERR_NULL_OBJECT;
+    }
+    int32_t level = -1;
+    ret = data.ReadInt32(level);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
+    std::string aciton;
+    ret = data.ReadString(aciton);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
+    bool result = SendStrategyToSA(type, saId, level, aciton);
+    if (!reply.WriteBool(result)) {
+        HILOGW(TAG, "SendStrategyToSA Write result failed!");
+        return ERR_NULL_OBJECT;
+    }
+    HILOGD(TAG, "SendStrategyToSA called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
 

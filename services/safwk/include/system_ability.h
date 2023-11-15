@@ -212,6 +212,16 @@ protected:
      */
     SystemAbilityState GetAbilityState();
 
+    /**
+     * OnDeviceLevelChanged, OnDeviceLevelChanged will be called when listen strategy send.
+     *
+     * @param type, type is a certain device status type.
+     * @param level, level is level of a certain device status type.
+     * @param action, action is scheduling strategy.
+     * @return void.
+     */
+    virtual void OnDeviceLevelChanged(int32_t type, int32_t level, std::string& action);
+
 private:
     void Start();
     void Idle(const SystemAbilityOnDemandReason& idleReason, int32_t& delayTime);
