@@ -119,6 +119,11 @@
             "name" : "ohos.permission.START_INVISIBLE_ABILITY",
             "said" : "180",
             "description" : "Permission required for AMS to start LAUNCHER."
+        },
+        {
+            "name" : "ohos.permission.GET_BUNDLE_INFO",
+            "said" : "3203",
+            "description" : "Permission required for ReminderRequest to update the database."
         }
     ],
     "restart" : [
