@@ -66,6 +66,7 @@ public:
     nlohmann::json& GetStartReason(int32_t systemAbilityId);
     nlohmann::json& GetStopReason(int32_t systemAbilityId);
     SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
+    bool SendStrategyToSA(int32_t type, int32_t systemAbilityId, int32_t level, std::string& action) override;
 
 private:
     LocalAbilityManager();

@@ -1303,5 +1303,34 @@ HWTEST_F(LocalAbilityManagerTest, FindAndNotifyAbilityListeners001, TestSize.Lev
     LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, code);
     EXPECT_TRUE(LocalAbilityManager::GetInstance().listenerMap_.empty());
 }
+
+/**
+ * @tc.name: SendStrategyToSA001
+ * @tc.desc: test SendStrategyToSA001, cover function with valid SaID
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSA001, TestSize.Level2)
+{
+    int32_t systemAbilityId = 1;
+    std::string action = "";
+    bool ret = LocalAbilityManager::GetInstance().SendStrategyToSA(1, systemAbilityId, 1, action);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: SendStrategyToSA002
+ * @tc.desc: test SendStrategyToSA with said is in abilityMap_
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSA002, TestSize.Level2)
+{
+    MockSaRealize *mockSa = new MockSaRealize(SAID, false);
+    mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    std::string action = "";
+    bool ret = LocalAbilityManager::GetInstance().SendStrategyToSA(1, SAID, 1, action);
+    EXPECT_TRUE(ret);
+}
+
 } // namespace SAFWK
 } // namespace OHOS

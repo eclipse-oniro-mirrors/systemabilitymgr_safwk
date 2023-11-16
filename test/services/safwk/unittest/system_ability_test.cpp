@@ -49,6 +49,8 @@ public:
         const nlohmann::json& activeReason) override;
     bool IdleAbility(int32_t systemAbilityId,
         const nlohmann::json& idleReason, int32_t& delayTime) override;
+    bool SendStrategyToSA(int32_t type, int32_t systemAbilityId,
+        int32_t level, std::string& action) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -100,6 +102,13 @@ bool MockLocalAbilityManager::ActiveAbility(int32_t systemAbilityId,
 
 bool MockLocalAbilityManager::IdleAbility(int32_t systemAbilityId,
     const nlohmann::json& idleReason, int32_t& delayTime)
+{
+    DTEST_LOG << "said : " << systemAbilityId <<std::endl;
+    return true;
+}
+
+bool MockLocalAbilityManager::SendStrategyToSA(int32_t type, int32_t systemAbilityId,
+    int32_t level, std::string& action)
 {
     DTEST_LOG << "said : " << systemAbilityId <<std::endl;
     return true;

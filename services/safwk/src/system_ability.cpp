@@ -409,4 +409,10 @@ void SystemAbility::SetPermission(const std::u16string& permission)
 {
     permission_ = permission;
 }
+
+// The details should be implemented by subclass
+void SystemAbility::OnDeviceLevelChanged(int32_t type, int32_t level, std::string& action)
+{
+}
+
 }
