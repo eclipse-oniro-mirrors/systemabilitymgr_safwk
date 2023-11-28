@@ -15,11 +15,6 @@ import("//build/test.gni")
 
 module_output_path = "safwk/safwk"
 
-config("system_config") {
-  include_dirs =
-      [ "//foundation/systemabilitymgr/samgr/services/lsamgr/include" ]
-}
-
 config("system_ability_config") {
   visibility = [ ":*" ]
   include_dirs = [
@@ -41,10 +36,8 @@ ohos_static_library("system_ability_fwk_tdd") {
     "//foundation/systemabilitymgr/safwk/services/safwk/src/system_ability_ondemand_reason.cpp",
   ]
 
-  configs = [
-    ":system_config",
-    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
-  ]
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
   public_configs = [ ":system_ability_config" ]
   all_dependent_configs = [ ":system_ability_all_deps_config" ]
@@ -117,7 +110,6 @@ ohos_unittest("SystemAbilityTest") {
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
-    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
   ]
 
   sources = [
