@@ -18,7 +18,6 @@ config("config_safwk") {
   visibility = [ ":*" ]
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
-    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
   ]
 }
@@ -31,7 +30,6 @@ ohos_shared_library("system_ability_fwk_c") {
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/c_wrapper/include",
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
-    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
   ]
   sources = [ "//foundation/systemabilitymgr/safwk/services/safwk/c_wrapper/source/c_system_ability.cpp" ]
 
@@ -43,6 +41,7 @@ ohos_shared_library("system_ability_fwk_c") {
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_single",
+    "samgr:samgr_common",
   ]
 
   output_extension = "so"

@@ -35,9 +35,11 @@ ohos_rust_shared_library("audio_rust_sa") {
     ":audio_rust_ipc",
     "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/rust:rust_samgr",
   ]
-  external_deps = [ "hilog:hilog_rust" ]
+  external_deps = [
+    "hilog:hilog_rust",
+    "samgr:rust_samgr",
+  ]
 
   crate_name = "audio_rust_sa"
   crate_type = "dylib"
@@ -68,9 +70,11 @@ ohos_rust_shared_library("listen_rust_sa") {
     ":listen_rust_ipc",
     "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
-    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/rust:rust_samgr",
   ]
-  external_deps = [ "hilog:hilog_rust" ]
+  external_deps = [
+    "hilog:hilog_rust",
+    "samgr:rust_samgr",
+  ]
 
   crate_name = "listen_rust_sa"
   crate_type = "dylib"

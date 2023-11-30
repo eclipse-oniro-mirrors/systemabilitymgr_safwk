@@ -25,11 +25,6 @@ config("system_ability_config") {
   ]
 }
 
-config("system_config") {
-  include_dirs =
-      [ "//foundation/systemabilitymgr/samgr/services/lsamgr/include" ]
-}
-
 config("system_ability_all_deps_config") {
   include_dirs =
       [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk" ]
@@ -44,12 +39,13 @@ ohos_shared_library("system_ability_fwk") {
     "../../../services/safwk/src/system_ability_ondemand_reason.cpp",
   ]
 
-  configs = [
-    ":system_config",
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  public_configs = [
+    ":system_ability_config",
     "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
   ]
-
-  public_configs = [ ":system_ability_config" ]
   all_dependent_configs = [ ":system_ability_all_deps_config" ]
   if (is_standard_system) {
     external_deps = [
