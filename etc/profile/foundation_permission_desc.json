@@ -134,6 +134,11 @@
             "name" : "ohos.permission.GET_SUSPEND_STATE",
             "said" : "1910",
             "description" : "Permission required for AMS to register suspend state observer."
+        },
+        {
+            "name" : "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
+            "said" : "3704",
+            "description" : "Permission required for ScreenLock to publish a common event."
         }
     ],
     "restart" : [
