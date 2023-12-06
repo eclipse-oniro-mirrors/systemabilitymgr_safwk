@@ -281,6 +281,7 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
         return false;
     }
 
+    std::size_t listenerSaIdListSize = 0;
     {
         HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
         std::lock_guard<std::mutex> autoLock(listenerLock_);
@@ -291,16 +292,17 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
         if (iter == listenerSaIdList.end()) {
             listenerSaIdList.emplace_back(listenerSaId);
         }
+        listenerSaIdListSize = listenerSaIdList.size();
         HILOGI(TAG, "AddSystemAbilityListener SA:%{public}d, size:%{public}zu", systemAbilityId,
             listenerSaIdList.size());
-        if (listenerSaIdList.size() > 1) {
-            sptr<IRemoteObject> object = samgrProxy->CheckSystemAbility(systemAbilityId);
-            if (object != nullptr) {
-                NotifyAbilityListener(systemAbilityId, listenerSaId, "",
-                    ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
-            }
-            return true;
+    }
+    if (listenerSaIdListSize > 1) {
+        sptr<IRemoteObject> object = samgrProxy->CheckSystemAbility(systemAbilityId);
+        if (object != nullptr) {
+            NotifyAbilityListener(systemAbilityId, listenerSaId, "",
+                ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
         }
+        return true;
     }
 
     int32_t ret = samgrProxy->SubscribeSystemAbility(systemAbilityId, GetSystemAbilityStatusChange());
