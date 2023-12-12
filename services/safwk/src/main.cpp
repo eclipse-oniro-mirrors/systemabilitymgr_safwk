@@ -136,9 +136,8 @@ static bool CheckSaId(int32_t saId)
     return (saId >= FIRST_SYS_ABILITY_ID) && (saId <= LAST_SYS_ABILITY_ID);
 }
 
-int main(int argc, char *argv[])
+static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
 {
-    HILOGI(TAG, "[PerformanceTest] SAFWK main entry process starting!");
     auto setProcessName = [argc, argv](const string& name) -> void {
         uintptr_t start = reinterpret_cast<uintptr_t>(argv[0]);
         uintptr_t end = reinterpret_cast<uintptr_t>(strchr(argv[argc - 1], 0));
@@ -154,7 +153,25 @@ int main(int argc, char *argv[])
         }
         HILOGI(TAG, "Set process name to %{public}s", argv[0]);
     };
+    // Load default system abilities related shared libraries from specific format profile
+    // when this process starts.
+    string profilePath(DEFAULT_JSON);
+    if (argc > DEFAULT_LOAD) {
+        string filePath(argv[PROFILE_INDEX]);
+        if (filePath.empty() || filePath.find(".json") == string::npos) {
+            HILOGE(TAG, "profile file path is invalid!");
+            return 0;
+        }
+        SetProcName(filePath, setProcessName);
+        profilePath = std::move(filePath);
+    }
+    LocalAbilityManager::GetInstance().DoStartSAProcess(profilePath, saId);
+    return 0;
+}
 
+int main(int argc, char *argv[])
+{
+    HILOGI(TAG, "[PerformanceTest] SAFWK main entry process starting!");
     // find update list
     bool checkOnDemand = true;
     string updateList;
@@ -184,18 +201,7 @@ int main(int argc, char *argv[])
         }
         LocalAbilityManager::GetInstance().SetStartReason(saId, eventMap);
     }
-    // Load default system abilities related shared libraries from specific format profile
-    // when this process starts.
-    string profilePath(DEFAULT_JSON);
-    if (argc > DEFAULT_LOAD) {
-        string filePath(argv[PROFILE_INDEX]);
-        if (filePath.empty() || filePath.find(".json") == string::npos) {
-            HILOGE(TAG, "profile file path is invalid!");
-            return 0;
-        }
-        SetProcName(filePath, setProcessName);
-        profilePath = std::move(filePath);
-    }
-    LocalAbilityManager::GetInstance().DoStartSAProcess(profilePath, saId);
+    
+    DoStartSAProcess(argc, argv, saId);
     return 0;
 }
