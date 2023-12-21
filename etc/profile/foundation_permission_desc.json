@@ -144,6 +144,16 @@
             "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
             "said" : "401",
             "description" : "Permission required for BMS to get bundle info privileged."
+        },
+        {
+            "name" : "ohos.permission.CLEAN_APPLICATION_DATA",
+            "said" : "401",
+            "description" : "Permission required for BMS to clean application data."
+        },
+        {
+            "name" : "ohos.permission.REMOVE_CACHE_FILES",
+            "said" : "401",
+            "description" : "Permission required for BMS to remove cache files."
         }
     ],
     "restart" : [
