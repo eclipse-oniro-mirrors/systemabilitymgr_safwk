@@ -160,7 +160,7 @@
             "said" : "401",
             "description" : "Permission required for BMS to remove cache files."
         },
-		{
+        {
             "name" : "ohos.permission.USE_BLUETOOTH",
             "said" : "4005",
             "description" : "Permission required for telephony to use bluetooth."
