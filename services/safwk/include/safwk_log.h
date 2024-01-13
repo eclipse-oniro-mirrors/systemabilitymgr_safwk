@@ -19,11 +19,11 @@
 #include "hilog/log.h"
 
 namespace OHOS {
-static constexpr OHOS::HiviewDFX::HiLogLabel SAFWK_LABEL = {
-    LOG_CORE,
-    0xD001800,
-    "SAFWK"
-};
+#undef LOG_DOMAIN
+#define LOG_DOMAIN 0xD001800
+
+#undef LOG_TAG
+#define LOG_TAG "SAFWK"
 
 #ifdef HILOGF
 #undef HILOGF
@@ -45,14 +45,16 @@ static constexpr OHOS::HiviewDFX::HiLogLabel SAFWK_LABEL = {
 #undef HILOGD
 #endif
 
-#define SAFWK_LOG(level, TAG, fmt, ...) \
-    HiviewDFX::HiLog::level(SAFWK_LABEL, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
-
-#define HILOGF(TAG, fmt, ...) SAFWK_LOG(Fatal, TAG, fmt, ##__VA_ARGS__)
-#define HILOGE(TAG, fmt, ...) SAFWK_LOG(Error, TAG, fmt, ##__VA_ARGS__)
-#define HILOGW(TAG, fmt, ...) SAFWK_LOG(Warn,  TAG, fmt, ##__VA_ARGS__)
-#define HILOGI(TAG, fmt, ...) SAFWK_LOG(Info,  TAG, fmt, ##__VA_ARGS__)
-#define HILOGD(TAG, fmt, ...) SAFWK_LOG(Debug, TAG, fmt, ##__VA_ARGS__)
+#define HILOGF(TAG, fmt, ...) \
+    HILOG_FATAL(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+#define HILOGE(TAG, fmt, ...) \
+    HILOG_ERROR(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+#define HILOGW(TAG, fmt, ...) \
+    HILOG_WARN(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+#define HILOGI(TAG, fmt, ...) \
+    HILOG_INFO(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+#define HILOGD(TAG, fmt, ...) \
+    HILOG_DEBUG(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
 }
 
 #endif
