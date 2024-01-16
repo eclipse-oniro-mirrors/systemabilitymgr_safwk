@@ -31,11 +31,6 @@
             "description" : "Permission required for telephony to access AbillityManagerService."
         },
         {
-            "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
-            "said" : "180",
-            "description" : "Permission required for AMS to get the information from BMS."
-        },
-        {
             "name" : "ohos.permission.READ_DFX_SYSEVENT",
             "said" : "3304",
             "description" : "Permission required for battery_stats to add hisysevent listener."
@@ -169,6 +164,16 @@
             "name" : "ohos.permission.CONNECTIVITY_INTERNAL",
             "said" : "1151",
             "description" : "Permission required for connectivity to netconnectmgr."
+        },
+        {
+            "name" : "ohos.permission.GET_RUNNING_INFO",
+            "said" : "180",
+            "description" : "Permission required for BMS to get running info."
+        },
+        {
+            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS",
+            "said" : "180",
+            "description" : "Permission required for foundation to interact across local accounts."
         }
     ],
     "restart" : [
