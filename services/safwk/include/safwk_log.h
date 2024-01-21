@@ -46,15 +46,15 @@ namespace OHOS {
 #endif
 
 #define HILOGF(TAG, fmt, ...) \
-    HILOG_FATAL(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+    HILOG_FATAL(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
 #define HILOGE(TAG, fmt, ...) \
-    HILOG_ERROR(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+    HILOG_ERROR(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
 #define HILOGW(TAG, fmt, ...) \
-    HILOG_WARN(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+    HILOG_WARN(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
 #define HILOGI(TAG, fmt, ...) \
-    HILOG_INFO(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+    HILOG_INFO(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
 #define HILOGD(TAG, fmt, ...) \
-    HILOG_DEBUG(LOG_CORE, "%{public}s::%{public}s " fmt, TAG.c_str(), __FUNCTION__, ##__VA_ARGS__)
+    HILOG_DEBUG(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
 }
 
 #endif

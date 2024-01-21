@@ -78,7 +78,7 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
         HILOGE(TAG, "systemAbility is nullptr");
         return false;
     }
-    HILOGD(TAG, "[PerformanceTest] SAFWK Publish systemAbilityId:%{public}d", saId_);
+    HILOGD(TAG, "[PerformanceTest]Publish SA:%{public}d", saId_);
     // Avoid automatic destruction of system ability caused by failure of publishing ability
     publishObj_ = systemAbility;
     int64_t begin = GetTickCount();
@@ -91,7 +91,7 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
     ISystemAbilityManager::SAExtraProp saExtra(GetDistributed(), GetDumpLevel(), capability_, permission_);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
-    HILOGI(TAG, "[PerformanceTest] SAFWK Publish SA:%{public}d result : %{public}d, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]Publish SA:%{public}d result:%{public}d, spend:%{public}" PRId64 " ms",
         saId_, result, (GetTickCount() - begin));
     if (result == ERR_OK) {
         abilityState_ = SystemAbilityState::ACTIVE;
@@ -167,7 +167,7 @@ void SystemAbility::Start()
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d", saId_);
+    HILOGD(TAG, "[PerformanceTest]OnStart SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
     nlohmann::json startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
@@ -177,7 +177,7 @@ void SystemAbility::Start()
     OnStart(onDemandStartReason);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
-    HILOGI(TAG, "[PerformanceTest] SAFWK OnStart systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
 }
 
@@ -187,18 +187,18 @@ void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::ACTIVE) {
-            HILOGI(TAG, "cannot idle systemAbilityId:%{public}d", saId_);
+            HILOGI(TAG, "cannot idle SA:%{public}d", saId_);
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest] SAFWK Idle systemAbilityId:%{public}d", saId_);
+    HILOGD(TAG, "[PerformanceTest]Idle SA::%{public}d", saId_);
     int64_t begin = GetTickCount();
     delayTime = OnIdle(idleReason);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     if (delayTime == 0) {
         abilityState_ = SystemAbilityState::IDLE;
     }
-    HILOGI(TAG, "[PerformanceTest] SAFWK Idle systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]Idle SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
 }
 
@@ -207,16 +207,16 @@ void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::IDLE) {
-            HILOGI(TAG, "cannot active systemAbilityId:%{public}d", saId_);
+            HILOGI(TAG, "cannot active SA:%{public}d", saId_);
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest] SAFWK Active systemAbilityId:%{public}d", saId_);
+    HILOGD(TAG, "[PerformanceTest]Active SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     OnActive(activeReason);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::ACTIVE;
-    HILOGI(TAG, "[PerformanceTest] SAFWK Active systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]Active SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
 }
 
@@ -229,7 +229,7 @@ void SystemAbility::Stop()
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d", saId_);
+    HILOGD(TAG, "[PerformanceTest]OnStop SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
     SystemAbilityOnDemandReason onDemandStopReason =
@@ -238,7 +238,7 @@ void SystemAbility::Stop()
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
-    HILOGI(TAG, "[PerformanceTest] SAFWK OnStop systemAbilityId:%{public}d finished, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]OnStop SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
