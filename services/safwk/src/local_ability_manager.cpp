@@ -84,7 +84,7 @@ void LocalAbilityManager::SetUpdateList(const std::string& updateList)
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
     startBegin_ = GetTickCount();
-    HILOGI(TAG, "DoStartSAProcess saId : %{public}d", saId);
+    HILOGI(TAG, "SA:%{public}d", saId);
     string realProfilePath = "";
     if (!CheckAndGetProfilePath(profilePath, realProfilePath)) {
         HILOGE(TAG, "DoStartSAProcess invalid path");
@@ -171,7 +171,7 @@ bool LocalAbilityManager::CheckSystemAbilityManagerReady()
 
 bool LocalAbilityManager::InitSystemAbilityProfiles(const std::string& profilePath, int32_t saId)
 {
-    HILOGD(TAG, "[PerformanceTest] SAFWK parse system ability profiles!");
+    HILOGD(TAG, "[PerformanceTest]parse sa profiles!");
     int64_t begin = GetTickCount();
     bool ret = profileParser_->ParseSaProfiles(profilePath);
     if (!ret) {
@@ -182,7 +182,7 @@ bool LocalAbilityManager::InitSystemAbilityProfiles(const std::string& profilePa
     procName_ = profileParser_->GetProcessName();
     auto saInfos = profileParser_->GetAllSaProfiles();
     std::string process = Str16ToStr8(procName_);
-    HILOGI(TAG, "[PerformanceTest] SAFWK parse process:%{public}s system ability profiles finished, spend:%{public}"
+    HILOGI(TAG, "[PerformanceTest]parse process:%{public}s profiles finished, spend:%{public}"
         PRId64 " ms", process.c_str(), (GetTickCount() - begin));
     std::string path = PREFIX + process + SUFFIX;
     bool isExist = profileParser_->CheckPathExist(path);
@@ -213,7 +213,7 @@ void LocalAbilityManager::CheckTrustSa(const std::string& path, const std::strin
         // 2.check to-load sa in the allowed sa set, and if to-load sa not in the allowed, will remove and not load it
         for (const auto& saInfo : saInfos) {
             if (saSets.find(saInfo.saId) == saSets.end()) {
-                HILOGW(TAG, "sa : %{public}d not allow to load in %{public}s", saInfo.saId, process.c_str());
+                HILOGW(TAG, "SA:%{public}d not allow to load in %{public}s", saInfo.saId, process.c_str());
                 profileParser_->RemoveSaProfile(saInfo.saId);
             }
         }
@@ -241,10 +241,10 @@ bool LocalAbilityManager::AddAbility(SystemAbility* ability)
     std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
     auto iter = abilityMap_.find(saId);
     if (iter != abilityMap_.end()) {
-        HILOGW(TAG, "try to add existed ability:%{public}d!", saId);
+        HILOGW(TAG, "try to add existed SA:%{public}d!", saId);
         return false;
     }
-    HILOGI(TAG, "set profile attributes for SA:%{public}d", saId);
+    HILOGI(TAG, "set profile attr for SA:%{public}d", saId);
     ability->SetLibPath(saProfile.libPath);
     ability->SetRunOnCreate(saProfile.runOnCreate);
     ability->SetDependSa(saProfile.dependSa);
@@ -293,7 +293,7 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
             listenerSaIdList.emplace_back(listenerSaId);
         }
         listenerSaIdListSize = listenerSaIdList.size();
-        HILOGI(TAG, "AddSystemAbilityListener SA:%{public}d, size:%{public}zu", systemAbilityId,
+        HILOGI(TAG, "SA:%{public}d, size:%{public}zu", systemAbilityId,
             listenerSaIdList.size());
     }
     if (listenerSaIdListSize > 1) {
@@ -307,7 +307,7 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
 
     int32_t ret = samgrProxy->SubscribeSystemAbility(systemAbilityId, GetSystemAbilityStatusChange());
     if (ret) {
-        HILOGE(TAG, "failed to subscribe sa:%{public}d, process name:%{public}s", systemAbilityId,
+        HILOGE(TAG, "failed to subscribe SA:%{public}d, process name:%{public}s", systemAbilityId,
             Str16ToStr8(procName_).c_str());
         return false;
     }
@@ -335,7 +335,7 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
         if (iter != listenerSaIdList.end()) {
             listenerSaIdList.erase(iter);
         }
-        HILOGI(TAG, "RemoveSystemAbilityListener SA:%{public}d, size:%{public}zu", systemAbilityId,
+        HILOGI(TAG, "SA:%{public}d, size:%{public}zu", systemAbilityId,
             listenerSaIdList.size());
         if (!listenerSaIdList.empty()) {
             return true;
@@ -452,10 +452,10 @@ bool LocalAbilityManager::GetRunningStatus(int32_t systemAbilityId)
 void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
 {
     pthread_setname_np(pthread_self(), ONDEMAND_WORKER.c_str());
-    HILOGD(TAG, "[PerformanceTest] SAFWK ondemand LoadSaLib systemAbilityId:%{public}d library", systemAbilityId);
+    HILOGD(TAG, "[PerformanceTest]ondemand LoadSaLib SA:%{public}d library", systemAbilityId);
     int64_t begin = GetTickCount();
     bool isExist = profileParser_->LoadSaLib(systemAbilityId);
-    HILOGI(TAG, "[PerformanceTest] SAFWK ondemand LoadSaLib systemAbilityId:%{public}d, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]ondemand LoadSaLib SA:%{public}d, spend:%{public}" PRId64 " ms",
         systemAbilityId, (GetTickCount() - begin));
     if (isExist) {
         int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
@@ -477,7 +477,7 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
         }
 
         if (!OnStartAbility(systemAbilityId)) {
-            HILOGE(TAG, "failed to start ability:%{public}d", systemAbilityId);
+            HILOGE(TAG, "failed to start SA:%{public}d", systemAbilityId);
         }
     } else {
         HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
@@ -486,7 +486,7 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
 
 bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::string& eventStr)
 {
-    HILOGI(TAG, "[PerformanceTest] SAFWK received start systemAbilityId:%{public}d request", systemAbilityId);
+    HILOGI(TAG, "[PerformanceTest]received start SA:%{public}d request", systemAbilityId);
     nlohmann::json startReason = ParseUtil::StringToJsonObj(eventStr);
     SetStartReason(systemAbilityId, startReason);
     auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
@@ -499,13 +499,13 @@ void LocalAbilityManager::StopOndemandSystemAbility(int32_t systemAbilityId)
 {
     pthread_setname_np(pthread_self(), ONDEMAND_WORKER.c_str());
     if (!OnStopAbility(systemAbilityId)) {
-        HILOGE(TAG, "failed to stop ability:%{public}d", systemAbilityId);
+        HILOGE(TAG, "failed to stop SA:%{public}d", systemAbilityId);
     }
 }
 
 bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string& eventStr)
 {
-    HILOGI(TAG, "[PerformanceTest] SAFWK received stop systemAbilityId:%{public}d request", systemAbilityId);
+    HILOGI(TAG, "[PerformanceTest]received stop SA:%{public}d request", systemAbilityId);
     nlohmann::json stopReason = ParseUtil::StringToJsonObj(eventStr);
     SetStopReason(systemAbilityId, stopReason);
     auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
@@ -561,12 +561,12 @@ SystemAbilityOnDemandReason LocalAbilityManager::JsonToOnDemandReason(const nloh
 bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
 {
     int64_t begin = GetTickCount();
-    HILOGD(TAG, "[PerformanceTest] SAFWK LoadSaLib systemAbilityId:%{public}d", saId);
+    HILOGD(TAG, "[PerformanceTest]LoadSaLib SA:%{public}d", saId);
     bool result = profileParser_->LoadSaLib(saId);
-    HILOGI(TAG, "[PerformanceTest] SAFWK LoadSaLib systemAbilityId:%{public}d finished, spend:%{public}"
+    HILOGI(TAG, "[PerformanceTest]LoadSaLib SA:%{public}d finished, spend:%{public}"
         PRId64 " ms", saId, (GetTickCount() - begin));
     if (!result) {
-        HILOGW(TAG, "[PerformanceTest] LoadSaLib failed, Said:{public}%d", saId);
+        HILOGW(TAG, "[PerformanceTest]LoadSaLib failed, SA:{public}%d", saId);
         return false;
     }
     SaProfile saProfile;
@@ -611,7 +611,7 @@ vector<int32_t> LocalAbilityManager::CheckDependencyStatus(const vector<int32_t>
                 checkSaStatusResult.emplace_back(saId);
             }
         } else {
-            HILOGW(TAG, "dependency's id:%{public}d is invalid", saId);
+            HILOGW(TAG, "dependency's SA:%{public}d is invalid", saId);
         }
     }
     return checkSaStatusResult;
@@ -620,7 +620,7 @@ vector<int32_t> LocalAbilityManager::CheckDependencyStatus(const vector<int32_t>
 void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
 {
     if (ability != nullptr) {
-        HILOGD(TAG, "StartSystemAbility is called for %{public}d", ability->GetSystemAbilitId());
+        HILOGD(TAG, "StartSystemAbility is called for SA:%{public}d", ability->GetSystemAbilitId());
         if (ability->GetDependSa().empty()) {
             ability->Start();
         } else {
@@ -645,7 +645,7 @@ void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
                 }
             }
         }
-        HILOGI(TAG, "%{public}s SA : %{public}d init finished, %{public}" PRId64 " ms",
+        HILOGI(TAG, "%{public}s SA:%{public}d init finished, %{public}" PRId64 " ms",
             Str16ToStr8(procName_).c_str(), ability->GetSystemAbilitId(), (GetTickCount() - startBegin_));
     }
 
@@ -667,7 +667,7 @@ void LocalAbilityManager::RegisterOnDemandSystemAbility(int32_t saId)
     auto& saProfileList = profileParser_->GetAllSaProfiles();
     for (const auto& saProfile : saProfileList) {
         if (NeedRegisterOnDemand(saProfile, saId)) {
-            HILOGD(TAG, "register ondemand ability:%{public}d to samgr", saProfile.saId);
+            HILOGD(TAG, "register ondemand SA:%{public}d to samgr", saProfile.saId);
             int32_t ret = samgrProxy->AddOnDemandSystemAbilityInfo(saProfile.saId, procName_);
             if (ret != ERR_OK) {
                 HILOGI(TAG, "failed to add ability info for on-demand SA:%{public}d", saProfile.saId);
@@ -745,9 +745,9 @@ bool LocalAbilityManager::InitializeRunOnCreateSaProfiles(uint32_t bootPhase)
         return false;
     }
     int64_t begin = GetTickCount();
-    HILOGD(TAG, "[PerformanceTest] SAFWK load phase %{public}d libraries", bootPhase);
+    HILOGD(TAG, "[PerformanceTest]load phase %{public}d libraries", bootPhase);
     profileParser_->OpenSo(bootPhase);
-    HILOGI(TAG, "[PerformanceTest] SAFWK load phase %{public}d libraries finished, spend:%{public}" PRId64 " ms",
+    HILOGI(TAG, "[PerformanceTest]load phase %{public}d finished, spend:%{public}" PRId64 " ms",
         bootPhase, (GetTickCount() - begin));
     auto& saProfileList = profileParser_->GetAllSaProfiles();
     if (saProfileList.empty()) {
@@ -862,10 +862,10 @@ void LocalAbilityManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t s
 
 bool LocalAbilityManager::SendStrategyToSA(int32_t type, int32_t systemAbilityId, int32_t level, std::string& action)
 {
-    HILOGD(TAG, "SendStrategyToSA: %{public}d", systemAbilityId);
+    HILOGD(TAG, "SendStrategyTo SA:%{public}d", systemAbilityId);
     auto ability = GetAbility(systemAbilityId);
     if (ability == nullptr) {
-        HILOGW(TAG, "failed to get systemAbility %{public}d", systemAbilityId);
+        HILOGW(TAG, "failed to get SA:%{public}d", systemAbilityId);
         return false;
     }
     ability->OnDeviceLevelChanged(type, level, action);
