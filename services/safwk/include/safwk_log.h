@@ -20,7 +20,7 @@
 
 namespace OHOS {
 #undef LOG_DOMAIN
-#define LOG_DOMAIN 0xD001800
+#define LOG_DOMAIN 0xD001810
 
 #undef LOG_TAG
 #define LOG_TAG "SAFWK"
