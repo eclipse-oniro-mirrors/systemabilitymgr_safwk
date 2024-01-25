@@ -144,11 +144,11 @@ static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
         uintptr_t argvSize = end - start;
 
         if (memset_s(argv[0], argvSize, 0, argvSize) != EOK) {
-            HILOGW(TAG, "failed to clear argv:%s", strerror(errno));
+            HILOGW(TAG, "failed to clear argv:%{public}s", strerror(errno));
             return;
         }
         if (strcpy_s(argv[0], argvSize, name.c_str()) != EOK) {
-            HILOGW(TAG, "failed to set process name:%s", strerror(errno));
+            HILOGW(TAG, "failed to set process name:%{public}s", strerror(errno));
             return;
         }
         HILOGI(TAG, "Set process name to %{public}s", argv[0]);
@@ -171,7 +171,7 @@ static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
 
 int main(int argc, char *argv[])
 {
-    HILOGI(TAG, "[PerformanceTest] SAFWK main entry process starting!");
+    HILOGD(TAG, "[PerformanceTest] SAFWK main entry process starting!");
     // find update list
     bool checkOnDemand = true;
     string updateList;
