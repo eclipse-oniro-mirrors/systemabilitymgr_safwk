@@ -17,6 +17,7 @@
 
 #include <cstdint>
 #include <utility>
+#include <cinttypes>
 
 #include "errors.h"
 #include "hilog/log_cpp.h"
@@ -26,6 +27,7 @@
 #include "message_parcel.h"
 #include "parse_util.h"
 #include "safwk_log.h"
+#include "datetime_ex.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::HiviewDFX;
@@ -52,7 +54,7 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
     MessageParcel& data, MessageParcel& reply, MessageOption& option)
 {
-    HILOGI(TAG, "code:%{public}u, flags:%{public}d", code, option.GetFlags());
+    HILOGD(TAG, "code:%{public}u, flags:%{public}d", code, option.GetFlags());
     if (!EnforceInterceToken(data)) {
         HILOGW(TAG, "check interface token failed!");
         return ERR_PERMISSION_DENIED;
@@ -79,13 +81,15 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
+    int64_t begin = GetTickCount();
     std::string eventStr = data.ReadString();
     if (eventStr.empty()) {
         HILOGW(TAG, "LocalAbilityManagerStub::StartAbilityInner read eventStr failed!");
         return ERR_NULL_OBJECT;
     }
     bool result = StartAbility(saId, eventStr);
-    HILOGI(TAG, "%{public}s to start ability", result ? "success" : "failed");
+    HILOGI(TAG, "%{public}s to start SA:%{public}d, eventStrLen:%{public}zu, spend:%{public}" PRId64 " ms",
+        result ? "success" : "failed", saId, eventStr.length(), (GetTickCount() - begin));
     return ERR_NONE;
 }
 
@@ -100,13 +104,15 @@ int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
+    int64_t begin = GetTickCount();
     std::string eventStr = data.ReadString();
     if (eventStr.empty()) {
-        HILOGW(TAG, "LocalAbilityManagerStub::StopAbilityInner read eventStr failed!");
+        HILOGW(TAG, "StopAbilityInner read eventStr failed!");
         return ERR_NULL_OBJECT;
     }
     bool result = StopAbility(saId, eventStr);
-    HILOGI(TAG, "%{public}s to stop ability", result ? "success" : "failed");
+    HILOGI(TAG, "%{public}s to stop SA:%{public}d, eventStrLen:%{public}zu, spend:%{public}" PRId64 " ms",
+        result ? "success" : "failed", saId, eventStr.length(), (GetTickCount() - begin));
     return ERR_NONE;
 }
 
@@ -121,12 +127,15 @@ int32_t LocalAbilityManagerStub::ActiveAbilityInner(MessageParcel& data, Message
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
+    int64_t begin = GetTickCount();
     nlohmann::json activeReason = ParseUtil::StringToJsonObj(data.ReadString());
     bool result = ActiveAbility(saId, activeReason);
     if (!reply.WriteBool(result)) {
         HILOGW(TAG, "ActiveAbilityInner Write result failed!");
         return ERR_NULL_OBJECT;
     }
+    HILOGI(TAG, "%{public}s to Active SA:%{public}d, spend:%{public}" PRId64 " ms",
+        result ? "success" : "failed", saId, (GetTickCount() - begin));
     return ERR_NONE;
 }
 
@@ -141,6 +150,7 @@ int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
+    int64_t begin = GetTickCount();
     nlohmann::json idleReason = ParseUtil::StringToJsonObj(data.ReadString());
     int32_t delayTime = 0;
     bool result = IdleAbility(saId, idleReason, delayTime);
@@ -152,6 +162,8 @@ int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "ActiveAbilityInner Write delayTime failed!");
         return ERR_NULL_OBJECT;
     }
+    HILOGI(TAG, "%{public}s to Idle SA:%{public}d, delayTime:%{public}d spend:%{public}" PRId64 " ms",
+        result ? "success" : "failed", saId, delayTime, (GetTickCount() - begin));
     return ERR_NONE;
 }
 

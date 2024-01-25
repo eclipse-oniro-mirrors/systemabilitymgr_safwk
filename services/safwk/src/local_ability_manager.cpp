@@ -84,7 +84,7 @@ void LocalAbilityManager::SetUpdateList(const std::string& updateList)
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
     startBegin_ = GetTickCount();
-    HILOGI(TAG, "SA:%{public}d", saId);
+    HILOGD(TAG, "SA:%{public}d", saId);
     string realProfilePath = "";
     if (!CheckAndGetProfilePath(profilePath, realProfilePath)) {
         HILOGE(TAG, "DoStartSAProcess invalid path");
@@ -156,7 +156,7 @@ bool LocalAbilityManager::CheckSystemAbilityManagerReady()
     constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_SAMGR_ONE_TIME).count();
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     while (samgrProxy == nullptr) {
-        HILOGI(TAG, "waiting for samgr...");
+        HILOGI(TAG, "%{public}s waiting for samgr...", Str16ToStr8(procName_).c_str());
         if (timeout > 0) {
             usleep(duration);
             samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -293,7 +293,7 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
             listenerSaIdList.emplace_back(listenerSaId);
         }
         listenerSaIdListSize = listenerSaIdList.size();
-        HILOGI(TAG, "SA:%{public}d, size:%{public}zu", systemAbilityId,
+        HILOGI(TAG, "SA:%{public}d, listenerSA:%{public}d, size:%{public}zu", systemAbilityId, listenerSaId,
             listenerSaIdList.size());
     }
     if (listenerSaIdListSize > 1) {
@@ -401,8 +401,8 @@ void LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
     for (auto listenerSaId : listenerSaIdList) {
         NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, code);
     }
-    HILOGI(TAG, "SA:%{public}d, code:%{public}d spend:%{public}" PRId64 " ms", systemAbilityId, code,
-        GetTickCount() - begin);
+    HILOGI(TAG, "SA:%{public}d, listenerSASize:%{public}zu, code:%{public}d spend:%{public}" PRId64 " ms",
+        systemAbilityId, listenerSaIdList.size(), code, GetTickCount() - begin);
 }
 
 bool LocalAbilityManager::OnStartAbility(int32_t systemAbilityId)
@@ -712,7 +712,8 @@ void LocalAbilityManager::WaitForTasks()
     }
     startTaskNum_ = 0;
     int64_t end = GetTickCount();
-    HILOGI(TAG, "start tasks finished and spend %{public}" PRId64 " ms", (end - begin));
+    HILOGI(TAG, "start tasks process:%{public}s finished and spend %{public}" PRId64 " ms",
+        Str16ToStr8(procName_).c_str(), (end - begin));
 }
 
 void LocalAbilityManager::FindAndStartPhaseTasks(int32_t saId)
@@ -747,8 +748,8 @@ bool LocalAbilityManager::InitializeRunOnCreateSaProfiles(uint32_t bootPhase)
     int64_t begin = GetTickCount();
     HILOGD(TAG, "[PerformanceTest]load phase %{public}d libraries", bootPhase);
     profileParser_->OpenSo(bootPhase);
-    HILOGI(TAG, "[PerformanceTest]load phase %{public}d finished, spend:%{public}" PRId64 " ms",
-        bootPhase, (GetTickCount() - begin));
+    HILOGI(TAG, "[PerformanceTest]load process:%{public}s phase %{public}d finished, spend:%{public}" PRId64 " ms",
+        Str16ToStr8(procName_).c_str(), bootPhase, (GetTickCount() - begin));
     auto& saProfileList = profileParser_->GetAllSaProfiles();
     if (saProfileList.empty()) {
         HILOGW(TAG, "sa profile is empty");
@@ -776,7 +777,8 @@ bool LocalAbilityManager::Run(int32_t saId)
     }
     HILOGD(TAG, "success to add process name:%{public}s", Str16ToStr8(procName_).c_str());
     uint32_t concurrentThreads = std::thread::hardware_concurrency();
-    HILOGI(TAG, "concurrentThreads is %{public}d", concurrentThreads);
+    HILOGI(TAG, "concurrentThreads is %{public}d, process:%{public}s, SA:%{public}d",
+        concurrentThreads, Str16ToStr8(procName_).c_str(), saId);
     initPool_->Start(concurrentThreads);
     initPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
 
