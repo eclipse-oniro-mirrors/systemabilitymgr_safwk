@@ -124,9 +124,10 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
         HILOGE(TAG, "failed to get samgrProxy");
         return;
     }
-
+    int64_t begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(systemAbilityId);
-    HILOGI(TAG, "%{public}s to remove ability", (ret == ERR_OK) ? "success" : "failed");
+    HILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
+        (ret == ERR_OK) ? "success" : "failed", systemAbilityId, (GetTickCount() - begin));
 }
 
 void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason)
@@ -246,8 +247,10 @@ void SystemAbility::Stop()
         return;
     }
 
+    begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(saId_);
-    HILOGI(TAG, "%{public}s to remove ability", (ret == ERR_OK) ? "success" : "failed");
+    HILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
+        (ret == ERR_OK) ? "success" : "failed", saId_, (GetTickCount() - begin));
 }
 
 void SystemAbility::SADump()
