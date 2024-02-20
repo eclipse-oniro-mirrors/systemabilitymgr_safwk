@@ -91,7 +91,7 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
     ISystemAbilityManager::SAExtraProp saExtra(GetDistributed(), GetDumpLevel(), capability_, permission_);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
-    HILOGI(TAG, "[PerformanceTest]Publish SA:%{public}d result:%{public}d, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "[PerformanceTest]Publish SA:%{public}d result:%{public}d, spend:%{public}" PRId64 " ms",
         saId_, result, (GetTickCount() - begin));
     if (result == ERR_OK) {
         abilityState_ = SystemAbilityState::ACTIVE;
@@ -126,7 +126,7 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
     }
     int64_t begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(systemAbilityId);
-    HILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
         (ret == ERR_OK) ? "success" : "failed", systemAbilityId, (GetTickCount() - begin));
 }
 
@@ -178,7 +178,7 @@ void SystemAbility::Start()
     OnStart(onDemandStartReason);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
-    HILOGI(TAG, "[PerformanceTest]OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "[PerformanceTest]OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
 }
 
@@ -239,7 +239,7 @@ void SystemAbility::Stop()
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
-    HILOGI(TAG, "[PerformanceTest]OnStop SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "[PerformanceTest]OnStop SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, (GetTickCount() - begin));
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
@@ -249,7 +249,7 @@ void SystemAbility::Stop()
 
     begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(saId_);
-    HILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
         (ret == ERR_OK) ? "success" : "failed", saId_, (GetTickCount() - begin));
 }
 
