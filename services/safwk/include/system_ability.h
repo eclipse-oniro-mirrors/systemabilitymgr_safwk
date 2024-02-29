@@ -38,7 +38,7 @@ return #className; \
 
 #define DECLEAR_BASE_SYSTEM_ABILITY(className) \
 public: \
-virtual std::string GetClassName() = 0;
+virtual std::string GetClassName() = 0
 
 #define DECLARE_SYSTEM_ABILITY(className) \
 public: \
@@ -48,18 +48,7 @@ return #className; \
 
 #define DECLARE_BASE_SYSTEM_ABILITY(className) \
 public: \
-virtual std::string GetClassName() = 0;
-
-
-#define DECLARE_SYSTEM_ABILITY(className) \
-public: \
-virtual std::string GetClassName() override { \
-return #className; \
-}
-
-#define DECLARE_BASE_SYSTEM_ABILITY(className) \
-public: \
-virtual std::string GetClassName() = 0;
+virtual std::string GetClassName() = 0
 
 enum class SystemAbilityState {
     NOT_LOADED = 0,

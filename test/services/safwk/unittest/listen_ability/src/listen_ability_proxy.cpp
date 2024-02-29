@@ -22,7 +22,8 @@
 namespace OHOS {
 int32_t ListenAbilityProxy::AddVolume(int32_t volume)
 {
-    MessageParcel data, reply;
+    MessageParcel data;
+    MessageParcel reply;
     MessageOption option;
     data.WriteInterfaceToken(GetDescriptor());
     data.WriteInt32(volume);
