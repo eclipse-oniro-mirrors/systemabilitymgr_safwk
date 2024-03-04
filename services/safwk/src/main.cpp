@@ -151,7 +151,7 @@ static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
             HILOGW(TAG, "failed to set process name:%{public}s", strerror(errno));
             return;
         }
-        HILOGI(TAG, "Set process name to %{public}s", argv[0]);
+        KHILOGI(TAG, "Set process name to %{public}s", argv[0]);
     };
     // Load default system abilities related shared libraries from specific format profile
     // when this process starts.

@@ -19,6 +19,13 @@
 #include "hilog/log.h"
 
 namespace OHOS {
+
+constexpr OHOS::HiviewDFX::HiLogLabel SAFWK_LABEL = {
+    LOG_KMSG,
+    0xD001810,
+    "SAFWK"
+};
+
 #undef LOG_DOMAIN
 #define LOG_DOMAIN 0xD001810
 
@@ -44,6 +51,16 @@ namespace OHOS {
 #ifdef HILOGD
 #undef HILOGD
 #endif
+
+#ifdef KHILOGI
+#undef KHILOGI
+#endif
+
+#define KHILOGI(TAG, fmt, ...) \
+    do { \
+        (void)OHOS::HiviewDFX::HiLog::Info(SAFWK_LABEL, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__); \
+        HILOG_INFO(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__); \
+    } while (0)
 
 #define HILOGF(TAG, fmt, ...) \
     HILOG_FATAL(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
