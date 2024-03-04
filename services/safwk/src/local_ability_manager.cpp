@@ -617,6 +617,34 @@ vector<int32_t> LocalAbilityManager::CheckDependencyStatus(const vector<int32_t>
     return checkSaStatusResult;
 }
 
+void LocalAbilityManager::StartDependSaTask(SystemAbility* ability)
+{
+    if (ability == nullptr) {
+        HILOGE(TAG, "ability is null");
+        return;
+    }
+    int64_t start = GetTickCount();
+    int64_t dependTimeout = ability->GetDependTimeout();
+    while (!CheckDependencyStatus(ability->GetDependSa()).empty()) {
+        int64_t end = GetTickCount();
+        int64_t duration = ((end >= start) ? (end - start) : (INT64_MAX - end + start));
+        if (duration < dependTimeout) {
+            usleep(CHECK_DEPENDENT_SA_PERIOD);
+        } else {
+            break;
+        }
+    }
+    vector<int32_t> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
+    if (unpreparedDeps.empty()) {
+        ability->Start();
+    } else {
+        for (const auto& unpreparedDep : unpreparedDeps) {
+            HILOGI(TAG, "%{public}d's dependency:%{public}d not started in %{public}d ms",
+                ability->GetSystemAbilitId(), unpreparedDep, ability->GetDependTimeout());
+        }
+    }
+}
+
 void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
 {
     if (ability != nullptr) {
@@ -624,26 +652,7 @@ void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
         if (ability->GetDependSa().empty()) {
             ability->Start();
         } else {
-            int64_t start = GetTickCount();
-            int64_t dependTimeout = ability->GetDependTimeout();
-            while (!CheckDependencyStatus(ability->GetDependSa()).empty()) {
-                int64_t end = GetTickCount();
-                int64_t duration = ((end >= start) ? (end - start) : (INT64_MAX - end + start));
-                if (duration < dependTimeout) {
-                    usleep(CHECK_DEPENDENT_SA_PERIOD);
-                } else {
-                    break;
-                }
-            }
-            vector<int32_t> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
-            if (unpreparedDeps.empty()) {
-                ability->Start();
-            } else {
-                for (const auto& unpreparedDep : unpreparedDeps) {
-                    HILOGI(TAG, "%{public}d's dependency:%{public}d not started in %{public}d ms",
-                        ability->GetSystemAbilitId(), unpreparedDep, ability->GetDependTimeout());
-                }
-            }
+            StartDependSaTask(ability);
         }
         HILOGI(TAG, "%{public}s SA:%{public}d init finished, %{public}" PRId64 " ms",
             Str16ToStr8(procName_).c_str(), ability->GetSystemAbilitId(), (GetTickCount() - startBegin_));

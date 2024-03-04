@@ -82,6 +82,7 @@ private:
     void NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId,
         const std::string& deviceId, int32_t code);
     void WaitForTasks();
+    void StartDependSaTask(SystemAbility* ability);
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {
     public:
         void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
