@@ -265,6 +265,11 @@
             "description" : "Create auto_start_up_service directory for auto_startup_service to save data file at /data/service/el1/public/database/auto_startup_service"
         },
         {
+            "name" : "mkdir app_config_data",
+            "said" : "501",
+            "description" : "Create app_config_data directory for app_manager_service to save data file at /data/service/el1/public/database/app_config_data"
+        },
+        {
             "name" : "mkdir app_exit_reason",
             "said" : "180",
             "description" : "Create app_exit_reason directory for ability_manager_service to save data file at /data/service/el1/public/database/app_exit_reason"
