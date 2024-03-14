@@ -85,15 +85,16 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
         if (dotPos == string::npos) {
             return;
         }
+        string profileName = fileName.substr(0, dotPos);
+        setProcessName(profileName);
         if (dotPos > MAX_LEN_PID_NAME) {
             dotPos = MAX_LEN_PID_NAME;
         }
-        string profileName = fileName.substr(0, dotPos);
+        profileName = fileName.substr(0, dotPos);
         int32_t ret = prctl(PR_SET_NAME, profileName.c_str());
         if (ret != 0) {
             HILOGI(TAG, "call the system API prctl failed!");
         }
-        setProcessName(profileName);
         StartMemoryHook(profileName);
     }
 }
