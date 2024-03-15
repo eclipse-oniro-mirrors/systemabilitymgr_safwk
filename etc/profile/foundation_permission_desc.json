@@ -179,6 +179,21 @@
             "name" : "ohos.permission.RUNNING_STATE_OBSERVER",
             "said" : "180",
             "description" : "Permission required for AMS to register application state observer."
+        },
+        {
+            "name" : "ohos.permission.GET_INSTALLED_BUNDLE_LIST",
+            "said" : "6105",
+            "description" : "Permission required for ERMS to query installed bundle list."
+        },
+        {
+            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS_EXTENSION",
+            "said" : "6105",
+            "description" : "Permission required for ERMS to register account observer."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_USER_ACCOUNT_INFO",
+            "said" : "6105",
+            "description" : "Permission required for ERMS to query huawei id state."
         }
     ],
     "restart" : [
