@@ -16,11 +16,11 @@ import("//build/test.gni")
 ohos_rust_shared_library("audio_rust_ipc") {
   sources = [ "./audio_rust_sa/lib.rs" ]
 
-  deps = [
-    "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
-    "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
+  deps = [ "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust" ]
+  external_deps = [
+    "hilog:hilog_rust",
+    "ipc:ipc_rust",
   ]
-  external_deps = [ "hilog:hilog_rust" ]
 
   crate_name = "audio_rust_ipc"
   crate_type = "dylib"
@@ -33,11 +33,11 @@ ohos_rust_shared_library("audio_rust_sa") {
   sources = [ "./audio_rust_sa/audio.rs" ]
   deps = [
     ":audio_rust_ipc",
-    "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
   ]
   external_deps = [
     "hilog:hilog_rust",
+    "ipc:ipc_rust",
     "samgr:rust_samgr",
   ]
 
@@ -50,11 +50,11 @@ ohos_rust_shared_library("audio_rust_sa") {
 ohos_rust_shared_library("listen_rust_ipc") {
   sources = [ "./listen_rust_sa/lib.rs" ]
 
-  deps = [
-    "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
-    "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
+  deps = [ "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust" ]
+  external_deps = [
+    "hilog:hilog_rust",
+    "ipc:ipc_rust",
   ]
-  external_deps = [ "hilog:hilog_rust" ]
 
   crate_name = "listen_rust_ipc"
   crate_type = "dylib"
@@ -68,11 +68,11 @@ ohos_rust_shared_library("listen_rust_sa") {
   deps = [
     ":audio_rust_ipc",
     ":listen_rust_ipc",
-    "../../../../../../../communication/ipc/interfaces/innerkits/rust:ipc_rust",
     "../../../../../interfaces/innerkits/safwk:system_ability_fwk_rust",
   ]
   external_deps = [
     "hilog:hilog_rust",
+    "ipc:ipc_rust",
     "samgr:rust_samgr",
   ]
 
