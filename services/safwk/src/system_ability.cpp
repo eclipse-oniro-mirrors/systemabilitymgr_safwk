@@ -26,6 +26,7 @@
 #include "nlohmann/json.hpp"
 #include "safwk_log.h"
 #include "string_ex.h"
+#include "samgr_xcollie.h"
 
 namespace OHOS {
 namespace {
@@ -175,7 +176,12 @@ void SystemAbility::Start()
     SystemAbilityOnDemandReason onDemandStartReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(startReason);
     GetOnDemandReasonExtraData(onDemandStartReason);
-    OnStart(onDemandStartReason);
+
+    {
+        SamgrXCollie samgrXCollie("safwk::onStart_" + ToString(saId_));
+        OnStart(onDemandStartReason);
+    }
+
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
     KHILOGI(TAG, "[PerformanceTest]OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
@@ -235,7 +241,12 @@ void SystemAbility::Stop()
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
     SystemAbilityOnDemandReason onDemandStopReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
-    OnStop(onDemandStopReason);
+
+    {
+        SamgrXCollie samgrXCollie("safwk::onStop_" + ToString(saId_));
+        OnStop(onDemandStopReason);
+    }
+
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
