@@ -195,7 +195,7 @@
             "said" : "6105",
             "description" : "Permission required for ERMS to query huawei id state."
         },
-		{
+        {
             "name" : "ohos.permission.GET_NETWORK_INFO",
             "said" : "4005",
             "description" : "Permission required for telephony to get network info."
