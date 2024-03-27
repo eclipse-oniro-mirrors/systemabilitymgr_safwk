@@ -172,7 +172,7 @@ static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
 
 int main(int argc, char *argv[])
 {
-    HILOGD(TAG, "[PerformanceTest] SAFWK main entry process starting!");
+    HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
     // find update list
     bool checkOnDemand = true;
     string updateList;
