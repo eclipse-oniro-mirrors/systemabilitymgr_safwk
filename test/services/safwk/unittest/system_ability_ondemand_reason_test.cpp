@@ -103,6 +103,20 @@ HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetWant001, Tes
 }
 
 /**
+ * @tc.name: Marshalling001
+ * @tc.desc: test Marshalling with empty parcel
+ * @tc.type: FUNC
+ * @tc.require: I6Y5L8
+ */
+HWTEST_F(SystemAbilityOndemandReasonTest, Marshalling001, TestSize.Level2)
+{
+    OnDemandReasonExtraData onDemandReasonExtraData;
+    Parcel parcel;
+    bool ret = onDemandReasonExtraData.Marshalling(parcel);
+    EXPECT_TRUE(ret);
+}
+
+/**
  * @tc.name: Unmarshalling001
  * @tc.desc: test Unmarshalling with empty parcel
  * @tc.type: FUNC
