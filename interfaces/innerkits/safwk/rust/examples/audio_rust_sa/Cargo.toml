@@ -12,13 +12,12 @@
 # limitations under the License.
 
 [package]
-name = "system_ability_fwk"
+name = "audio_rust_sa"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+system_ability_fwk = { git = "https://gitee.com/openharmony/systemabilitymgr_safwk" }
+samgr = { git = "https://gitee.com/openharmony/systemabilitymgr_samgr" }
 ipc = { git = "https://gitee.com/openharmony/communication_ipc" }
 hilog_rust = { git = "https://gitee.com/openharmony/hiviewdfx_hilog.git" }
-cxx = "1.0.115"
