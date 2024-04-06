@@ -21,6 +21,7 @@
 #include "errors.h"
 #include "hitrace_meter.h"
 #include "if_system_ability_manager.h"
+#include "hisysevent_adapter.h"
 #include "iservice_registry.h"
 #include "local_ability_manager.h"
 #include "nlohmann/json.hpp"
@@ -184,8 +185,10 @@ void SystemAbility::Start()
 
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
+    int64_t duration = GetTickCount() - begin;
     KHILOGI(TAG, "[PerformanceTest]OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
-        saId_, (GetTickCount() - begin));
+        saId_, duration);
+    ReportSaLoadDuration(saId_, SA_LOAD_ON_START, duration);
 }
 
 void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
@@ -250,8 +253,11 @@ void SystemAbility::Stop()
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
+    int64_t duration = GetTickCount() - begin;
     KHILOGI(TAG, "[PerformanceTest]OnStop SA:%{public}d finished, spend:%{public}" PRId64 " ms",
-        saId_, (GetTickCount() - begin));
+        saId_, duration);
+    ReportSaUnLoadDuration(saId_, SA_UNLOAD_ON_STOP, duration);
+
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");
