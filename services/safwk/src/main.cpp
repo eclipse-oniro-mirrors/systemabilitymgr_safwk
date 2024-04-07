@@ -140,8 +140,13 @@ static bool CheckSaId(int32_t saId)
 static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
 {
     auto setProcessName = [argc, argv](const string& name) -> void {
+        char *endCh = strchr(argv[argc - 1], 0);
+        if (endCh == nullptr) {
+            HILOGW(TAG, "argv is invalid");
+            return;
+        }
         uintptr_t start = reinterpret_cast<uintptr_t>(argv[0]);
-        uintptr_t end = reinterpret_cast<uintptr_t>(strchr(argv[argc - 1], 0));
+        uintptr_t end = reinterpret_cast<uintptr_t>(endCh);
         uintptr_t argvSize = end - start;
 
         if (memset_s(argv[0], argvSize, 0, argvSize) != EOK) {
