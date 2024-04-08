@@ -188,7 +188,7 @@ protected:
      * @param systemAbilityId, Said to be deleted.
      * @return void.
      */
-    void StopAbility(int32_t systemAbilityId);
+    static void StopAbility(int32_t systemAbilityId);
 
     SystemAbility(bool runOnCreate = false);
     SystemAbility(int32_t systemAbilityId, bool runOnCreate = false);

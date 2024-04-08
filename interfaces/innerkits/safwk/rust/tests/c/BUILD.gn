@@ -11,30 +11,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/test.gni")
+import("//build/ohos.gni")
 
-config("test_tt_ability_config") {
-  visibility = [ ":*" ]
+ohos_static_library("safwk_rust_test_c") {
   include_dirs = [ "include" ]
-}
 
-ohos_shared_library("test_tt_ability") {
-  sources = [
-    "src/test_tt_ability.cpp",
-    "src/test_tt_ability_proxy.cpp",
-    "src/test_tt_ability_stub.cpp",
-  ]
-  configs = [ ":test_tt_ability_config" ]
+  sources = [ "src/safwk_rust_test.cpp" ]
 
-  deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk" ]
+  deps = [ "../../../../safwk:system_ability_fwk" ]
 
-  external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
-    "ipc:ipc_core",
-    "samgr:samgr_proxy",
-  ]
+  external_deps = [ "c_utils:utils" ]
 
-  part_name = "safwk"
   subsystem_name = "systemabilitymgr"
+  part_name = "safwk"
 }

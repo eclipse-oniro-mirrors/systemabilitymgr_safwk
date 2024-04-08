@@ -19,6 +19,18 @@
             "run-on-create": false,
             "distributed": false,
             "dump-level": 1
+        },{
+            "name": 1488,
+            "libpath": "/data/test/libaudio_rust_sa.dylib.so",
+            "run-on-create": false,
+            "distributed": false,
+            "dump-level": 1
+        },{
+            "name": 1489,
+            "libpath": "/data/test/liblisten_rust_sa.dylib.so",
+            "run-on-create": false,
+            "distributed": false,
+            "dump-level": 1
         }
     ]
 }

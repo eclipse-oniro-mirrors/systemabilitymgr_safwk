@@ -57,26 +57,20 @@
                         "header_base": [],
                         "header_files": []
                     },
-                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk_rust"
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust:system_ability_fwk_rust"
                 },
                 {
                     "header": {
                         "header_base": [],
                         "header_files": []
                     },
-                    "name": "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/rust:audio_rust_ipc"
-                },
-                {
-                    "header": {
-                        "header_base": [],
-                        "header_files": []
-                    },
-                    "name": "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/rust:audio_rust_sa"
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:audio_rust_sa"
                 }
             ],
             "test": [
                 "//foundation/systemabilitymgr/safwk/test:unittest",
-                "//foundation/systemabilitymgr/safwk/test/fuzztest/systemabilityfwk_fuzzer:fuzztest"
+                "//foundation/systemabilitymgr/safwk/test/fuzztest/systemabilityfwk_fuzzer:fuzztest",
+                "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/tests:unittest"
             ]
         }
     }

@@ -71,7 +71,6 @@ ohos_unittest("LocalAbilityManagerTest") {
   ]
 
   sources = [
-    "./c_system_ability.test.cpp",
     "./local_ability_manager_test.cpp",
     "./mock_sa_realize.cpp",
     "./system_ability_ondemand_reason_test.cpp",
@@ -82,14 +81,14 @@ ohos_unittest("LocalAbilityManagerTest") {
 
   deps = [
     ":system_ability_fwk_tdd",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:audio_rust_sa",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:listen_rust_sa",
     "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/connect_ability:test_connect_ability",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/tt_ability:test_tt_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/incomplete_ability:test_incomplete_ability",
+    "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
+    "//foundation/systemabilitymgr/safwk/test/mock/common/tt_ability:test_tt_ability",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability:listen_test",
-    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/rust:audio_rust_sa",
-    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/rust:listen_rust_sa",
     "//third_party/googletest:gtest_main",
   ]
 

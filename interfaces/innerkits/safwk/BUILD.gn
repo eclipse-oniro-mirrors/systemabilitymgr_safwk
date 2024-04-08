@@ -68,32 +68,4 @@ ohos_shared_library("system_ability_fwk") {
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"
 }
-
-ohos_rust_shared_library("system_ability_fwk_rust") {
-  sources = [
-    "rust/src/lib.rs",
-    "rust/src/sa_binding.rs",
-    "rust/src/safwk/macros.rs",
-    "rust/src/safwk/mod.rs",
-    "rust/src/safwk/r_system_ability.rs",
-  ]
-
-  deps = [
-    "//foundation/systemabilitymgr/safwk/services/safwk:system_ability_fwk_c",
-  ]
-
-  external_deps = [
-    "hilog:hilog_rust",
-    "ipc:ipc_rust",
-    "samgr:rust_samgr",
-  ]
-
-  crate_name = "system_ability_fwk_rust"
-  crate_type = "dylib"
-
-  install_images = [ system_base_dir ]
-  relative_install_dir = "chipset-pub-sdk"
-  subsystem_name = "systemabilitymgr"
-  part_name = "safwk"
-}
 ################################################################################
