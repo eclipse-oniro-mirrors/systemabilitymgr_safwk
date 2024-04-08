@@ -204,6 +204,11 @@
             "name" : "ohos.permission.MONITOR_DEVICE_NETWORK_STATE",
             "said" : "3203",
             "description" : "Permission required for listen dm online state."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_BLUETOOTH",
+            "said" : "1130",
+            "description" : "Native uses the Bluetooth interface"
         }
     ],
     "restart" : [
