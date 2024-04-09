@@ -40,6 +40,7 @@ private:
     int32_t ActiveAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t IdleAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t SendStrategyToSAInner(MessageParcel& data, MessageParcel& reply);
+    int32_t IpcStatCmdProcInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();
     static bool EnforceInterceToken(MessageParcel& data);
 

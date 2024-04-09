@@ -49,6 +49,8 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         &LocalAbilityManagerStub::IdleAbilityInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SEND_STRATEGY_TO_SA_TRANSACTION)] =
         &LocalAbilityManagerStub::SendStrategyToSAInner;
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IPC_STAT_CMD_TRANSACTION)] =
+        &LocalAbilityManagerStub::IpcStatCmdProcInner;
 }
 
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
@@ -199,6 +201,26 @@ int32_t LocalAbilityManagerStub::SendStrategyToSAInner(MessageParcel& data, Mess
         return ERR_NULL_OBJECT;
     }
     HILOGD(TAG, "SendStrategyToSA called %{public}s  ", result ? "success" : "failed");
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::IpcStatCmdProcInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t fd = data.ReadFileDescriptor();
+    if (fd < 0) {
+        return ERR_NULL_OBJECT;
+    }
+    int cmd = -1;
+    bool ret = data.ReadInt32(cmd);
+    if (!ret) {
+        return ERR_NULL_OBJECT;
+    }
+    bool result = IpcStatCmdProc(fd, cmd);
+    if (!reply.WriteBool(result)) {
+        HILOGW(TAG, "IpcStatCmdProc Write result failed!");
+        return ERR_NULL_OBJECT;
+    }
+    HILOGD(TAG, "IpcStatCmdProc called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
 

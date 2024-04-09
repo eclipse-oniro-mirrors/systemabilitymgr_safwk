@@ -27,8 +27,10 @@
 #include "ipc_skeleton.h"
 #include "iservice_registry.h"
 #include "safwk_log.h"
+#include "file_ex.h"
 #include "string_ex.h"
 #include "system_ability_ondemand_reason.h"
+#include "local_ability_manager_dumper.h"
 
 namespace OHOS {
 using std::u16string;
@@ -883,4 +885,38 @@ bool LocalAbilityManager::SendStrategyToSA(int32_t type, int32_t systemAbilityId
     return true;
 }
 
+bool LocalAbilityManager::IpcStatCmdProc(int32_t fd, int32_t cmd)
+{
+    bool ret = false;
+    std::string result;
+
+    HILOGI(TAG, "IpcStatCmdProc:fd=%{public}d cmd=%{public}d request", fd, cmd);
+    if (cmd < IPC_STAT_CMD_START || cmd >= IPC_STAT_CMD_MAX) {
+        HILOGW(TAG, "para invalid, fd=%{public}d cmd=%{public}d", fd, cmd);
+        return false;
+    }
+
+    switch (cmd) {
+        case IPC_STAT_CMD_START: {
+            ret = LocalAbilityManagerDumper::StartIpcStatistics(result);
+            break;
+        }
+        case IPC_STAT_CMD_STOP: {
+            ret = LocalAbilityManagerDumper::StopIpcStatistics(result);
+            break;
+        }
+        case IPC_STAT_CMD_GET: {
+            ret = LocalAbilityManagerDumper::GetIpcStatistics(result);
+            break;
+        }
+        default:
+            return false;
+    }
+
+    if (!SaveStringToFd(fd, result)) {
+        HILOGW(TAG, "save to fd failed");
+        return false;
+    }
+    return ret;
+}
 }

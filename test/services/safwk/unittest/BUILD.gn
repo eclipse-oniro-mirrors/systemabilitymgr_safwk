@@ -31,6 +31,7 @@ config("system_ability_all_deps_config") {
 ohos_static_library("system_ability_fwk_tdd") {
   sources = [
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager.cpp",
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_dumper.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_stub.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/system_ability.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/system_ability_ondemand_reason.cpp",
@@ -71,6 +72,7 @@ ohos_unittest("LocalAbilityManagerTest") {
   ]
 
   sources = [
+    "./local_ability_manager_dumper_test.cpp",
     "./local_ability_manager_test.cpp",
     "./mock_sa_realize.cpp",
     "./system_ability_ondemand_reason_test.cpp",
