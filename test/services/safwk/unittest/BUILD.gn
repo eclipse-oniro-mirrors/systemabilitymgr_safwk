@@ -100,10 +100,10 @@ ohos_unittest("LocalAbilityManagerTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "ipc:ipc_core",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
-    "hisysevent:libhisysevent",
   ]
 }
 
