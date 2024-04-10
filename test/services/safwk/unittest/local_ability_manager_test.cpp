@@ -18,6 +18,7 @@
 #include "iservice_registry.h"
 #include "string_ex.h"
 #include "test_log.h"
+#include "hisysevent_adapter.h"
 
 #define private public
 #include "local_ability_manager.h"

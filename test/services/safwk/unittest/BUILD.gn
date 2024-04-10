@@ -74,6 +74,7 @@ ohos_unittest("LocalAbilityManagerTest") {
     "./local_ability_manager_test.cpp",
     "./mock_sa_realize.cpp",
     "./system_ability_ondemand_reason_test.cpp",
+    "//foundation/systemabilitymgr/samgr/services/dfx/source/hisysevent_adapter.cpp",
   ]
 
   configs =
@@ -99,6 +100,7 @@ ohos_unittest("LocalAbilityManagerTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "ipc:ipc_core",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
