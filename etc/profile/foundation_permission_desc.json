@@ -303,6 +303,11 @@
             "name" : "mkdir app_exit_reason",
             "said" : "180",
             "description" : "Create app_exit_reason directory for ability_manager_service to save data file at /data/service/el1/public/database/app_exit_reason"
+        },
+        {
+            "name" : "mkdir ability_manager_service",
+            "said" : "180",
+            "description" : "Create ability_manager_service directory for ability_manager_service to save data file at /data/service/el1/public/database/ability_manager_service"
         }
     ],
     "bootevents" : [
