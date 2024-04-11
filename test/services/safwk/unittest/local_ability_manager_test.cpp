@@ -563,7 +563,7 @@ HWTEST_F(LocalAbilityManagerTest, StartOndemandSystemAbility001, TestSize.Level1
     LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     LocalAbilityManager::GetInstance().StartOndemandSystemAbility(SAID);
-    EXPECT_EQ(LocalAbilityManager::GetInstance().profileParser_->saProfiles_.size(), 3);
+    EXPECT_EQ(LocalAbilityManager::GetInstance().profileParser_->saProfiles_.size(), 5);
 }
 
 /**
@@ -581,7 +581,7 @@ HWTEST_F(LocalAbilityManagerTest, StartOndemandSystemAbility002, TestSize.Level1
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     LocalAbilityManager::GetInstance().StartOndemandSystemAbility(SAID);
     delete mockSa;
-    EXPECT_EQ(LocalAbilityManager::GetInstance().profileParser_->saProfiles_.size(), 3);
+    EXPECT_EQ(LocalAbilityManager::GetInstance().profileParser_->saProfiles_.size(), 5);
 }
 
 /**
