@@ -51,6 +51,7 @@ public:
         const nlohmann::json& idleReason, int32_t& delayTime) override;
     bool SendStrategyToSA(int32_t type, int32_t systemAbilityId,
         int32_t level, std::string& action) override;
+    bool IpcStatCmdProc(int32_t fd, int32_t cmd) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -111,6 +112,13 @@ bool MockLocalAbilityManager::SendStrategyToSA(int32_t type, int32_t systemAbili
     int32_t level, std::string& action)
 {
     DTEST_LOG << "said : " << systemAbilityId <<std::endl;
+    return true;
+}
+
+bool MockLocalAbilityManager::IpcStatCmdProc(int32_t fd, int32_t cmd)
+{
+    DTEST_LOG << "fd : " << fd <<std::endl;
+    DTEST_LOG << "cmd : " << cmd <<std::endl;
     return true;
 }
 

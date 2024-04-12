@@ -1333,5 +1333,56 @@ HWTEST_F(LocalAbilityManagerTest, SendStrategyToSA002, TestSize.Level2)
     EXPECT_TRUE(ret);
 }
 
+/**
+ * @tc.name: IpcStatCmdProc001
+ * @tc.desc: test IpcStatCmdProc001, cover function with valid fd and valid cmd
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProc001, TestSize.Level2)
+{
+    int32_t fd = 1;
+    int32_t cmd = 0;
+    bool ret = LocalAbilityManager::GetInstance().IpcStatCmdProc(fd, cmd);
+    EXPECT_TRUE(ret);
+}
+
+/**
+ * @tc.name: IpcStatCmdProc002
+ * @tc.desc: test IpcStatCmdProc002, cover function with valid fd and invalid cmd
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProc002, TestSize.Level2)
+{
+    int32_t fd = 1;
+    int32_t cmd = -1;
+    bool ret = LocalAbilityManager::GetInstance().IpcStatCmdProc(fd, cmd);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: IpcStatCmdProc003
+ * @tc.desc: test IpcStatCmdProc003, cover function with invalid fd and valid cmd
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProc003, TestSize.Level2)
+{
+    int32_t fd = -1;
+    int32_t cmd = 0;
+    bool ret = LocalAbilityManager::GetInstance().IpcStatCmdProc(fd, cmd);
+    EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: IpcStatCmdProc004
+ * @tc.desc: test IpcStatCmdProc004, cover function with invalid fd and invalid cmd
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProc004, TestSize.Level2)
+{
+    int32_t fd = -1;
+    int32_t cmd = -1;
+    bool ret = LocalAbilityManager::GetInstance().IpcStatCmdProc(fd, cmd);
+    EXPECT_FALSE(ret);
+}
 } // namespace SAFWK
 } // namespace OHOS
