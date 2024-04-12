@@ -64,19 +64,23 @@ void SystemAbilityWrapper::OnStart(const OHOS::SystemAbilityOnDemandReason &star
     ability_->OnStartWithReason(BuildReasonWrapper(startReason), this);
 }
 
-bool SystemAbilityWrapper::CancelIdleWrapper(SystemAbilityWrapper *systemAbilityWrapper)
+bool SystemAbilityWrapper::CancelIdleWrapper()
 {
-    return systemAbilityWrapper->CancelIdle();
+    return this->CancelIdle();
 }
 
-bool SystemAbilityWrapper::PublishWrapper(SystemAbilityWrapper *systemAbilityWrapper, sptr<IRemoteObject> systemAbility)
+bool SystemAbilityWrapper::PublishWrapper(rust::Box<AbilityStub> ability)
 {
-    return systemAbilityWrapper->Publish(systemAbility);
+    auto stub = sptr<RemoteServiceStub>::MakeSptr(ability.into_raw());
+    if (stub == nullptr) {
+        return false;
+    }
+    return this->Publish(stub);
 }
 
 int32_t SystemAbilityWrapper::OnIdle(const OHOS::SystemAbilityOnDemandReason &idleReason)
 {
-    return ability_->OnIdle(BuildReasonWrapper(idleReason), this);
+    return ability_->OnIdle(BuildReasonWrapper(idleReason));
 }
 
 void SystemAbilityWrapper::OnActive(const OHOS::SystemAbilityOnDemandReason &activeReason)
@@ -109,25 +113,6 @@ void SystemAbilityWrapper::OnDeviceLevelChanged(int32_t type, int32_t level, std
     ability_->OnDeviceLevelChanged(type, level, action);
 }
 
-void StopAbility(int32_t systemAbilityId)
-{
-    SystemAbilityWrapper::StopAbilityWrapper(systemAbilityId);
-}
-
-bool StubPublish(SystemAbilityWrapper *systemAbilityWrapper, rust::Box<AbilityStub> ability)
-{
-    auto stub = sptr<RemoteServiceStub>::MakeSptr(ability.into_raw());
-    if (stub == nullptr) {
-        return false;
-    }
-    return SystemAbilityWrapper::PublishWrapper(systemAbilityWrapper, stub);
-}
-
-bool CancelIdle(SystemAbilityWrapper *systemAbilityWrapper)
-{
-    return SystemAbilityWrapper::CancelIdleWrapper(systemAbilityWrapper);
-}
-
 bool RegisterAbility(SystemAbilityWrapper *system_ability)
 {
     HILOGD(TAG, "register_ability_");
@@ -136,12 +121,21 @@ bool RegisterAbility(SystemAbilityWrapper *system_ability)
 
 SystemAbilityOnDemandReason BuildReasonWrapper(const OHOS::SystemAbilityOnDemandReason &reason)
 {
+    rust::vec<rust::string> want;
+
+    auto map = reason.GetExtraData().GetWant();
+    for (auto i = map.begin(); i != map.end(); ++i) {
+        want.push_back(rust::string(i->first.data()));
+        want.push_back(rust::string(i->second.data()));
+    }
+
     return SystemAbilityOnDemandReason{
-        .name = reason.GetName(),
-        .value = reason.GetValue(),
+        .name = rust::string(reason.GetName().data()),
+        .value = rust::string(reason.GetValue().data()),
         .reason_id = reason.GetId(),
-        .extra_data = OnDemandReasonExtraData{ .data = reason.GetExtraData().GetData(),
-            .code = reason.GetExtraData().GetCode() },
+        .extra_data = OnDemandReasonExtraData{ .data = rust::string(reason.GetExtraData().GetData().data()),
+            .code = reason.GetExtraData().GetCode(),
+            .want = want },
         .extra_data_id = reason.GetExtraDataId(),
     };
 }

@@ -32,25 +32,7 @@ impl SystemAbility {
         }
     }
 
-    pub fn add_system_ability_listen(&mut self, system_ability_id: i32) -> bool {
-        match self.inner.as_mut() {
-            Some(system_ability) => system_ability.AddSystemAbilityListener(system_ability_id),
-            None => {
-                error!("System Ability is null");
-                false
-            }
-        }
-    }
 
-    pub fn remove_system_ability_listen(&mut self, system_ability_id: i32) -> bool {
-        match self.inner.as_mut() {
-            Some(system_ability) => system_ability.RemoveSystemAbilityListener(system_ability_id),
-            None => {
-                error!("System Ability is null");
-                false
-            }
-        }
-    }
 }
 
 pub fn build_system_ability<A: Ability + 'static>(

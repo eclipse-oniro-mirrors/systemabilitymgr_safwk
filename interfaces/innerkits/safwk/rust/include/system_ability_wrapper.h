@@ -36,9 +36,9 @@ public:
     SystemAbilityWrapper(rust::Box<AbilityWrapper> ability, int32_t systemAbilityId, bool runOnCreate);
     ~SystemAbilityWrapper() override;
 
-    static void StopAbilityWrapper(int32_t systemAbilityId);
-    static bool CancelIdleWrapper(SystemAbilityWrapper *systemAbilityWrapper);
-    static bool PublishWrapper(SystemAbilityWrapper *systemAbilityWrapper, sptr<IRemoteObject> systemAbility);
+    void StopAbilityWrapper(int32_t systemAbilityId);
+    bool CancelIdleWrapper();
+    bool PublishWrapper(rust::Box<AbilityStub> ability);
 
 protected:
     std::string GetClassName() override;

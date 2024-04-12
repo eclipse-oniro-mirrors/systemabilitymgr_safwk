@@ -11,15 +11,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::sync::{Arc, Mutex};
+
 use ipc::parcel::MsgParcel;
 use ipc::remote::RemoteStub;
 use ipc::IpcStatusCode;
-use samgr::manage::SystemAbilityManager;
+use system_ability_fwk::ability::Handler;
+use system_ability_fwk::cxx_share::SystemAbilityOnDemandReason;
 
-use crate::interface::AudioInterfaceCode;
-use crate::{test_msg, TEST_AUDIO_ID};
+use crate::{interface, Watch};
 
-pub struct AudioService;
+pub struct AudioService {
+    system_ability: Handler,
+    watch: Arc<Mutex<Watch>>,
+}
+
+impl AudioService {
+    pub(crate) fn new(handler: Handler, watch: Arc<Mutex<Watch>>) -> Self {
+        Self {
+            system_ability: handler,
+            watch,
+        }
+    }
+}
 
 impl RemoteStub for AudioService {
     fn on_remote_request(
@@ -28,48 +42,60 @@ impl RemoteStub for AudioService {
         data: &mut ipc::parcel::MsgParcel,
         reply: &mut ipc::parcel::MsgParcel,
     ) -> i32 {
+        self.system_ability.cancel_idle();
         match code {
-            _ if code == AudioInterfaceCode::Unload as u32 => {
-                self.unload(data, reply);
-            }
-            _ if code == AudioInterfaceCode::RequestExample as u32 => {
-                self.request_example(data, reply);
-            }
-            _ if code == AudioInterfaceCode::CheckResult as u32 => {
-                self.check_result(data, reply);
-            }
-            _ => return IpcStatusCode::Failed as i32,
+            interface::START_REASON_TEST => self.start_reason(data, reply),
+            interface::IDLE_REASON_TEST => self.idle_reason(data, reply),
+            interface::ACTIVE_REASON_TEST => self.active_reason(data, reply),
+            interface::ADD_TEST => self.on_add(data, reply),
+            interface::REMOVE_TEST => self.on_remove(data, reply),
+            interface::STOP_REASON_TEST => self.recv_stop_reason(data, reply),
+            interface::STOP_REASON_TEST_GET => self.send_stop_reason(data, reply),
+            _ => IpcStatusCode::Failed as i32,
         }
-        0
     }
 }
 
 impl AudioService {
-    fn unload(&self, data: &mut MsgParcel, reply: &mut MsgParcel) {
-        info!("TestService unload");
-
-        assert_eq!(data.read::<String>().unwrap(), "unload sa");
-
-        assert_eq!(
-            0,
-            SystemAbilityManager::unload_system_ability(TEST_AUDIO_ID)
-        );
-
-        reply.write("unload success").unwrap();
+    fn start_reason(&self, _data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply
+            .write(&self.watch.lock().unwrap().start_reason)
+            .unwrap();
+        0
     }
 
-    fn request_example(&self, data: &mut MsgParcel, reply: &mut MsgParcel) {
-        info!("Test Request example recv");
-
-        assert_eq!(data.read::<String>().unwrap(), "request example");
-
-        reply.write("request success").unwrap();
+    fn idle_reason(&self, _data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply
+            .write(&self.watch.lock().unwrap().idle_reason)
+            .unwrap();
+        0
     }
 
-    fn check_result(&self, _data: &mut MsgParcel, reply: &mut MsgParcel) {
-        let mut msg = test_msg().lock().unwrap();
-        let len = msg.readable();
-        let v = msg.read_buffer(len).unwrap();
-        reply.write_buffer(&v).unwrap();
+    fn active_reason(&self, _data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply
+            .write(&self.watch.lock().unwrap().active_reason)
+            .unwrap();
+        0
+    }
+
+    fn on_add(&self, _data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply.write(&self.watch.lock().unwrap().on_add).unwrap();
+        0
+    }
+
+    fn on_remove(&self, _data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply.write(&self.watch.lock().unwrap().on_remove).unwrap();
+        0
+    }
+
+    fn recv_stop_reason(&self, data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        self.watch.lock().unwrap().stop_reason = Some(data.read().unwrap());
+        0
+    }
+    fn send_stop_reason(&self, data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply
+            .write(&self.watch.lock().unwrap().stop_reason)
+            .unwrap();
+        0
     }
 }

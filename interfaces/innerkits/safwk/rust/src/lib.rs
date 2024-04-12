@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(missing_docs, unused)]
+#![allow(missing_docs)]
 #[macro_use]
 mod hilog;
 pub mod ability;
@@ -20,7 +20,6 @@ mod wrapper;
 pub mod exts;
 
 pub mod cxx_share;
-pub mod reason;
 const LOG_LABEL: hilog_rust::HiLogLabel = hilog_rust::HiLogLabel {
     log_type: hilog_rust::LogType::LogCore,
     domain: 0xD001810,

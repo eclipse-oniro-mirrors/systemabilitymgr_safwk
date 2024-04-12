@@ -11,8 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub(crate) enum AudioInterfaceCode {
-    Unload = 0,
-    RequestExample,
-    CheckResult,
-}
+pub const START_REASON_TEST: u32 = 0;
+pub const IDLE_REASON_TEST: u32 = 1;
+pub const ACTIVE_REASON_TEST: u32 = 2;
+pub const ADD_TEST: u32 = 3;
+pub const REMOVE_TEST: u32 = 4;
+pub const STOP_REASON_TEST: u32 = 5;
+pub const STOP_REASON_TEST_GET: u32 = 6;

@@ -34,19 +34,23 @@ ohos_rust_unittest("rust_safwk_ut_test") {
 
 ohos_rust_systemtest("rust_safwk_sdv_test") {
   module_out_path = "safwk/safwk_rust"
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
 
   rustflags = [ "--cfg=gn_test" ]
-
   sources = [ "entry.rs" ]
 
   deps = [
     "../../rust:system_ability_fwk_rust",
-    "c:safwk_rust_test_c",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:audio_rust_sa",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:listen_rust_sa",
   ]
 
   external_deps = [
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
+    "ipc:ipc_rust",
+    "samgr:samgr_rust",
   ]
 
   subsystem_name = "systemabilitymgr"

@@ -12,27 +12,26 @@
 // limitations under the License.
 
 #![allow(unreachable_pub)]
+use std::collections::HashMap;
 use std::fs::File;
 use std::os::fd::FromRawFd;
 use std::pin::Pin;
 
-use cxx::{CxxString, CxxVector};
 pub(crate) use ffi::*;
 pub use ffi::{OnDemandReasonExtraData, OnDemandReasonId, SystemAbilityOnDemandReason};
 use ipc::parcel::{Deserialize, MsgParcel, Serialize};
 use ipc::remote::RemoteStub;
 use ipc::IpcStatusCode;
 
-use crate::ability::{Ability, CancelHandler, PublishHandler};
-use crate::reason;
+use crate::ability::{Ability, Handler};
 /// AbilityWrapper used for cxx
 
 #[cxx::bridge(namespace = "OHOS::SafwkRust")]
 mod ffi {
-    
+
     #[repr(i32)]
     #[derive(Debug)]
-    enum OnDemandReasonId {
+    pub enum OnDemandReasonId {
         INTERFACE_CALL = 0,
         DEVICE_ONLINE = 1,
         SETTING_SWITCH = 2,
@@ -42,24 +41,24 @@ mod ffi {
     }
 
     #[derive(Debug)]
-    struct SystemAbilityOnDemandReason {
-        name: String,
-        value: String,
-        reason_id: OnDemandReasonId,
-        extra_data: OnDemandReasonExtraData,
-        extra_data_id: i64,
+    pub struct SystemAbilityOnDemandReason {
+        pub name: String,
+        pub value: String,
+        pub reason_id: OnDemandReasonId,
+        pub extra_data: OnDemandReasonExtraData,
+        pub extra_data_id: i64,
     }
 
     #[derive(Debug)]
-    struct OnDemandReasonExtraData {
-        data: String,
-        code: i32,
+    pub struct OnDemandReasonExtraData {
+        pub data: String,
+        pub code: i32,
+        pub want: Vec<String>,
     }
 
     extern "Rust" {
         type AbilityWrapper;
         type AbilityStub;
-
         fn on_remote_request(
             self: &mut AbilityStub,
             code: u32,
@@ -77,15 +76,10 @@ mod ffi {
             reason: SystemAbilityOnDemandReason,
             system_ability: *mut SystemAbilityWrapper,
         );
-        unsafe fn OnIdle(
-            self: &AbilityWrapper,
-            reason: SystemAbilityOnDemandReason,
-            system_ability: *mut SystemAbilityWrapper,
-        ) -> i32;
+        unsafe fn OnIdle(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason) -> i32;
         fn OnActive(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason);
         fn OnStop(self: &AbilityWrapper);
         fn OnStopWithReason(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason);
-        fn HandleCancelIdleRes(self: &AbilityWrapper, cancel_res: bool);
 
         fn OnAddSystemAbility(self: &AbilityWrapper, said: i32, device_id: String);
         fn OnRemoveSystemAbility(self: &AbilityWrapper, said: i32, device_id: String);
@@ -128,12 +122,11 @@ mod ffi {
             mut system_ability_id: i32,
         ) -> bool;
 
-        fn StopAbility(system_ability: i32);
-        unsafe fn CancelIdle(system_ability: *mut SystemAbilityWrapper) -> bool;
-        unsafe fn StubPublish(
-            system_ability: *mut SystemAbilityWrapper,
-            ability: Box<AbilityStub>,
-        ) -> bool;
+        fn StopAbilityWrapper(self: Pin<&mut SystemAbilityWrapper>, system_ability: i32);
+
+        fn CancelIdleWrapper(self: Pin<&mut SystemAbilityWrapper>) -> bool;
+
+        fn PublishWrapper(self: Pin<&mut SystemAbilityWrapper>, ability: Box<AbilityStub>) -> bool;
 
     }
 }
@@ -147,7 +140,7 @@ impl AbilityWrapper {
     }
 
     fn OnStart(&self, system_ability: *mut ffi::SystemAbilityWrapper) {
-        let handle = PublishHandler {
+        let handle = Handler {
             inner: system_ability,
         };
         self.inner.on_start(handle)
@@ -158,21 +151,14 @@ impl AbilityWrapper {
         reason: ffi::SystemAbilityOnDemandReason,
         system_ability: *mut ffi::SystemAbilityWrapper,
     ) {
-        let handle = PublishHandler {
+        let handle = Handler {
             inner: system_ability,
         };
         self.inner.on_start_with_reason(reason, handle);
     }
 
-    unsafe fn OnIdle(
-        &self,
-        reason: ffi::SystemAbilityOnDemandReason,
-        system_ability: *mut ffi::SystemAbilityWrapper,
-    ) -> i32 {
-        let handle = CancelHandler {
-            inner: system_ability,
-        };
-        self.inner.on_idle(reason, handle)
+    unsafe fn OnIdle(&self, reason: ffi::SystemAbilityOnDemandReason) -> i32 {
+        self.inner.on_idle(reason)
     }
 
     fn OnActive(&self, reason: ffi::SystemAbilityOnDemandReason) {
@@ -188,11 +174,11 @@ impl AbilityWrapper {
     }
 
     fn OnAddSystemAbility(&self, said: i32, device_id: String) {
-        self.inner.on_add_sa(said, device_id)
+        self.inner.on_system_ability_load_event(said, device_id)
     }
 
     fn OnRemoveSystemAbility(&self, said: i32, device_id: String) {
-        self.inner.on_remove_sa(said, device_id)
+        self.inner.on_system_ability_remove_event(said, device_id)
     }
 
     fn OnDeviceLevelChanged(&self, change_type: i32, level: i32, action: String) {
@@ -200,9 +186,7 @@ impl AbilityWrapper {
             .on_device_level_changed(change_type, level, action)
     }
 
-    fn HandleCancelIdleRes(&self, cancel_res: bool) {
-        self.inner.handle_cancel_idle_res(cancel_res)
-    }
+
 }
 
 pub struct AbilityStub {
@@ -263,7 +247,8 @@ impl Deserialize for OnDemandReasonId {
 impl Serialize for OnDemandReasonExtraData {
     fn serialize(&self, parcel: &mut MsgParcel) -> ipc::IpcResult<()> {
         parcel.write(&self.data)?;
-        parcel.write(&self.code)
+        parcel.write(&self.code)?;
+        parcel.write(&self.want)
     }
 }
 
@@ -271,7 +256,8 @@ impl Deserialize for OnDemandReasonExtraData {
     fn deserialize(parcel: &mut MsgParcel) -> ipc::IpcResult<Self> {
         let data = parcel.read()?;
         let code = parcel.read()?;
-        Ok(Self { data, code })
+        let want = parcel.read()?;
+        Ok(Self { data, code, want })
     }
 }
 
@@ -299,5 +285,18 @@ impl Deserialize for SystemAbilityOnDemandReason {
             extra_data,
             extra_data_id,
         })
+    }
+}
+
+impl OnDemandReasonExtraData {
+    pub fn want(self) -> HashMap<String, String> {
+        let mut res = HashMap::new();
+        let mut want = self.want.into_iter();
+        while let Some(k) = want.next() {
+            if let Some(v) = want.next() {
+                res.insert(k, v);
+            }
+        }
+        res
     }
 }

@@ -14,32 +14,27 @@
 //! Used for test meanwhile.
 
 #![allow(missing_docs)]
+#![allow(unused)]
 
 #[macro_use]
 mod hilog;
 mod interface;
 pub mod proxy;
 mod stub;
-use std::mem::MaybeUninit;
-use std::sync::{Mutex, Once};
+use std::sync::{Arc, Mutex, Once, RwLock};
 
 use hilog_rust::{HiLogLabel, LogType};
-use ipc::parcel::MsgParcel;
-use system_ability_fwk::ability::Ability;
+use ipc::parcel::{Deserialize, MsgParcel, Serialize};
+use samgr::manage::SystemAbilityManager;
+use system_ability_fwk::ability::{Ability, Handler};
+use system_ability_fwk::cxx_share::SystemAbilityOnDemandReason;
 
 use crate::stub::AudioService;
 
-static mut TEST_MSG: MaybeUninit<Mutex<MsgParcel>> = MaybeUninit::uninit();
+/// TEST_LISTEN_ID SAID
+const TEST_LISTEN_ID: i32 = 1494;
 
-fn test_msg() -> &'static Mutex<MsgParcel> {
-    static ONCE: Once = Once::new();
-    ONCE.call_once(|| {
-        unsafe { TEST_MSG.write(Mutex::new(MsgParcel::new())) };
-    });
-    unsafe { TEST_MSG.assume_init_ref() }
-}
-
-const TEST_AUDIO_ID: i32 = 1488;
+const TEST_AUDIO_ID: i32 = 1499;
 
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
@@ -47,31 +42,76 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     tag: "rustSA",
 };
 
-struct AudioSA;
+struct AudioSA {
+    handler: RwLock<Option<Handler>>,
+    watch: Arc<Mutex<Watch>>,
+}
+
+pub struct Watch {
+    pub start_reason: Option<SystemAbilityOnDemandReason>,
+    pub idle_reason: Option<SystemAbilityOnDemandReason>,
+    pub active_reason: Option<SystemAbilityOnDemandReason>,
+    pub stop_reason: Option<SystemAbilityOnDemandReason>,
+    pub on_add: bool,
+    pub on_remove: bool,
+}
+
+impl Watch {
+    fn new() -> Self {
+        Self {
+            start_reason: None,
+            idle_reason: None,
+            active_reason: None,
+            stop_reason: None,
+            on_add: false,
+            on_remove: false,
+        }
+    }
+}
 
 impl Ability for AudioSA {
+    fn on_start(&self, handler: system_ability_fwk::ability::Handler) {
+        panic!();
+    }
+
     fn on_start_with_reason(
         &self,
-        reason: system_ability_fwk::reason::SystemAbilityOnDemandReason,
-        handler: system_ability_fwk::ability::PublishHandler,
+        reason: system_ability_fwk::cxx_share::SystemAbilityOnDemandReason,
+        handler: system_ability_fwk::ability::Handler,
     ) {
+        handler.add_system_ability_listen(TEST_LISTEN_ID);
+        self.handler.write().unwrap().replace(handler.clone());
+        self.watch.lock().unwrap().start_reason = Some(reason);
+        assert!(handler.publish(AudioService::new(handler.clone(), self.watch.clone())));
+    }
+
+    fn on_stop(&self) {}
+    
+    fn on_active(&self, reason: SystemAbilityOnDemandReason) {
+        self.watch.lock().unwrap().active_reason = Some(reason);
+    }
+
+    fn on_system_ability_load_event(&self, said: i32, device_id: String) {
+        if said == TEST_LISTEN_ID {
+            self.watch.lock().unwrap().on_add = true;
+        }
+    }
+
+    fn on_system_ability_remove_event(&self, said: i32, device_id: String) {
+        if said == TEST_LISTEN_ID {
+            self.watch.lock().unwrap().on_remove = true;
+        }
+    }
+
+    fn on_dump(&self) {}
+
+    fn on_idle(&self, reason: system_ability_fwk::cxx_share::SystemAbilityOnDemandReason) -> i32 {
         static ONCE: Once = Once::new();
+        let w = if ONCE.is_completed() { 0 } else { -1 };
         ONCE.call_once(|| {
-            test_msg().lock().unwrap().write(&reason).unwrap();
+            self.watch.lock().unwrap().idle_reason = Some(reason);
         });
-        assert!(handler.publish(AudioService));
-    }
-
-    fn on_stop(&self) {
-        info!("on_stop");
-    }
-
-    fn on_idle(
-        &self,
-        _reason: system_ability_fwk::reason::SystemAbilityOnDemandReason,
-        _handler: system_ability_fwk::ability::CancelHandler,
-    ) -> i32 {
-        0
+        w
     }
 }
 
@@ -79,7 +119,12 @@ impl Ability for AudioSA {
 #[link_section = ".init_array"]
 static A: extern "C" fn() = {
     extern "C" fn init() {
-        let system_ability = AudioSA.build_system_ability(TEST_AUDIO_ID, true).unwrap();
+        let system_ability = AudioSA {
+            handler: RwLock::new(None),
+            watch: Arc::new(Mutex::new(Watch::new())),
+        }
+        .build_system_ability(TEST_AUDIO_ID, true)
+        .unwrap();
         system_ability.register();
     }
     init

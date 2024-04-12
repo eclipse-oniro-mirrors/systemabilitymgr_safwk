@@ -19,41 +19,35 @@ use ipc::remote::RemoteStub;
 
 use crate::exts::SystemAbility;
 use crate::wrapper::{
-    AbilityStub, AbilityWrapper, BuildSystemAbility, CancelIdle, StopAbility, StubPublish,
-    SystemAbilityOnDemandReason, SystemAbilityWrapper,
+    AbilityStub, AbilityWrapper, BuildSystemAbility, SystemAbilityOnDemandReason,
+    SystemAbilityWrapper,
 };
 
 #[allow(unused)]
 pub trait Ability {
-    fn on_start(&self, publish_handler: PublishHandler) {}
+    fn on_start(&self, handler: Handler) {}
 
     fn on_stop(&self) {}
 
     fn on_dump(&self) {}
 
-    fn on_idle(&self, reason: SystemAbilityOnDemandReason, cancel_handler: CancelHandler) -> i32 {
+    fn on_idle(&self, reason: SystemAbilityOnDemandReason) -> i32 {
         0
     }
 
     fn on_active(&self, reason: SystemAbilityOnDemandReason) {}
 
-    fn on_start_with_reason(
-        &self,
-        reason: SystemAbilityOnDemandReason,
-        publish_handler: PublishHandler,
-    ) {
-        self.on_start(publish_handler);
+    fn on_start_with_reason(&self, reason: SystemAbilityOnDemandReason, handler: Handler) {
+        self.on_start(handler);
     }
 
     fn on_stop_with_reason(&self, reason: SystemAbilityOnDemandReason) {
         self.on_stop();
     }
 
-    fn on_add_sa(&self, said: i32, device_id: String) {}
+    fn on_system_ability_load_event(&self, said: i32, device_id: String) {}
 
-    fn on_remove_sa(&self, said: i32, device_id: String) {}
-
-    fn handle_cancel_idle_res(&self, cancel_res: bool) {}
+    fn on_system_ability_remove_event(&self, said: i32, device_id: String) {}
 
     fn on_device_level_changed(&self, change_type: i32, level: i32, action: String) {}
 
@@ -74,34 +68,30 @@ pub trait Ability {
     }
 }
 
-pub trait AbilityExt: Ability {
-    fn stop_ability(&self, system_ability: i32);
-}
-
-impl<T: Ability + ?Sized> AbilityExt for T {
-    fn stop_ability(&self, system_ability: i32) {
-        StopAbility(system_ability);
-    }
-}
-
-use crate::wrapper::MessageParcel;
-
-pub struct CancelHandler {
-    pub(crate) inner: *mut SystemAbilityWrapper,
-}
-impl CancelHandler {
-    pub fn cancle_idle(&self) -> bool {
-        unsafe { CancelIdle(self.inner) }
-    }
-}
-
-pub struct PublishHandler {
+#[derive(Clone)]
+pub struct Handler {
     pub(crate) inner: *mut SystemAbilityWrapper,
 }
 
-impl PublishHandler {
+impl Handler {
     pub fn publish<A: RemoteStub + 'static>(&self, ability: A) -> bool {
         let ability = Box::new(AbilityStub::new(ability));
-        unsafe { StubPublish(self.inner, ability) }
+        let system_ability = unsafe { Pin::new_unchecked(&mut *self.inner) };
+        system_ability.PublishWrapper(ability)
+    }
+
+    pub fn cancel_idle(&self) -> bool {
+        let system_ability = unsafe { Pin::new_unchecked(&mut *self.inner) };
+        system_ability.CancelIdleWrapper()
+    }
+
+    pub fn add_system_ability_listen(&self, system_ability_id: i32) -> bool {
+        let system_ability = unsafe { Pin::new_unchecked(&mut *self.inner) };
+        system_ability.AddSystemAbilityListener(system_ability_id)
+    }
+
+    pub fn remove_system_ability_listen(&self, system_ability_id: i32) -> bool {
+        let system_ability = unsafe { Pin::new_unchecked(&mut *self.inner) };
+        system_ability.RemoveSystemAbilityListener(system_ability_id)
     }
 }

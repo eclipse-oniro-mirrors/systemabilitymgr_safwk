@@ -14,6 +14,7 @@
 //! Used for test meanwhile.
 
 #![allow(missing_docs)]
+#![allow(unused)]
 
 #[macro_use]
 mod hilog;
@@ -21,15 +22,18 @@ mod hilog;
 mod interface;
 
 mod stub;
+use std::sync::{Arc, Mutex};
 
 use audio_rust_sa::proxy::AudioProxy;
 use hilog_rust::{HiLogLabel, LogType};
 use samgr::manage::SystemAbilityManager;
-use system_ability_fwk::ability::Ability;
+use stub::{ListenService, Watch};
+use system_ability_fwk::ability::{Ability, Handler};
+
 /// TEST_LISTEN_ID SAID
-pub const TEST_LISTEN_ID: i32 = 1489;
+pub const TEST_LISTEN_ID: i32 = 1494;
 /// TEST_AUDIO_ID SAID
-pub const TEST_AUDIO_ID: i32 = 1488;
+pub const TEST_AUDIO_ID: i32 = 1499;
 
 const LOG_LABEL: HiLogLabel = HiLogLabel {
     log_type: LogType::LogCore,
@@ -37,20 +41,26 @@ const LOG_LABEL: HiLogLabel = HiLogLabel {
     tag: "rustSA",
 };
 
-pub struct ListenSA;
+pub struct ListenSA {
+    watch: Arc<Mutex<stub::Watch>>,
+}
 
 impl Ability for ListenSA {
-    fn on_start(&self, _publish_handler: system_ability_fwk::ability::PublishHandler) {
-        let audio_sa = SystemAbilityManager::get_system_ability(TEST_AUDIO_ID).unwrap();
-        let audio_proxy = AudioProxy::new(audio_sa);
-        audio_proxy.request_example();
-        audio_proxy.unload();
-
-        assert!(SystemAbilityManager::check_system_ability(TEST_AUDIO_ID).is_none());
+    fn on_start(&self, handler: system_ability_fwk::ability::Handler) {
+        handler.publish(ListenService::new(self.watch.clone()));
     }
 
     fn on_stop(&self) {
-        info!("on stop")
+        panic!();
+    }
+
+    fn on_stop_with_reason(
+        &self,
+        reason: system_ability_fwk::cxx_share::SystemAbilityOnDemandReason,
+    ) {
+        let audio =
+            AudioProxy::new(SystemAbilityManager::check_system_ability(TEST_AUDIO_ID).unwrap());
+        audio.send_stop_reason(&reason);
     }
 }
 
@@ -58,7 +68,10 @@ impl Ability for ListenSA {
 #[link_section = ".init_array"]
 static A: extern "C" fn() = {
     extern "C" fn init() {
-        let system_ability = ListenSA.build_system_ability(TEST_LISTEN_ID, true).unwrap();
+        let watch = Arc::new(Mutex::new(Watch { stop_reason: None }));
+        let system_ability = ListenSA { watch }
+            .build_system_ability(TEST_LISTEN_ID, true)
+            .unwrap();
         system_ability.register();
     }
     init
