@@ -243,6 +243,11 @@
             "description" : "bgtaskmgr_service rely on AMS, need to restart"
         },
         {
+            "name" : "reset inputmethod_service",
+            "said" : "3703",
+            "description" : "inputmethod_service rely on WMS, need to restart"
+        },
+        {
             "name" : "reset resource_schedule_service",
             "said" : "180",
             "description" : "resource_schedule_service rely on AMS, need to restart"
