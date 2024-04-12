@@ -17,5 +17,4 @@ members = [
     "interfaces/innerkits/safwk/rust",
     "interfaces/innerkits/safwk/rust/examples/audio_rust_sa",
     "interfaces/innerkits/safwk/rust/examples/listen_rust_sa",
-
 ]

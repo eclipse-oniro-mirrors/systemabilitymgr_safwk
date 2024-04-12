@@ -13,9 +13,4 @@
 
 pub const FIRST_CALL_TRANSACTION: isize = 0x00000001;
 
-pub enum ListenInterfaceCode {
-    /// echo_str code
-    EchoStr = FIRST_CALL_TRANSACTION,
-    /// request_concurent code
-    RequestConcurrent,
-}
+pub enum ListenInterfaceCode {}

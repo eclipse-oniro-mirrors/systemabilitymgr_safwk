@@ -13,6 +13,7 @@
 
 /// hilog label.
 
+#[allow(unused)]
 macro_rules! debug {
     ($($args:tt)*) => {{
         use hilog_rust::hilog;

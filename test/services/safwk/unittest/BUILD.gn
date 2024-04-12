@@ -65,7 +65,6 @@ ohos_unittest("LocalAbilityManagerTest") {
       "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
 
   include_dirs = [
-    "//foundation/systemabilitymgr/safwk/services/safwk/c_wrapper/include",
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
     "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
@@ -84,8 +83,6 @@ ohos_unittest("LocalAbilityManagerTest") {
 
   deps = [
     ":system_ability_fwk_tdd",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:audio_rust_sa",
-    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:listen_rust_sa",
     "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/connect_ability:test_connect_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/incomplete_ability:test_incomplete_ability",

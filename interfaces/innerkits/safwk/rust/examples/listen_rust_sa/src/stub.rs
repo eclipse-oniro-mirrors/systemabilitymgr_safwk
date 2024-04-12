@@ -11,40 +11,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use std::sync::{Arc, Mutex};
+
 use ipc::parcel::MsgParcel;
 use ipc::remote::RemoteStub;
 use ipc::IpcStatusCode;
+use system_ability_fwk::cxx_share::SystemAbilityOnDemandReason;
 
 use crate::interface::ListenInterfaceCode;
 
-struct ListenService;
+pub(crate) struct Watch {
+    pub(crate) stop_reason: Option<SystemAbilityOnDemandReason>,
+}
+
+pub struct ListenService {
+    watch: Arc<Mutex<Watch>>,
+}
 
 impl RemoteStub for ListenService {
-    fn on_remote_request(
-        &self,
-        code: u32,
-        data: &mut ipc::parcel::MsgParcel,
-        reply: &mut ipc::parcel::MsgParcel,
-    ) -> i32 {
-        info!("on_remote_reuqest in Rust TestStub, code: {}", code);
-
+    fn on_remote_request(&self, code: u32, data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
         match code {
-            _ if code == ListenInterfaceCode::EchoStr as u32 => self.echo_str(data, reply),
-            _ if code == ListenInterfaceCode::RequestConcurrent as u32 => {
-                self.request_example(data, reply)
-            }
-            _ => return IpcStatusCode::Failed as i32,
+            0 => self.recv_stop_reason(data, reply),
+            1 => self.send_stop_reason(data, reply),
+            _ => IpcStatusCode::Failed as i32,
         }
-        0
     }
 }
 
 impl ListenService {
-    fn echo_str(&self, _data: &mut MsgParcel, _reply: &mut MsgParcel) {
-        info!("echo_str");
+    pub(crate) fn new(watch: Arc<Mutex<Watch>>) -> Self {
+        Self { watch }
     }
-
-    fn request_example(&self, _data: &mut MsgParcel, _reply: &mut MsgParcel) {
-        info!("request example");
+    fn recv_stop_reason(&self, data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        self.watch.lock().unwrap().stop_reason = Some(data.read().unwrap());
+        0
+    }
+    fn send_stop_reason(&self, data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        reply.write(&self.watch.lock().unwrap().stop_reason);
+        0
     }
 }

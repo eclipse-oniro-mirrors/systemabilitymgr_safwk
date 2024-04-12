@@ -19,6 +19,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ipc = { git = "https://gitee.com/openharmony/communication_ipc" }
+ipc = { path = "/home/yanglv/OpenHarmony/foundation/communication/ipc/interfaces/innerkits/rust" }
 hilog_rust = { git = "https://gitee.com/openharmony/hiviewdfx_hilog.git" }
 cxx = "1.0.115"
+
+[dev-dependencies]
+samgr = { git = "https://gitee.com/openharmony/systemabilitymgr_samgr", version = "1.0.0" }
+audio_rust_sa = { path = "./examples/audio_rust_sa" }

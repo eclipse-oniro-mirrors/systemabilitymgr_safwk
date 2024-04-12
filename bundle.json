@@ -69,8 +69,7 @@
             ],
             "test": [
                 "//foundation/systemabilitymgr/safwk/test:unittest",
-                "//foundation/systemabilitymgr/safwk/test/fuzztest/systemabilityfwk_fuzzer:fuzztest",
-                "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/tests:unittest"
+                "//foundation/systemabilitymgr/safwk/test/fuzztest/systemabilityfwk_fuzzer:fuzztest"
             ]
         }
     }

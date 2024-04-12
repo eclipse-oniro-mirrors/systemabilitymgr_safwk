@@ -13,11 +13,11 @@
 
 use ipc::parcel::MsgParcel;
 use ipc::remote::RemoteObj;
+use system_ability_fwk::cxx_share::SystemAbilityOnDemandReason;
 
-use crate::interface::AudioInterfaceCode;
-
+use crate::interface;
 pub struct AudioProxy {
-    remote: RemoteObj,
+    pub remote: RemoteObj,
 }
 
 impl AudioProxy {
@@ -25,25 +25,64 @@ impl AudioProxy {
         Self { remote }
     }
 
-    pub fn unload(&self) {
-        let code = AudioInterfaceCode::Unload as u32;
-        info!("TestProxy unload");
-
+    pub fn on_start_reason(&self) -> Option<SystemAbilityOnDemandReason> {
         let mut data = MsgParcel::new();
-        data.write("unload sa").unwrap();
-
-        let mut reply = self.remote.send_request(code, &mut data).unwrap();
-        assert_eq!(reply.read::<String>().unwrap(), "unload success");
+        let mut reply = self
+            .remote
+            .send_request(interface::START_REASON_TEST, &mut data)
+            .unwrap();
+        reply.read().unwrap()
     }
 
-    pub fn request_example(&self) {
-        let code = AudioInterfaceCode::RequestExample as u32;
-        info!("TestProxy request example");
-
+    pub fn on_idle_reason(&self) -> Option<SystemAbilityOnDemandReason> {
         let mut data = MsgParcel::new();
-        data.write("request example").unwrap();
+        let mut reply = self
+            .remote
+            .send_request(interface::IDLE_REASON_TEST, &mut data)
+            .unwrap();
+        reply.read().unwrap()
+    }
 
-        let mut reply = self.remote.send_request(code, &mut data).unwrap();
-        assert_eq!(reply.read::<String>().unwrap(), "request success");
+    pub fn on_active_reason(&self) -> Option<SystemAbilityOnDemandReason> {
+        let mut data = MsgParcel::new();
+        let mut reply = self
+            .remote
+            .send_request(interface::ACTIVE_REASON_TEST, &mut data)
+            .unwrap();
+        reply.read().unwrap()
+    }
+
+    pub fn on_add(&self) -> bool {
+        let mut data = MsgParcel::new();
+        let mut reply = self
+            .remote
+            .send_request(interface::ADD_TEST, &mut data)
+            .unwrap();
+        reply.read().unwrap()
+    }
+
+    pub fn on_remove(&self) -> bool {
+        let mut data = MsgParcel::new();
+        let mut reply = self
+            .remote
+            .send_request(interface::REMOVE_TEST, &mut data)
+            .unwrap();
+        reply.read().unwrap()
+    }
+
+    pub fn send_stop_reason(&self, reason: &SystemAbilityOnDemandReason) {
+        let mut data = MsgParcel::new();
+        data.write(reason).unwrap();
+        self.remote
+            .send_request(interface::STOP_REASON_TEST, &mut data)
+            .unwrap();
+    }
+    pub fn get_stop_reason(&self) -> Option<SystemAbilityOnDemandReason> {
+        let mut data = MsgParcel::new();
+        let mut reply = self
+            .remote
+            .send_request(interface::STOP_REASON_TEST_GET, &mut data)
+            .unwrap();
+        reply.read().unwrap()
     }
 }
