@@ -56,11 +56,18 @@ constexpr OHOS::HiviewDFX::HiLogLabel SAFWK_LABEL = {
 #undef KHILOGI
 #endif
 
+#ifdef LOGI
+#undef LOGI
+#endif
+
 #define KHILOGI(TAG, fmt, ...) \
     do { \
         (void)OHOS::HiviewDFX::HiLog::Info(SAFWK_LABEL, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__); \
         HILOG_INFO(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__); \
     } while (0)
+
+#define LOGI(TAG, fmt, ...) \
+    HILOG_INFO(LOG_CORE, fmt, ##__VA_ARGS__)
 
 #define HILOGF(TAG, fmt, ...) \
     HILOG_FATAL(LOG_CORE, "%{public}s " fmt, __FUNCTION__, ##__VA_ARGS__)
