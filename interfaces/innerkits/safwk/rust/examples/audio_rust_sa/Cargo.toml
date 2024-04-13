@@ -19,5 +19,5 @@ edition = "2021"
 [dependencies]
 system_ability_fwk = { path = "../../" }
 samgr = { git = "https://gitee.com/openharmony/systemabilitymgr_samgr", version = "1.0.0" }
-ipc = { path = "/home/yanglv/OpenHarmony/foundation/communication/ipc/interfaces/innerkits/rust" }
+ipc = { git = "https://gitee.com/openharmony/communication_ipc" }
 hilog_rust = { git = "https://gitee.com/openharmony/hiviewdfx_hilog.git" }
