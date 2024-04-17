@@ -113,7 +113,6 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
     }
 
     IPCSkeleton::JoinWorkThread();
-    ClearResource();
     HILOGE(TAG, "JoinWorkThread stop, will exit");
 }
 
