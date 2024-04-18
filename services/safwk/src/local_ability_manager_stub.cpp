@@ -90,8 +90,8 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
         return ERR_NULL_OBJECT;
     }
     bool result = StartAbility(saId, eventStr);
-    HILOGI(TAG, "%{public}s to start SA:%{public}d, eventStrLen:%{public}zu, spend:%{public}" PRId64 " ms",
-        result ? "success" : "failed", saId, eventStr.length(), (GetTickCount() - begin));
+    LOGI("StartSaInner %{public}s to start SA:%{public}d,eventLen:%{public}zu,spend:%{public}" PRId64 "ms",
+        result ? "suc" : "fail", saId, eventStr.length(), (GetTickCount() - begin));
     return ERR_NONE;
 }
 
@@ -113,8 +113,8 @@ int32_t LocalAbilityManagerStub::StopAbilityInner(MessageParcel& data, MessagePa
         return ERR_NULL_OBJECT;
     }
     bool result = StopAbility(saId, eventStr);
-    HILOGI(TAG, "%{public}s to stop SA:%{public}d, eventStrLen:%{public}zu, spend:%{public}" PRId64 " ms",
-        result ? "success" : "failed", saId, eventStr.length(), (GetTickCount() - begin));
+    LOGI("StopSaInner %{public}s to stop SA:%{public}d,eventLen:%{public}zu,spend:%{public}" PRId64 "ms",
+        result ? "suc" : "fail", saId, eventStr.length(), (GetTickCount() - begin));
     return ERR_NONE;
 }
 
@@ -136,8 +136,8 @@ int32_t LocalAbilityManagerStub::ActiveAbilityInner(MessageParcel& data, Message
         HILOGW(TAG, "ActiveAbilityInner Write result failed!");
         return ERR_NULL_OBJECT;
     }
-    HILOGI(TAG, "%{public}s to Active SA:%{public}d, spend:%{public}" PRId64 " ms",
-        result ? "success" : "failed", saId, (GetTickCount() - begin));
+    LOGI("ActiveSaInner %{public}s to Active SA:%{public}d,spend:%{public}" PRId64 "ms",
+        result ? "suc" : "fail", saId, (GetTickCount() - begin));
     return ERR_NONE;
 }
 
@@ -164,8 +164,8 @@ int32_t LocalAbilityManagerStub::IdleAbilityInner(MessageParcel& data, MessagePa
         HILOGW(TAG, "ActiveAbilityInner Write delayTime failed!");
         return ERR_NULL_OBJECT;
     }
-    HILOGI(TAG, "%{public}s to Idle SA:%{public}d, delayTime:%{public}d spend:%{public}" PRId64 " ms",
-        result ? "success" : "failed", saId, delayTime, (GetTickCount() - begin));
+    LOGI("IdleSaInner %{public}s to Idle SA:%{public}d,delayTime:%{public}d,spend:%{public}" PRId64 "ms",
+        result ? "suc" : "fail", saId, delayTime, (GetTickCount() - begin));
     return ERR_NONE;
 }
 

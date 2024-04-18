@@ -722,7 +722,7 @@ void LocalAbilityManager::WaitForTasks()
     }
     startTaskNum_ = 0;
     int64_t end = GetTickCount();
-    HILOGI(TAG, "start tasks process:%{public}s finished and spend %{public}" PRId64 " ms",
+    LOGI("start tasks proc:%{public}s end,spend %{public}" PRId64 "ms",
         Str16ToStr8(procName_).c_str(), (end - begin));
 }
 
