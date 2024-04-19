@@ -80,7 +80,7 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
         HILOGE(TAG, "systemAbility is nullptr");
         return false;
     }
-    HILOGD(TAG, "[PerformanceTest]Publish SA:%{public}d", saId_);
+    LOGD("Publish SA:%{public}d", saId_);
     // Avoid automatic destruction of system ability caused by failure of publishing ability
     publishObj_ = systemAbility;
     int64_t begin = GetTickCount();
@@ -93,7 +93,7 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
     ISystemAbilityManager::SAExtraProp saExtra(GetDistributed(), GetDumpLevel(), capability_, permission_);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
-    KHILOGI(TAG, "[PerformanceTest]Publish SA:%{public}d result:%{public}d, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "SA:%{public}d result:%{public}d,spend:%{public}" PRId64 "ms",
         saId_, result, (GetTickCount() - begin));
     if (result == ERR_OK) {
         abilityState_ = SystemAbilityState::ACTIVE;
@@ -128,7 +128,7 @@ void SystemAbility::StopAbility(int32_t systemAbilityId)
     }
     int64_t begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(systemAbilityId);
-    KHILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "%{public}s to rm SA:%{public}d, spend:%{public}" PRId64 " ms",
         (ret == ERR_OK) ? "success" : "failed", systemAbilityId, (GetTickCount() - begin));
 }
 
@@ -170,7 +170,7 @@ void SystemAbility::Start()
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest]OnStart SA:%{public}d", saId_);
+    LOGD("Start OnStart-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
     nlohmann::json startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
@@ -186,7 +186,7 @@ void SystemAbility::Start()
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
     int64_t duration = GetTickCount() - begin;
-    KHILOGI(TAG, "[PerformanceTest]OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "OnStart-SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, duration);
     ReportSaLoadDuration(saId_, SA_LOAD_ON_START, duration);
 }
@@ -201,14 +201,14 @@ void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest]Idle SA::%{public}d", saId_);
+    LOGD("Idle SA::%{public}d", saId_);
     int64_t begin = GetTickCount();
     delayTime = OnIdle(idleReason);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     if (delayTime == 0) {
         abilityState_ = SystemAbilityState::IDLE;
     }
-    HILOGI(TAG, "[PerformanceTest]Idle SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    LOGI("Idle SA:%{public}d end,spend:%{public}" PRId64 "ms",
         saId_, (GetTickCount() - begin));
 }
 
@@ -221,12 +221,12 @@ void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest]Active SA:%{public}d", saId_);
+    LOGD("Active SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     OnActive(activeReason);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::ACTIVE;
-    HILOGI(TAG, "[PerformanceTest]Active SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    LOGI("Active SA:%{public}d end,spend:%{public}" PRId64 "ms",
         saId_, (GetTickCount() - begin));
 }
 
@@ -239,7 +239,7 @@ void SystemAbility::Stop()
             return;
         }
     }
-    HILOGD(TAG, "[PerformanceTest]OnStop SA:%{public}d", saId_);
+    LOGD("Stop OnStop-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
     SystemAbilityOnDemandReason onDemandStopReason =
@@ -254,7 +254,7 @@ void SystemAbility::Stop()
     abilityState_ = SystemAbilityState::NOT_LOADED;
     isRunning_ = false;
     int64_t duration = GetTickCount() - begin;
-    KHILOGI(TAG, "[PerformanceTest]OnStop SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "OnStop-SA:%{public}d finished,spend:%{public}" PRId64 "ms",
         saId_, duration);
     ReportSaUnLoadDuration(saId_, SA_UNLOAD_ON_STOP, duration);
 
@@ -266,8 +266,8 @@ void SystemAbility::Stop()
 
     begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(saId_);
-    KHILOGI(TAG, "%{public}s to remove SA:%{public}d, spend:%{public}" PRId64 " ms",
-        (ret == ERR_OK) ? "success" : "failed", saId_, (GetTickCount() - begin));
+    KHILOGI(TAG, "%{public}s to rm SA:%{public}d,spend:%{public}" PRId64 "ms",
+        (ret == ERR_OK) ? "suc" : "fail", saId_, (GetTickCount() - begin));
 }
 
 void SystemAbility::SADump()
@@ -346,7 +346,7 @@ void SystemAbility::SetDependTimeout(int32_t dependTimeout)
     if (dependTimeout >= MIN_DEPENDENCY_TIMEOUT && dependTimeout <= MAX_DEPENDENCY_TIMEOUT) {
         dependTimeout_ = dependTimeout;
     }
-    HILOGD(TAG, "new dependTimeout:%{public}d, original dependTimeout:%{public}d", dependTimeout, dependTimeout_);
+    LOGD("SetDependTimeout new:%{public}d,old:%{public}d", dependTimeout, dependTimeout_);
 }
 
 int32_t SystemAbility::GetDependTimeout() const
@@ -372,14 +372,14 @@ void SystemAbility::OnStart(const SystemAbilityOnDemandReason& startReason)
 
 int32_t SystemAbility::OnIdle(const SystemAbilityOnDemandReason& idleReason)
 {
-    HILOGD(TAG, "OnIdle system ability, idle reason %{public}d, %{public}s, %{public}s",
+    LOGD("OnIdle SA, idle reason %{public}d, %{public}s, %{public}s",
         idleReason.GetId(), idleReason.GetName().c_str(), idleReason.GetValue().c_str());
     return 0;
 }
 
 void SystemAbility::OnActive(const SystemAbilityOnDemandReason& activeReason)
 {
-    HILOGD(TAG, "OnActive system ability, active reason %{public}d, %{public}s, %{public}s",
+    LOGD("OnActive SA, active reason %{public}d, %{public}s, %{public}s",
         activeReason.GetId(), activeReason.GetName().c_str(), activeReason.GetValue().c_str());
 }
 
