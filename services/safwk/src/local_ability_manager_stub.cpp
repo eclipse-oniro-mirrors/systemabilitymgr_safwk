@@ -51,6 +51,8 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         &LocalAbilityManagerStub::SendStrategyToSAInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IPC_STAT_CMD_TRANSACTION)] =
         &LocalAbilityManagerStub::IpcStatCmdProcInner;
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::FFRT_DUMPER_TRANSACTION)] =
+        &LocalAbilityManagerStub::FfrtDumperProcInner;
 }
 
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
@@ -221,6 +223,19 @@ int32_t LocalAbilityManagerStub::IpcStatCmdProcInner(MessageParcel& data, Messag
         return ERR_NULL_OBJECT;
     }
     HILOGD(TAG, "IpcStatCmdProc called %{public}s  ", result ? "success" : "failed");
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::FfrtDumperProcInner(MessageParcel& data, MessageParcel& reply)
+{
+    std::string ffrtDumperInfo;
+    bool result = FfrtDumperProc(ffrtDumperInfo);
+    HILOGI(TAG, "safwk ffrt dumper result %{public}s", result ? "succeed" : "failed");
+    if (!reply.WriteString(ffrtDumperInfo)) {
+        HILOGW(TAG, "FfrtDumperProc write ffrtDumperInfo failed!");
+        return ERR_NULL_OBJECT;
+    }
+    HILOGD(TAG, "FfrtDumperProc called %{public}s ", result? "success" : "failed");
     return ERR_NONE;
 }
 

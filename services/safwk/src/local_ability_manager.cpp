@@ -17,6 +17,7 @@
 
 #include <chrono>
 #include <cinttypes>
+#include <dlfcn.h>
 #include <iostream>
 #include <sys/types.h>
 #include <thread>
@@ -47,6 +48,7 @@ constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 5; // .json length
+constexpr int FFRT_BUFFER_SIZE = 512 * 1024;
 
 const string PROFILES_DIR = "/system/profile/";
 const string DEFAULT_DIR = "/system/usr/";
@@ -916,5 +918,33 @@ bool LocalAbilityManager::IpcStatCmdProc(int32_t fd, int32_t cmd)
         return false;
     }
     return ret;
+}
+
+typedef void (*PGetSdkName)(char *buf, uint32_t len);
+
+bool LocalAbilityManager::FfrtDumperProc(std::string& ffrtDumperInfo)
+{
+    HILOGI(TAG, "FfrtDumperPorc request");
+    PGetSdkName pFFrtDumpInfo = (PGetSdkName)dlsym(RTLD_DEFAULT, "ffrt_watchdog_dumpinfo");
+    char* pszErr = dlerror();
+    if (pszErr != NULL) {
+        HILOGE(TAG, "dlsym err info: %{public}s", pszErr);
+    }
+    if (pFFrtDumpInfo == NULL) {
+        HILOGE(TAG, "dlsym failed");
+        ffrtDumperInfo.append("process " + std::to_string(getpid()) + " did not load ffrt\n");
+        return false;
+    }
+    char* buffer = new char[FFRT_BUFFER_SIZE + 1]();
+    buffer[FFRT_BUFFER_SIZE] = 0;
+    (*pFFrtDumpInfo)(buffer, FFRT_BUFFER_SIZE);
+    if (strlen(buffer) == 0) {
+        HILOGE(TAG, "get samgr FfrtDumperInfo failed");
+        delete[] buffer;
+        return false;
+    }
+    ffrtDumperInfo += buffer;
+    delete[] buffer;
+    return true;
 }
 }

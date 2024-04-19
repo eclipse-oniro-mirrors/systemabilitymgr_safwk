@@ -1291,6 +1291,19 @@ HWTEST_F(LocalAbilityManagerTest, JsonToOnDemandReason001, TestSize.Level2)
 }
 
 /**
+ * @tc.name: FfrtDumperProc001
+ * @tc.desc: test FfrtDumperProc
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerTest, FfrtDumperProc001, TestSize.Level2)
+{
+    std::string ffrtDumperInfo;
+    bool result = LocalAbilityManager::GetInstance().FfrtDumperProc(ffrtDumperInfo);
+    EXPECT_TRUE(result);
+}
+
+/**
  * @tc.name: FindAndNotifyAbilityListeners001
  * @tc.desc: test FindAndNotifyAbilityListeners with listenerMap_ is empty
  * @tc.type: FUNC
