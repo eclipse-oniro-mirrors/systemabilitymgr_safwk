@@ -31,11 +31,6 @@
             "description" : "Permission required for telephony to access AbillityManagerService."
         },
         {
-            "name" : "ohos.permission.READ_DFX_SYSEVENT",
-            "said" : "3304",
-            "description" : "Permission required for battery_stats to add hisysevent listener."
-        },
-        {
             "name" : "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
             "said" : "401",
             "description" : "Permission required for BMS to grant sensitive permissions."
@@ -44,11 +39,6 @@
             "name" : "ohos.permission.REVOKE_SENSITIVE_PERMISSIONS",
             "said" : "401",
             "description" : "Permission required for BMS to revoke sensitive permissions."
-        },
-        {
-            "name" : "ohos.permission.MANAGE_SECURE_SETTINGS",
-            "said" : ["3301", "3308"],
-            "description" : "Permission required for settingsdata to access SA."
         },
         {
             "name" : "ohos.permission.STORAGE_MANAGER",
@@ -104,11 +94,6 @@
             "name" : "ohos.permission.VIBRATE",
             "said" : "4005",
             "description" : "Permission required for telephony to vibrate."
-        },
-        {
-            "name" : "ohos.permission.SYSTEM_LIGHT_CONTROL",
-            "said" : "3302",
-            "description" : "Permission required for battery service to light."
         },
         {
             "name" : "ohos.permission.UPDATE_CONFIGURATION",
@@ -268,21 +253,6 @@
             "name" : "mkdir notification",
             "said" : "3203",
             "description" : "Move notification db from /data/system_ce/ans_standard to /data/service/el1/public/notification/."
-        },
-        {
-            "name" : "mkdir thermal",
-            "said" : "3303",
-            "description" : "create thermal directory for thermal service to put thermal info /data/service/el0/thermal/"
-        },
-        {
-            "name" : "mkdir config",
-            "said" : "3303",
-            "description" : "create config directory for thermal service to put config info /data/service/el0/thermal/config/"
-        },
-        {
-            "name" : "mkdir stats",
-            "said" : "3304",
-            "description" : "Change process battery_stats to process foundation, need to save data file to folder /data/service/el0/stats"
         },
         {
             "name" : "mkdir window",
