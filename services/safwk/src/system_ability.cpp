@@ -178,10 +178,7 @@ void SystemAbility::Start()
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(startReason);
     GetOnDemandReasonExtraData(onDemandStartReason);
 
-    {
-        SamgrXCollie samgrXCollie("safwk::onStart_" + ToString(saId_));
-        OnStart(onDemandStartReason);
-    }
+    OnStart(onDemandStartReason);
 
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
