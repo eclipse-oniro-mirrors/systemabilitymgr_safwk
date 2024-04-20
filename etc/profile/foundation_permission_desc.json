@@ -194,6 +194,11 @@
             "name" : "ohos.permission.MANAGE_BLUETOOTH",
             "said" : "1130",
             "description" : "Native uses the Bluetooth interface"
+        },
+        {
+            "name" : "ohos.permission.ACCESS_SPAMSHIELD_SERVICE",
+            "said" : "4005",
+            "description" : "Permission required for telephony to access spamshield service."
         }
     ],
     "restart" : [
