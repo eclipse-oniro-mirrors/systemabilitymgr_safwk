@@ -199,6 +199,21 @@
             "name" : "ohos.permission.ACCESS_SPAMSHIELD_SERVICE",
             "said" : "4005",
             "description" : "Permission required for telephony to access spamshield service."
+        },
+        {
+            "name" : "ohos.permission.APPPROXIMATELY_LOCATION",
+            "said" : "4005",
+            "description" : "Permission required for location earthquake alarm."
+        },
+        {
+            "name" : "ohos.permission.LOCATION",
+            "said" : "4005",
+            "description" : "Permission required for location earthquake alarm."
+        },
+        {
+            "name" : "ohos.permission.LOCATION_IN_BACKGROUND",
+            "said" : "4005",
+            "description" : "Permission required for location earthquake alarm."
         }
     ],
     "restart" : [
