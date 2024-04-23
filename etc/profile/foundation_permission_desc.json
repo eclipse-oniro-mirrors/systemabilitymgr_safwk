@@ -199,6 +199,11 @@
             "name" : "ohos.permission.ACCESS_SPAMSHIELD_SERVICE",
             "said" : "4005",
             "description" : "Permission required for telephony to access spamshield service."
+        },
+        {
+            "name" : "ohos.permission.CAPTURE_SCREEN",
+            "said" : "4607",
+            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
         }
     ],
     "restart" : [
