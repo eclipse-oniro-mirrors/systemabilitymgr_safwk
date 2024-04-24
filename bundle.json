@@ -58,13 +58,6 @@
                         "header_files": []
                     },
                     "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust:system_ability_fwk_rust"
-                },
-                {
-                    "header": {
-                        "header_base": [],
-                        "header_files": []
-                    },
-                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust/examples:audio_rust_sa"
                 }
             ],
             "test": [
