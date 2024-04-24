@@ -44,6 +44,8 @@ ohos_rust_shared_library("system_ability_fwk_rust") {
 
   sources = [ "src/lib.rs" ]
 
+  rustflags = [ "-Zstack-protector=all" ]
+
   deps = [
     ":system_ability_fwk_rust_cxx",
     "//third_party/rust/crates/cxx:lib",
