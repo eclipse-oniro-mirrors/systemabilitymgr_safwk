@@ -21,6 +21,11 @@
             "description" : "permission required for telephony to write call log."
         },
         {
+            "name" : "ohos.permission.START_SYSTEM_DIALOG",
+            "said" : "4005",
+            "description" : "permission required for telephony to start system dialog."
+        },
+        {
             "name" : "ohos.permission.READ_CONTACTS",
             "said" : "4005",
             "description" : "permission required for telephony to read contacts info."
