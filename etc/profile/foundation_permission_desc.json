@@ -214,6 +214,11 @@
             "name" : "ohos.permission.LOCATION_IN_BACKGROUND",
             "said" : "4005",
             "description" : "Permission required for location earthquake alarm."
+        },
+        {
+            "name" : "ohos.permission.CAPTURE_SCREEN",
+            "said" : "4607",
+            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
         }
     ],
     "restart" : [
