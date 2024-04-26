@@ -52,6 +52,7 @@ public:
     bool SendStrategyToSA(int32_t type, int32_t systemAbilityId,
         int32_t level, std::string& action) override;
     bool IpcStatCmdProc(int32_t fd, int32_t cmd) override;
+    bool FfrtDumperProc(std::string& ffrtdumpinfo) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -119,6 +120,12 @@ bool MockLocalAbilityManager::IpcStatCmdProc(int32_t fd, int32_t cmd)
 {
     DTEST_LOG << "fd : " << fd <<std::endl;
     DTEST_LOG << "cmd : " << cmd <<std::endl;
+    return true;
+}
+
+bool MockLocalAbilityManager::FfrtDumperProc(std::string& ffrtDumpInfo)
+{
+    DTEST_LOG << "FfrtDumperProc" <<std::endl;
     return true;
 }
 
