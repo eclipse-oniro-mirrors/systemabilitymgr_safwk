@@ -285,8 +285,8 @@ int32_t LocalAbilityManagerStub::SystemAbilityExtProcInner(MessageParcel& data, 
     }
 
     SystemAbilityExtensionPara callback;
-    callback.data = &data;
-    callback.reply = &reply;
+    callback.data_ = &data;
+    callback.reply_ = &reply;
 
     int32_t result = SystemAbilityExtProc(extension, saId, &callback, false);
     if (result != ERR_NONE) {
