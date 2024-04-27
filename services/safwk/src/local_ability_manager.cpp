@@ -961,6 +961,6 @@ int32_t LocalAbilityManager::SystemAbilityExtProc(const std::string& extension, 
     if (ability == nullptr) {
         return INVALID_DATA;
     }
-    return ability->OnExtension(extension, *callback->data, *callback->reply);
+    return ability->OnExtension(extension, *callback->data_, *callback->reply_);
 }
 }
