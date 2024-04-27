@@ -993,7 +993,7 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest004, TestSize.Level2)
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
-    EXPECT_EQ(result, ERR_NULL_OBJECT);
+    EXPECT_EQ(result, ERR_PERMISSION_DENIED);
 }
 /**
  * @tc.name: OnRemoteRequest005
@@ -1014,7 +1014,7 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest005, TestSize.Level2)
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
-    EXPECT_EQ(result, ERR_NONE);
+    EXPECT_EQ(result, ERR_PERMISSION_DENIED);
 }
 
 /**
@@ -1396,6 +1396,67 @@ HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProc004, TestSize.Level2)
     int32_t cmd = -1;
     bool ret = LocalAbilityManager::GetInstance().IpcStatCmdProc(fd, cmd);
     EXPECT_FALSE(ret);
+}
+
+/**
+ * @tc.name: CheckPermission001
+ * @tc.desc: test CheckPermission001
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, CheckPermission001, TestSize.Level2)
+{
+    uint32_t code = static_cast<uint32_t>(SafwkInterfaceCode::START_ABILITY_TRANSACTION);
+    bool result = LocalAbilityManager::GetInstance().CheckPermission(code);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: CheckPermission002
+ * @tc.desc: test CheckPermission002
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, CheckPermission002, TestSize.Level2)
+{
+    uint32_t code = static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION);
+    bool result = LocalAbilityManager::GetInstance().CheckPermission(code);
+    EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: SystemAbilityExtProc001
+ * @tc.desc: test SystemAbilityExtProc001
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProc001, TestSize.Level2)
+{
+    std::string extension = "ext1";
+    SystemAbilityExtensionPara callback;
+    bool isAsync = false;
+    int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProc(extension, INVALID_SAID, &callback, isAsync);
+    EXPECT_FALSE(ret == ERR_NONE);
+}
+
+/**
+ * @tc.name: SystemAbilityExtProc002
+ * @tc.desc: test SystemAbilityExtProc002
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProc002, TestSize.Level2)
+{
+    std::string extension = "ext1";
+    SystemAbilityExtensionPara callback;
+    bool isAsync = false;
+
+    std::string deviceId = "";
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
+    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
+    int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProc(extension, SAID, &callback, isAsync);
+    EXPECT_TRUE(ret == ERR_NONE);
+    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    delete sysAby;
 }
 } // namespace SAFWK
 } // namespace OHOS

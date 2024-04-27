@@ -51,6 +51,7 @@ ohos_shared_library("system_ability_fwk") {
   all_dependent_configs = [ ":system_ability_all_deps_config" ]
   if (is_standard_system) {
     external_deps = [
+      "access_token:libaccesstoken_sdk",
       "c_utils:utils",
       "hilog:libhilog",
       "hitrace:hitrace_meter",

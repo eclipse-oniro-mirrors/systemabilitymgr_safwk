@@ -42,8 +42,10 @@ private:
     int32_t SendStrategyToSAInner(MessageParcel& data, MessageParcel& reply);
     int32_t IpcStatCmdProcInner(MessageParcel& data, MessageParcel& reply);
     int32_t FfrtDumperProcInner(MessageParcel& data, MessageParcel& reply);
+    int32_t SystemAbilityExtProcInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();
     static bool EnforceInterceToken(MessageParcel& data);
+    static bool CheckPermission(uint32_t code);
 
     using LocalAbilityManagerStubFunc =
         int32_t (LocalAbilityManagerStub::*)(MessageParcel& data, MessageParcel& reply);

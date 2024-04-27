@@ -29,12 +29,16 @@
 #include "safwk_log.h"
 #include "datetime_ex.h"
 #include "system_ability_definition.h"
+#include "ipc_skeleton.h"
+#include "accesstoken_kit.h"
 
 using namespace OHOS::HiviewDFX;
 
 namespace OHOS {
 namespace {
 const std::string TAG = "LocalAbilityManagerStub";
+const std::string PERMISSION_EXT_TRANSACTION = "ohos.permission.ACCESS_EXT_SYSTEM_ABILITY";
+const std::string PERMISSION_MANAGE = "ohos.permission.MANAGE_SYSTEM_ABILITY";
 }
 
 LocalAbilityManagerStub::LocalAbilityManagerStub()
@@ -53,6 +57,23 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         &LocalAbilityManagerStub::IpcStatCmdProcInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::FFRT_DUMPER_TRANSACTION)] =
         &LocalAbilityManagerStub::FfrtDumperProcInner;
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)] =
+        &LocalAbilityManagerStub::SystemAbilityExtProcInner;
+}
+
+bool LocalAbilityManagerStub::CheckPermission(uint32_t code)
+{
+    uint32_t accessToken = IPCSkeleton::GetCallingTokenID();
+    std::string permissionToCheck;
+
+    if (code == static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)) {
+        permissionToCheck = PERMISSION_EXT_TRANSACTION;
+    } else {
+        permissionToCheck = PERMISSION_MANAGE;
+    }
+
+    int32_t ret = Security::AccessToken::AccessTokenKit::VerifyAccessToken(accessToken, permissionToCheck);
+    return ret == static_cast<int32_t>(Security::AccessToken::PermissionState::PERMISSION_GRANTED);
 }
 
 int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
@@ -63,6 +84,13 @@ int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
         HILOGW(TAG, "check interface token failed!");
         return ERR_PERMISSION_DENIED;
     }
+
+    if (CheckPermission(code) == false) {
+        HILOGW(TAG, "check permission failed!");
+        return ERR_PERMISSION_DENIED;
+    }
+    HILOGD(TAG, "check permission success!");
+
     auto iter = memberFuncMap_.find(code);
     if (iter != memberFuncMap_.end()) {
         auto memberFunc = iter->second;
@@ -236,6 +264,37 @@ int32_t LocalAbilityManagerStub::FfrtDumperProcInner(MessageParcel& data, Messag
         return ERR_NULL_OBJECT;
     }
     HILOGD(TAG, "FfrtDumperProc called %{public}s ", result? "success" : "failed");
+    return ERR_NONE;
+}
+
+int32_t LocalAbilityManagerStub::SystemAbilityExtProcInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t saId = -1;
+    bool ret = data.ReadInt32(saId);
+    if (!ret) {
+        return INVALID_DATA;
+    }
+    if (!CheckInputSysAbilityId(saId)) {
+        HILOGW(TAG, "read saId failed!");
+        return INVALID_DATA;
+    }
+    std::string extension = data.ReadString();
+    if (extension.empty()) {
+        HILOGW(TAG, "LocalAbilityManagerStub::SystemAbilityExtProcInner read extension failed!");
+        return INVALID_DATA;
+    }
+
+    SystemAbilityExtensionPara callback;
+    callback.data = &data;
+    callback.reply = &reply;
+
+    int32_t result = SystemAbilityExtProc(extension, saId, &callback, false);
+    if (result != ERR_NONE) {
+        HILOGW(TAG, "SystemAbilityExtProc fail!");
+        return result;
+    }
+
+    HILOGD(TAG, "SystemAbilityExtProc success ");
     return ERR_NONE;
 }
 
