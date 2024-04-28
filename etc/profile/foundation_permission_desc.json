@@ -224,6 +224,11 @@
             "name" : "ohos.permission.CAPTURE_SCREEN",
             "said" : "4607",
             "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
+        },
+        {
+            "name" : "ohos.permission.REQUIRE_FORM",
+            "said" : "403",
+            "description" : "Permission required for FMS to access theme manager service."
         }
     ],
     "restart" : [
