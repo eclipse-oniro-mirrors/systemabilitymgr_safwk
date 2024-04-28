@@ -58,6 +58,15 @@
                         "header_files": []
                     },
                     "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk/rust:system_ability_fwk_rust"
+                },
+                {
+                    "header": {
+                        "header_base": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
+                        "header_files": [
+                            "api_cache_manager.h"
+                        ]
+                    },
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:api_cache_manager"
                 }
             ],
             "test": [

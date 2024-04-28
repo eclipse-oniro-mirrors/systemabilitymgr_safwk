@@ -30,6 +30,14 @@ config("system_ability_all_deps_config") {
       [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk" ]
 }
 
+config("api_cache_manager_config") {
+  visibility = [ ":*" ]
+  include_dirs = [
+    "../../../services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
+  ]
+}
+
 ohos_shared_library("system_ability_fwk") {
   version_script = "libsystem_ability_fwk.versionscript"
   sources = [
@@ -65,6 +73,29 @@ ohos_shared_library("system_ability_fwk") {
   innerapi_tags = [
     "platformsdk_indirect",
     "sasdk",
+  ]
+  part_name = "safwk"
+  subsystem_name = "systemabilitymgr"
+}
+
+ohos_shared_library("api_cache_manager") {
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/include/",
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+  ]
+  sources = [ "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp" ]
+  public_configs = [ ":api_cache_manager_config" ]
+
+  install_images = [ system_base_dir ]
+  relative_install_dir = "platformsdk"
+  innerapi_tags = [
+    "platformsdk_indirect",
+    "sasdk",
+  ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_single",
   ]
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"

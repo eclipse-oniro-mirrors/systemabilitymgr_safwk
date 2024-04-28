@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,27 +18,34 @@
 
 #include <string>
 
-#include "listen_ability_stub.h"
+#include "test_sa_proxy_cache_stub.h"
 #include "system_ability.h"
-#include "itest_sa_proxy_cache.h"
 
 namespace OHOS {
-class ListenAbility : public SystemAbility, public ListenAbilityStub {
-    DECLARE_SYSTEM_ABILITY(ListenAbility);
+class TestSaProxyCache : public SystemAbility, public TestSaProxyCacheStub {
+    DECLARE_SYSTEM_ABILITY(TestSaProxyCache);
 
 public:
-    ListenAbility(int32_t systemAbilityId, bool runOnCreate);
-    ~ListenAbility();
-    int32_t AddVolume(int32_t volume) override;
-    ErrCode TestSaCallSa(int32_t input, double& output) override;
-    ErrCode TestGetIpcSendRequestTimes(int32_t& times) override;
-    ErrCode TestClearSa1493Proxy_() override;
+    TestSaProxyCache(int32_t systemAbilityId, bool runOnCreate);
+    ~TestSaProxyCache();
+    ErrCode GetStringFunc(
+        const std::string& in_str,
+        std::string& ret_str) override;
+
+    ErrCode GetDoubleFunc(
+        int32_t number,
+        double& ret_number) override;
+
+    ErrCode GetVectorFunc(
+        const std::vector<bool>& in_vec,
+        std::vector<int8_t>& ret_vec) override;
+    uint32_t TestGetIpcSendRequestTimes() override;
+    ErrCode GetSaPid(
+        int32_t& pid) override;
 protected:
     void OnStart() override;
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
     void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
-private:
-    sptr<ITestSaProxyCache> TestSa1493Proxy_ = nullptr;
 };
 }
 #endif /* SAFWK_TEST_SERVICES_SAFWK_UNITTEST_LISTEN_ABILITY_INCLUDE_LISTEN_ABILITY_H */

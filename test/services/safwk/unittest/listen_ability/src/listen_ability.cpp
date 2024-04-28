@@ -17,6 +17,9 @@
 #include "hilog/log.h"
 #include "iremote_object.h"
 #include "system_ability_definition.h"
+#include "if_system_ability_manager.h"
+#include "iservice_registry.h"
+#include "test_sa_proxy_cache_proxy.h"
 
 using namespace OHOS::HiviewDFX;
 
@@ -41,6 +44,40 @@ int32_t ListenAbility::AddVolume(int32_t volume)
 {
     HiLog::Info(LABEL, "AddVolume volume = %d.", volume);
     return (volume + 1);
+}
+
+ErrCode ListenAbility::TestSaCallSa(int32_t input, double& output)
+{
+    if (TestSa1493Proxy_ == nullptr)  {
+        sptr<ISystemAbilityManager> systemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(DISTRIBUTED_SCHED_TEST_TT_ID);
+        TestSa1493Proxy_ = iface_cast<ITestSaProxyCache>(remoteObject);
+    }
+    if (TestSa1493Proxy_ == nullptr) {
+        HiLog::Info(LABEL, "TestSa1493Proxy_ is nullptr");
+        return ERR_TIMED_OUT;
+    }
+
+    auto ret = TestSa1493Proxy_->GetDoubleFunc(input, output);
+    HiLog::Info(LABEL, "ret :%{public}d Listen Testsacall input:%{public}d, output:%{public}lf", ret, input, output);
+    return ret;
+}
+
+ErrCode ListenAbility::TestGetIpcSendRequestTimes(int32_t& times)
+{
+    if (TestSa1493Proxy_ == nullptr) {
+        HiLog::Info(LABEL, "TestClearSa1493Proxy_ is nullptr");
+        return ERR_NULL_OBJECT;
+    }
+    times = TestSa1493Proxy_->TestGetIpcSendRequestTimes();
+    return ERR_OK;
+}
+
+ErrCode ListenAbility::TestClearSa1493Proxy_()
+{
+    TestSa1493Proxy_.clear();
+    return ERR_OK;
 }
 
 void ListenAbility::OnStart()

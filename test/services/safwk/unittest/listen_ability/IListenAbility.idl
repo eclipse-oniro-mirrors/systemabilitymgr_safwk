@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,9 @@
  * limitations under the License.
  */
 
-#include "listen_ability_proxy.h"
-
-#include "iremote_object.h"
-#include "message_option.h"
-#include "message_parcel.h"
-
-namespace OHOS {
-int32_t ListenAbilityProxy::AddVolume(int32_t volume)
-{
-    MessageParcel data;
-    MessageParcel reply;
-    MessageOption option;
-    data.WriteInterfaceToken(GetDescriptor());
-    data.WriteInt32(volume);
-    Remote()->SendRequest(ADD_VOLUME, data, reply, option);
-    int32_t result = reply.ReadInt32();
-    return result;
-}
+interface OHOS.IListenAbility {
+    [cacheable 100] void AddVolume([in] int volume);
+    void TestSaCallSa([in] int input, [out] double output);
+    void TestGetIpcSendRequestTimes([out] int times);
+    void TestClearSa1493Proxy_();
 }
