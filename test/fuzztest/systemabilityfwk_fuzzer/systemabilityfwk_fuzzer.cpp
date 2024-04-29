@@ -37,7 +37,7 @@ constexpr int32_t SHIFT_THIRD = 8;
 constexpr int32_t ZERO_NUM = 0;
 constexpr int32_t FIRST_NUM = 1;
 constexpr int32_t SECOND_NUM = 2;
-constexpr int32_t THIRD_NUM = 2;
+constexpr int32_t THIRD_NUM = 3;
 const std::u16string LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN = u"ohos.localabilitymanager.accessToken";
 }
 
