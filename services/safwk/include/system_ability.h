@@ -210,7 +210,7 @@ protected:
      * @return void.
      */
     virtual void OnDeviceLevelChanged(int32_t type, int32_t level, std::string& action);
-    
+
     /**
      * OnExtension, OnExtension will be called when extension is send
      *
