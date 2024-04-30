@@ -53,6 +53,8 @@ public:
         int32_t level, std::string& action) override;
     bool IpcStatCmdProc(int32_t fd, int32_t cmd) override;
     bool FfrtDumperProc(std::string& ffrtdumpinfo) override;
+    int32_t SystemAbilityExtProc(const std::string& extension, int32_t said,
+        SystemAbilityExtensionPara* callback, bool isAsync) override;
 };
 class SystemAbilityTest : public testing::Test {
 public:
@@ -127,6 +129,13 @@ bool MockLocalAbilityManager::FfrtDumperProc(std::string& ffrtDumpInfo)
 {
     DTEST_LOG << "FfrtDumperProc" <<std::endl;
     return true;
+}
+
+int32_t MockLocalAbilityManager::SystemAbilityExtProc(const std::string& extension, int32_t said,
+    SystemAbilityExtensionPara* callback, bool isAsync)
+{
+    DTEST_LOG << "said : " << said <<std::endl;
+    return 0;
 }
 
 /**

@@ -432,4 +432,8 @@ void SystemAbility::OnDeviceLevelChanged(int32_t type, int32_t level, std::strin
 {
 }
 
+int32_t SystemAbility::OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply)
+{
+    return 0;
+}
 }

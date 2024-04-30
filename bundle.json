@@ -27,7 +27,8 @@
                 "ipc",
                 "init",
                 "samgr",
-                "c_utils"
+                "c_utils",
+                "access_token"
             ]
         },
         "build": {

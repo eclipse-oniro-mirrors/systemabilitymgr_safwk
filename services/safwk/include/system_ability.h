@@ -211,6 +211,16 @@ protected:
      */
     virtual void OnDeviceLevelChanged(int32_t type, int32_t level, std::string& action);
 
+    /**
+     * OnExtension, OnExtension will be called when extension is send
+     *
+     * @param extension, the system ability extension name.
+     * @param data, extension data.
+     * @param reply, extension reply.
+     * @return int32_t, error code.
+     */
+    virtual int32_t OnExtension(const std::string& extension, MessageParcel& data, MessageParcel& reply);
+
 private:
     void Start();
     void Idle(const SystemAbilityOnDemandReason& idleReason, int32_t& delayTime);

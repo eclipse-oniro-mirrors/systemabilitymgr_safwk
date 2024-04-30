@@ -947,4 +947,20 @@ bool LocalAbilityManager::FfrtDumperProc(std::string& ffrtDumperInfo)
     delete[] buffer;
     return true;
 }
+
+int32_t LocalAbilityManager::SystemAbilityExtProc(const std::string& extension, int32_t said,
+    SystemAbilityExtensionPara* callback, bool isAsync)
+{
+    (void)isAsync;
+    if (callback == nullptr) {
+        return INVALID_DATA;
+    }
+
+    HILOGD(TAG, "SystemAbilityExtProc Extension %{public}s SA:%{public}d", extension.c_str(), said);
+    auto ability = GetAbility(said);
+    if (ability == nullptr) {
+        return INVALID_DATA;
+    }
+    return ability->OnExtension(extension, *callback->data_, *callback->reply_);
+}
 }
