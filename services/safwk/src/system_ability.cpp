@@ -155,7 +155,7 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
         return;
     }
     onDemandStartReason.SetExtraData(*extraData);
-    LOGI("get extra id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDatald()));
+    LOGI("get extra id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDataId()));
     delete extraData;
 }
 
