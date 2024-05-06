@@ -35,6 +35,7 @@ ohos_fuzztest("SystemAbilityFwkFuzzTest") {
   configs = [ ":safwk_fuzz_test_config" ]
 
   sources = [
+    "${safwk_dir}/test/services/safwk/unittest/mock_accesstoken_kit.cpp",
     "${safwk_dir}/test/services/safwk/unittest/sa_mock_permission.cpp",
     "${safwk_services_dir}/local_ability_manager.cpp",
     "${safwk_services_dir}/local_ability_manager_dumper.cpp",
