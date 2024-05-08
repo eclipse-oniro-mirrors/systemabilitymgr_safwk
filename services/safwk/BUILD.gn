@@ -53,6 +53,7 @@ ohos_executable("sa_main") {
       "hilog:libhilog",
       "init:libbegetutil",
       "samgr:samgr_common",
+      "ipc:ipc_single",
     ]
   }
 
