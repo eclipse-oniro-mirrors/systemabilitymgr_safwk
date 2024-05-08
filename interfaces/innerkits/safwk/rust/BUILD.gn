@@ -28,6 +28,7 @@ ohos_static_library("system_ability_fwk_rust_cxx") {
   external_deps = [
     "hilog:libhilog",
     "samgr:samgr_proxy",
+    "ipc:ipc_single",    
   ]
   deps = [
     ":system_ability_fwk_rust_gen",
