@@ -30,6 +30,7 @@ config("system_ability_all_deps_config") {
 
 ohos_static_library("system_ability_fwk_tdd") {
   sources = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_dumper.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_stub.cpp",
@@ -116,6 +117,7 @@ ohos_unittest("SystemAbilityTest") {
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability/include",
   ]
 
   sources = [
@@ -147,9 +149,123 @@ ohos_unittest("SystemAbilityTest") {
   ]
 }
 
+ohos_unittest("CacheManagerTest") {
+  module_out_path = module_output_path
+
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
+
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability/include",
+    "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability/include",
+  ]
+
+  sources = [ "./api_cache_manager_test.cpp" ]
+
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  deps = [
+    ":system_ability_fwk_tdd",
+    "listen_ability:listen_test",
+    "test_sa_proxy_cache_ability:test_sa_proxy_cache",
+    "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  if (target_cpu == "arm") {
+    cflags = [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "access_token:libnativetoken",
+    "access_token:libtoken_setproc",
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+    "samgr:samgr_common",
+  ]
+}
+
+ohos_unittest("ExpireLruCacheTest") {
+  module_out_path = module_output_path
+
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
+
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+  ]
+
+  sources = [ "./expire_lru_cache_test.cpp" ]
+
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  deps = [
+    ":system_ability_fwk_tdd",
+    "listen_ability:listen_test",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  if (target_cpu == "arm") {
+    cflags = [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
+ohos_unittest("SaProxyCacheTest") {
+  module_out_path = module_output_path
+
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
+
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/test_sa_proxy_cache_ability/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability/include",
+  ]
+
+  sources = [ "./sa_proxy_cache_test.cpp" ]
+
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  deps = [
+    ":system_ability_fwk_tdd",
+    "listen_ability:liblisten_ability_interface_proxy",
+    "listen_ability:listen_test",
+    "test_sa_proxy_cache_ability:test_sa_proxy_cache",
+    "//third_party/googletest:gmock_main",
+    "//third_party/googletest:gtest_main",
+  ]
+
+  if (target_cpu == "arm") {
+    cflags = [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+  ]
+}
+
 group("unittest") {
   testonly = true
   deps = [
+    ":CacheManagerTest",
+    ":ExpireLruCacheTest",
     ":LocalAbilityManagerTest",
     ":SystemAbilityTest",
   ]

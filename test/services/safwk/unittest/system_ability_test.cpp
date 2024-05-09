@@ -470,5 +470,6 @@ HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
     auto ret = sysAby->GetLibPath();
     EXPECT_EQ(ret, capability);
 }
+
 }
 }
