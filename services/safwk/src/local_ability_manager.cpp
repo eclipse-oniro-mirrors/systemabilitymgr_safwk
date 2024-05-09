@@ -454,7 +454,7 @@ bool LocalAbilityManager::GetRunningStatus(int32_t systemAbilityId)
 
 void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
 {
-    pthread_setname_np(pthread_self(), ONDEMAND_WORKER.c_str());
+    pthread_setname_np(pthread_self(), ONDEMAND_WORKER);
     LOGD("StartOndemandSa LoadSaLib SA:%{public}d library", systemAbilityId);
     int64_t begin = GetTickCount();
     bool isExist = profileParser_->LoadSaLib(systemAbilityId);
@@ -500,7 +500,7 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::strin
 
 void LocalAbilityManager::StopOndemandSystemAbility(int32_t systemAbilityId)
 {
-    pthread_setname_np(pthread_self(), ONDEMAND_WORKER.c_str());
+    pthread_setname_np(pthread_self(), ONDEMAND_WORKER);
     if (!OnStopAbility(systemAbilityId)) {
         HILOGE(TAG, "failed to stop SA:%{public}d", systemAbilityId);
     }
