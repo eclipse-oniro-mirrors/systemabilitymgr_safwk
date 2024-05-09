@@ -30,9 +30,6 @@
 #include "samgr_xcollie.h"
 
 namespace OHOS {
-namespace {
-const std::string TAG = "SystemAbility";
-}
 
 SystemAbility::SystemAbility(bool runOnCreate)
 {

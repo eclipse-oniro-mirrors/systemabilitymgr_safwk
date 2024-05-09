@@ -39,7 +39,7 @@ using std::string;
 using std::vector;
 
 namespace {
-const string TAG = "LocalAbilityManager";
+constexpr const char* TAG = "LocalAbilityManager";
 constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
 constexpr int32_t DEFAULT_SAID = -1;
@@ -51,13 +51,13 @@ constexpr int32_t SUFFIX_LENGTH = 5; // .json length
 constexpr uint32_t FFRT_DUMP_INFO_ALL = 0;
 constexpr int FFRT_BUFFER_SIZE = 512 * 1024;
 
-const string PROFILES_DIR = "/system/profile/";
-const string DEFAULT_DIR = "/system/usr/";
-const string PREFIX = PROFILES_DIR;
-const string SUFFIX = "_trust.json";
+constexpr const char* PROFILES_DIR = "/system/profile/";
+constexpr const char* DEFAULT_DIR = "/system/usr/";
+constexpr const char* PREFIX = PROFILES_DIR;
+constexpr const char* SUFFIX = "_trust.json";
 
-const string ONDEMAND_WORKER = "SaOndemand";
-const string INIT_POOL = "SaInit";
+constexpr const char* ONDEMAND_WORKER = "SaOndemand";
+constexpr const char* INIT_POOL = "SaInit";
 
 constexpr const char* EVENT_ID = "eventId";
 constexpr const char* NAME = "name";

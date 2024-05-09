@@ -36,7 +36,6 @@ using namespace OHOS::HiviewDFX;
 
 namespace OHOS {
 namespace {
-const std::string TAG = "LocalAbilityManagerStub";
 const std::string PERMISSION_EXT_TRANSACTION = "ohos.permission.ACCESS_EXT_SYSTEM_ABILITY";
 const std::string PERMISSION_MANAGE = "ohos.permission.MANAGE_SYSTEM_ABILITY";
 }

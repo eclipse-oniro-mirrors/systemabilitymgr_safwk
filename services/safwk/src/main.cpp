@@ -29,13 +29,11 @@ using namespace OHOS;
 using std::string;
 
 namespace {
-const string TAG = "SaMain";
-const string START_SAID = "said";
-const string PARAM_PREFIX_U = "-u";
-const string EVENT_TYPE = "eventId";
-const string EVENT_NAME = "name";
-const string EVENT_VALUE = "value";
-const string EVENT_EXTRA_DATA_ID = "extraDataId";
+constexpr const char* PARAM_PREFIX_U = "-u";
+constexpr const char* EVENT_TYPE = "eventId";
+constexpr const char* EVENT_NAME = "name";
+constexpr const char* EVENT_VALUE = "value";
+constexpr const char* EVENT_EXTRA_DATA_ID = "extraDataId";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_JSON = "/system/usr/default.json";
@@ -182,7 +180,7 @@ int main(int argc, char *argv[])
     bool checkOnDemand = true;
     string updateList;
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_U.compare(argv[i]) == 0) {
+        if (PARAM_PREFIX_U == 0) {
             if (i == EVENT_INDEX) {
                 checkOnDemand = false;
             }
