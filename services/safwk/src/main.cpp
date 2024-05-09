@@ -30,15 +30,12 @@ using namespace OHOS;
 using std::string;
 
 namespace {
-const string TAG = "SaMain";
-const string START_SAID = "said";
-const string PARAM_PREFIX_U = "-u";
-const string PARAM_PREFIX_M = "-m";
-const string EVENT_TYPE = "eventId";
-const string EVENT_NAME = "name";
-const string EVENT_VALUE = "value";
-const string EVENT_EXTRA_DATA_ID = "extraDataId";
-const string MALLOPT_CONFIG_SEPARATOR = ":";
+constexpr const char* PARAM_PREFIX_M = "-m";
+constexpr const char* PARAM_PREFIX_U = "-u";
+constexpr const char* EVENT_TYPE = "eventId";
+constexpr const char* EVENT_NAME = "name";
+constexpr const char* EVENT_VALUE = "value";
+constexpr const char* EVENT_EXTRA_DATA_ID = "extraDataId";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_JSON = "/system/usr/default.json";
@@ -185,7 +182,7 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
     std::vector<std::string> malloptStrList;
 #endif
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_M.compare(argv[i]) == 0) {
+        if (PARAM_PREFIX_M == nullptr) {
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
             malloptStrList.emplace_back(argv[i + 1]);
 #endif
@@ -222,7 +219,7 @@ int main(int argc, char *argv[])
     InitMallopt(argc, argv, ondemandLoad, eventIndex);
     string updateList;
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_U.compare(argv[i]) == 0) {
+        if (PARAM_PREFIX_U == nullptr) {
             if (i == EVENT_INDEX) {
                 checkOnDemand = false;
             }

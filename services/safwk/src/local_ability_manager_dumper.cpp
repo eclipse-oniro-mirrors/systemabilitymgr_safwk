@@ -20,8 +20,8 @@
 #include "ipc_payload_statistics.h"
 
 namespace OHOS {
-const std::string DUMP_SUCCESS = " success\n";
-const std::string DUMP_FAIL = " fail\n";
+constexpr const char* DUMP_SUCCESS = " success\n";
+constexpr const char* DUMP_FAIL = " fail\n";
 
 bool LocalAbilityManagerDumper::StartIpcStatistics(std::string& result)
 {

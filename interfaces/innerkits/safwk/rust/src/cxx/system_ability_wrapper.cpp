@@ -25,7 +25,6 @@
 
 namespace OHOS {
 namespace SafwkRust {
-const std::string TAG = "SafwkRustInterface";
 
 SystemAbilityWrapper::SystemAbilityWrapper(
     rust::Box<AbilityWrapper> ability_, int32_t systemAbilityId, bool runOnCreate)
