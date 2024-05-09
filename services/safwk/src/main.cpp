@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
     InitMallopt(argc, argv, ondemandLoad, eventIndex);
     string updateList;
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_U == 0) {
+        if (PARAM_PREFIX_U == nullptr) {
             if (i == EVENT_INDEX) {
                 checkOnDemand = false;
             }
