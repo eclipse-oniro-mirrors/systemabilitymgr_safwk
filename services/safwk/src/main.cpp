@@ -18,6 +18,7 @@
 
 #include "errors.h"
 #include "local_ability_manager.h"
+#include "malloc.h"
 #include "parameter.h"
 #include "parse_util.h"
 #include "safwk_log.h"
@@ -51,6 +52,7 @@ constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
 constexpr int PARTEVENT_NUM = 5;
 constexpr int MAX_LENGTH = 2000;
+constexpr int MALLOPT_CONFIG_LEN = 2;
 }
 
 static void StartMemoryHook(const string& processName)
@@ -98,9 +100,9 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
 }
 
 // check argv size with SAID_INDEX before using the function
-static int32_t ParseArgv(char *argv[], nlohmann::json& eventMap)
+static int32_t ParseArgv(char *argv[], nlohmann::json& eventMap, int eventIndex)
 {
-    string eventStr(argv[EVENT_INDEX]);
+    string eventStr(argv[eventIndex]);
     HILOGI(TAG, "ParseArgv extraArgv eventStr:%{public}s!", eventStr.c_str());
     int32_t saId = DEFAULT_SAID;
     if (eventStr.size() > MAX_LENGTH) {
@@ -173,11 +175,47 @@ static int DoStartSAProcess(int argc, char *argv[], int32_t saId)
     return 0;
 }
 
+static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventIndex)
+{
+#ifdef CONFIG_USE_JEMALLOC_DFX_INTF
+    std::vector<std::string> malloptStrList;
+#endif
+    for (int i = 0; i < argc - 1; ++i) {
+        if (PARAM_PREFIX_M.compare(argv[i]) == 0) {
+#ifdef CONFIG_USE_JEMALLOC_DFX_INTF
+            malloptStrList.emplace_back(argv[i + 1]);
+#endif
+            ondemandLoad += MALLOPT_CONFIG_LEN;
+            eventIndex += MALLOPT_CONFIG_LEN;
+        }
+    }
+#ifdef CONFIG_USE_JEMALLOC_DFX_INTF
+    for (size_t i = 0; i < malloptStrList.size(); i++) {
+        std::vector<std::string> malloptItem;
+        SplitStr(malloptStrList[i], MALLOPT_CONFIG_SEPARATOR, malloptItem);
+        if (malloptItem.size() != MALLOPT_CONFIG_LEN) {
+            HILOGE(TAG, "mallopt config string : %{public}s is invalid", malloptStrList[i].c_str());
+            continue;
+        }
+        int key = atoi(malloptItem[0].c_str());
+        int value = atoi(malloptItem[1].c_str());
+
+        int err = mallopt(key, value);
+        if (err != 1) {
+            HILOGE(TAG, "mallopt failed, malloptStr : %{public}s, result : %{public}d", malloptStrList[i].c_str(), err);
+        }
+    }
+#endif
+}
+
 int main(int argc, char *argv[])
 {
     HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
     // find update list
     bool checkOnDemand = true;
+    int ondemandLoad = ONDEMAND_LOAD;
+    int eventIndex = EVENT_INDEX;
+    InitMallopt(argc, argv, ondemandLoad, eventIndex);
     string updateList;
     for (int i = 0; i < argc - 1; ++i) {
         if (PARAM_PREFIX_U == 0) {
@@ -196,9 +234,13 @@ int main(int argc, char *argv[])
     // Load ondemand system abilities related shared libraries from specific json-format profile
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
-    if (checkOnDemand && argc > ONDEMAND_LOAD) {
+    if (checkOnDemand && argc > ondemandLoad) {
         nlohmann::json eventMap;
-        saId = ParseArgv(argv, eventMap);
+        if (eventIndex >= argc) {
+            HILOGE(TAG, "sa services path config error!");
+            return 0;
+        }
+        saId = ParseArgv(argv, eventMap, eventIndex);
         if (!CheckSaId(saId)) {
             HILOGE(TAG, "saId is invalid!");
             return 0;

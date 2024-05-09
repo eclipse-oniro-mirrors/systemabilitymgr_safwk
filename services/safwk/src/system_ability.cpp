@@ -139,7 +139,7 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
         HILOGE(TAG, "failed to get samgrProxy");
         return;
     }
-    HILOGI(TAG, "get extra data id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDataId()));
+    LOGI("get extra id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDataId()));
     MessageParcel extraDataParcel;
     int32_t ret = samgrProxy->GetOnDemandReasonExtraData(onDemandStartReason.GetExtraDataId(), extraDataParcel);
     if (ret != ERR_OK) {
@@ -152,7 +152,8 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
         return;
     }
     onDemandStartReason.SetExtraData(*extraData);
-    LOGI("get extra id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDataId()));
+    HILOGD(TAG, "get extra data: %{public}d, %{public}s", onDemandStartReason.GetExtraData().GetCode(),
+        onDemandStartReason.GetExtraData().GetData().c_str());
     delete extraData;
 }
 
