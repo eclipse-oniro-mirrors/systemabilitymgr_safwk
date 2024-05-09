@@ -30,6 +30,7 @@ using namespace OHOS;
 using std::string;
 
 namespace {
+constexpr const char* PARAM_PREFIX_M = "-m";
 constexpr const char* PARAM_PREFIX_U = "-u";
 constexpr const char* EVENT_TYPE = "eventId";
 constexpr const char* EVENT_NAME = "name";
@@ -181,7 +182,7 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
     std::vector<std::string> malloptStrList;
 #endif
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_M.compare(argv[i]) == 0) {
+        if (PARAM_PREFIX_M == nullptr) {
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
             malloptStrList.emplace_back(argv[i + 1]);
 #endif
