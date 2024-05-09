@@ -39,7 +39,6 @@ using std::string;
 using std::vector;
 
 namespace {
-constexpr const char* TAG = "LocalAbilityManager";
 constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
 constexpr int32_t DEFAULT_SAID = -1;
