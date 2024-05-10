@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
     // Load ondemand system abilities related shared libraries from specific json-format profile
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
-    if (argc > ondemandLoad) {
+    if (argc > ONDEMAND_LOAD) {
         nlohmann::json eventMap;
         if (eventIndex >= argc) {
             HILOGE(TAG, "sa services path config error!");
