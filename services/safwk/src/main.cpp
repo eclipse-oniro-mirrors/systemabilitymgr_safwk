@@ -211,7 +211,6 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
 int main(int argc, char *argv[])
 {
     HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
-    bool checkOnDemand = true;
     int ondemandLoad = ONDEMAND_LOAD;
     int eventIndex = EVENT_INDEX;
     InitMallopt(argc, argv, ondemandLoad, eventIndex);
