@@ -60,7 +60,6 @@ public:
         int32_t& delayTime) override;
     bool StopAbility(int32_t systemAbilityId, const std::string& eventStr) override;
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
-    void SetUpdateList(const std::string& updateList);
     void SetStartReason(int32_t systemAbilityId, const nlohmann::json& event);
     void SetStopReason(int32_t systemAbilityId, const nlohmann::json& event);
     nlohmann::json& GetStartReason(int32_t systemAbilityId);

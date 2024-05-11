@@ -31,7 +31,6 @@ using std::string;
 
 namespace {
 constexpr const char* PARAM_PREFIX_M = "-m";
-constexpr const char* PARAM_PREFIX_U = "-u";
 constexpr const char* EVENT_TYPE = "eventId";
 constexpr const char* EVENT_NAME = "name";
 constexpr const char* EVENT_VALUE = "value";
@@ -212,30 +211,13 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
 int main(int argc, char *argv[])
 {
     HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
-    // find update list
-    bool checkOnDemand = true;
     int ondemandLoad = ONDEMAND_LOAD;
     int eventIndex = EVENT_INDEX;
     InitMallopt(argc, argv, ondemandLoad, eventIndex);
-    string updateList;
-    for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_U == nullptr) {
-            if (i == EVENT_INDEX) {
-                checkOnDemand = false;
-            }
-            updateList = argv[i + 1];
-            break;
-        }
-    }
-
-    if (!updateList.empty()) {
-        LocalAbilityManager::GetInstance().SetUpdateList(updateList);
-    }
-
     // Load ondemand system abilities related shared libraries from specific json-format profile
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
-    if (checkOnDemand && argc > ondemandLoad) {
+    if (argc > ONDEMAND_LOAD) {
         nlohmann::json eventMap;
         if (eventIndex >= argc) {
             HILOGE(TAG, "sa services path config error!");
