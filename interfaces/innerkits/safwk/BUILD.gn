@@ -79,10 +79,6 @@ ohos_shared_library("system_ability_fwk") {
 }
 
 ohos_shared_library("api_cache_manager") {
-  include_dirs = [
-    "//foundation/systemabilitymgr/safwk/include/",
-    "//foundation/systemabilitymgr/safwk/services/safwk/include",
-  ]
   sources = [ "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp" ]
   public_configs = [ ":api_cache_manager_config" ]
 

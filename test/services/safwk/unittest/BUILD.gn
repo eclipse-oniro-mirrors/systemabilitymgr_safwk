@@ -242,7 +242,6 @@ ohos_unittest("SaProxyCacheTest") {
 
   deps = [
     ":system_ability_fwk_tdd",
-    "listen_ability:liblisten_ability_interface_proxy",
     "listen_ability:listen_test",
     "test_sa_proxy_cache_ability:test_sa_proxy_cache",
     "//third_party/googletest:gmock_main",
