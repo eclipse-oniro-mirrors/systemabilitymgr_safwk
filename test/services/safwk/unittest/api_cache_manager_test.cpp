@@ -27,9 +27,9 @@
 using namespace testing::ext;
 namespace OHOS {
 namespace {
-    std::u16string g_Descriptor1 = u"testdescriptor1";
-    std::u16string g_Descriptor2 = u"testdescriptor2";
-    std::u16string g_Descriptor3 = u"testdescriptor3";
+    std::u16string g_descriptor1 = u"testdescriptor1";
+    std::u16string g_descriptor2 = u"testdescriptor2";
+    std::u16string g_descriptor3 = u"testdescriptor3";
 
     const std::u16string CACHE_KEY_STR_1 = u"ohos.cacheAPIKey.1";
     const std::u16string CACHE_KEY_STR_2 = u"ohos.cacheAPIKey.2";
@@ -84,23 +84,23 @@ void CacheManagerTest::TearDown()
  */
 HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level2)
 {
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_100S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_100S);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 1);
 
     // repeated addition
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_100S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_100S);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 1);
 
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_100, EXPIRE_TIME_100S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_100, EXPIRE_TIME_100S);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 2);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_1);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_1);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 2);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 1);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 0);
 }
 
@@ -117,16 +117,16 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     MessageParcel data1;
     MessageParcel reply1;
     // (des1, apicode100) api has not enabled the proxy cache
-    ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data1, reply1);
+    ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data1, reply1);
     EXPECT_EQ(ret, false);
 
     MessageParcel data2;
     MessageParcel reply2;
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_3S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_3S);
     ret = data2.WriteString16(CACHE_KEY_STR_1);
     EXPECT_EQ(ret, true);
     // cache miss
-    ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data2, reply2);
+    ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data2, reply2);
     EXPECT_EQ(ret, false);
 
     MessageParcel data3;
@@ -134,7 +134,7 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     data3.WriteString16(CACHE_KEY_STR_1);
     reply3.WriteString16(CACHE_VALUE_STR_1);
     // add cache
-    ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data3, reply3);
+    ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data3, reply3);
     EXPECT_EQ(ret, true);
 
     MessageParcel data4;
@@ -142,7 +142,7 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     std::u16string cacheReplyStr1;
     data4.WriteString16(CACHE_KEY_STR_1);
     // cache hit
-    ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data4, reply4);
+    ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data4, reply4);
     EXPECT_EQ(ret, true);
 
     reply4.ReadString16(cacheReplyStr1);
@@ -152,7 +152,7 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     MessageParcel reply5;
     std::u16string cacheReplyStr2;
     data5.WriteString16(CACHE_KEY_STR_2);
-    ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data5, reply5);
+    ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data5, reply5);
     EXPECT_EQ(ret, false);
 
     ret = reply5.ReadString16(cacheReplyStr2);
@@ -162,9 +162,9 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     sleep(4);
     MessageParcel data6;
     MessageParcel reply6;
-    ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data6, reply6);
+    ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data6, reply6);
     EXPECT_EQ(ret, false);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
 }
 
 void LRUTest001AddCache1()
@@ -178,7 +178,7 @@ void LRUTest001AddCache1()
         EXPECT_EQ(data.WriteBool(testTrueBool), true);
 
         EXPECT_EQ(reply.WriteBool(testFalseBool), true);
-        ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
     }
     {
@@ -186,7 +186,7 @@ void LRUTest001AddCache1()
         MessageParcel reply;
         EXPECT_EQ(data.WriteBool(testTrueBool), true);
 
-        ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
         EXPECT_EQ(reply.ReadBool(ret), true);
         EXPECT_EQ(ret, testFalseBool);
@@ -218,7 +218,7 @@ void LRUTest001AddCache2()
         EXPECT_EQ(reply.WriteDouble(valDouble), true);
         EXPECT_EQ(reply.WriteFloat(valFloat), true);
         EXPECT_EQ(reply.WriteString(valString), true);
-        ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
     }
     {
@@ -230,7 +230,7 @@ void LRUTest001AddCache2()
         EXPECT_EQ(data.WriteFloat(keyFloat), true);
         EXPECT_EQ(data.WriteString16(keyU16string), true);
 
-        ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
         double retdouble;
         float retfloat;
@@ -270,7 +270,7 @@ void LRUTest001AddCache3()
     EXPECT_EQ(reply.WriteFloat(valFloat), true);
     EXPECT_EQ(reply.WriteString(valString), true);
     EXPECT_EQ(reply.WriteString16Vector(val16StringVector), true);
-    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     EXPECT_EQ(ret, true);
 }
 
@@ -290,7 +290,7 @@ void LRUTest001AddCache4()
 
         EXPECT_EQ(reply.WriteDouble(valDouble), true);
         EXPECT_EQ(reply.WriteFloat(valFloat), true);
-        ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
     }
 
@@ -300,7 +300,7 @@ void LRUTest001AddCache4()
         EXPECT_EQ(data.WriteStringVector(keyStringVector), true);
         EXPECT_EQ(data.WriteString16(keyU16string), true);
 
-        ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
         double retdouble;
         float retfloat;
@@ -322,7 +322,7 @@ void LRUTest001AddCache5()
     EXPECT_EQ(data.WriteInterfaceToken(testKeyToken), true);
 
     EXPECT_EQ(reply.WriteInterfaceToken(testValToken), true);
-    ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+    ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     EXPECT_EQ(ret, true);
     return;
 }
@@ -338,7 +338,7 @@ void LRUTest001AddCache6()
         EXPECT_EQ(data.WritePointer(keyPtr), true);
 
         EXPECT_EQ(reply.WritePointer(valPtr), true);
-        ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
     }
     {
@@ -346,7 +346,7 @@ void LRUTest001AddCache6()
         MessageParcel reply;
         EXPECT_EQ(data.WritePointer(keyPtr), true);
 
-        ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
         EXPECT_EQ(reply.ReadPointer(), valPtr);
     }
@@ -362,7 +362,7 @@ void LRUTest001AddCache7()
     EXPECT_EQ(data.WriteUint16Unaligned(keyUint16T), true);
 
     EXPECT_EQ(reply.WriteString(valString), true);
-    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     EXPECT_EQ(ret, true);
     return;
 }
@@ -420,7 +420,7 @@ void LRUTest001AddCache8()
     EXPECT_EQ(reply.WriteString16Vector(val16StringVector), true);
     EXPECT_EQ(reply.WriteInterfaceToken(testValToken), true);
     EXPECT_EQ(reply.WritePointer(valPtr), true);
-    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     EXPECT_EQ(ret, true);
     return;
 }
@@ -439,7 +439,7 @@ void LRUTest001CheckCache8()
     MessageParcel reply;
     LRUTest001ParcelCache8(data);
 
-    auto ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+    auto ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     EXPECT_EQ(ret, true);
     double retdouble;
     float retfloat;
@@ -463,7 +463,7 @@ void LRUTest001CheckCache8()
 
 void LRUTest001CheckCacheNums(int32_t expectNums)
 {
-    std::pair<std::u16string, uint32_t> myPair = std::make_pair(g_Descriptor1, CACHE_API_CODE_100);
+    std::pair<std::u16string, uint32_t> myPair = std::make_pair(g_descriptor1, CACHE_API_CODE_100);
     auto apiCache = ApiCacheManager::GetInstance().caches_.find(myPair);
     EXPECT_NE(apiCache, ApiCacheManager::GetInstance().caches_.end());
     if (apiCache != ApiCacheManager::GetInstance().caches_.end()) {
@@ -483,7 +483,7 @@ void LRUTest001AddCache9()
     EXPECT_EQ(data.WriteInt32(keyInt32T), true);
 
     EXPECT_EQ(reply.WriteString(valString), true);
-    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+    auto ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     EXPECT_EQ(ret, true);
     return;
 }
@@ -496,7 +496,7 @@ void LRUTest001AddCache9()
 HWTEST_F(CacheManagerTest, LRUTest001, TestSize.Level2)
 {
     bool ret;
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_1S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_1S);
     float keyFloat = 0.012345;
     std::u16string keyU16string = u"keyU16161616Ustring";
     bool testTrueBool = true;
@@ -528,7 +528,7 @@ HWTEST_F(CacheManagerTest, LRUTest001, TestSize.Level2)
         MessageParcel data;
         MessageParcel reply;
         EXPECT_EQ(data.WriteBool(testTrueBool), true);
-        ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, false);
     }
 
@@ -541,7 +541,7 @@ HWTEST_F(CacheManagerTest, LRUTest001, TestSize.Level2)
         EXPECT_EQ(data.WriteFloat(keyFloat), true);
 
         EXPECT_EQ(reply.WriteDouble(valDouble), true);
-        ret = ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
     }
     LRUTest001CheckCacheNums(1);
     {
@@ -550,7 +550,7 @@ HWTEST_F(CacheManagerTest, LRUTest001, TestSize.Level2)
         double retDouble;
         EXPECT_EQ(data.WriteFloat(keyFloat), true);
 
-        ret = ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data, reply);
+        ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data, reply);
         EXPECT_EQ(ret, true);
         EXPECT_EQ(reply.ReadDouble(retDouble), true);
         EXPECT_EQ(retDouble, valDouble);
@@ -763,36 +763,36 @@ bool ClearCache001TestCheck(const std::u16string& descriptor, uint32_t apiCode,
 void ClearCache001TestStep1AddCache()
 {
     // add SA:descriptor1 API_CODE:100, cache: [keystr1, valstr1], [keystr2, valstr2]
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_3S);
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_1, CACHE_VALUE_STR_1), true);
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_3S);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_1, CACHE_VALUE_STR_1), true);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
 
     // add SA:descriptor1 API_CODE:1, cache: [keystr2, valstr2], [keystr3, valstr3]
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_1, EXPIRE_TIME_3S);
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor1, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor1, CACHE_API_CODE_1, CACHE_KEY_STR_3, CACHE_VALUE_STR_3), true);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_1, EXPIRE_TIME_3S);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor1, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor1, CACHE_API_CODE_1, CACHE_KEY_STR_3, CACHE_VALUE_STR_3), true);
 
     // add SA:descriptor2 API_CODE:1, cache: [keystr3, valstr3_valint1], [keystr2, valstr2]
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_1, EXPIRE_TIME_3S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_1, EXPIRE_TIME_3S);
     {
         MessageParcel data;
         MessageParcel reply;
         ClearCache001TestParcelData(data, CACHE_KEY_STR_3, CACHE_KEY_INT_1);
         ClearCache001TestParcelData(reply, CACHE_VALUE_STR_3, CACHE_VALUE_INT_1);
-        EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor2, CACHE_API_CODE_1, data, reply), true);
+        EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor2, CACHE_API_CODE_1, data, reply), true);
     }
 
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor2, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor2, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
 
     // add SA:descriptor2 API_CODE:100, cache: [keyint1, valint1_valstr3], [keystr2, valstr2]
     {
         MessageParcel data;
         MessageParcel reply;
-        ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_100, EXPIRE_TIME_3S);
+        ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_100, EXPIRE_TIME_3S);
         ClearCache001TestParcelData(data, CACHE_KEY_INT_1);
         ClearCache001TestParcelData(reply, CACHE_VALUE_INT_1, CACHE_VALUE_STR_3);
-        EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor2, CACHE_API_CODE_100, data, reply), true);
-        EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor2, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2),
+        EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor2, CACHE_API_CODE_100, data, reply), true);
+        EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor2, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2),
             true);
     }
 
@@ -804,7 +804,7 @@ void ClearCache001TestStep1AddCache()
         }
     }
 
-    bool ret = ClearCache001TestCheck(g_Descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_1, CACHE_VALUE_STR_1, true);
+    bool ret = ClearCache001TestCheck(g_descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_1, CACHE_VALUE_STR_1, true);
     EXPECT_EQ(ret, true);
 }
 
@@ -832,67 +832,67 @@ HWTEST_F(CacheManagerTest, ClearCache001, TestSize.Level2)
 {
     ClearCache001TestStep1AddCache();
 
-    ApiCacheManager::GetInstance().ClearCache(g_Descriptor1, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().ClearCache(g_descriptor1, CACHE_API_CODE_100);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 4);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
     EXPECT_EQ(ClearCache001TestCheckNumber(3, 2), true);
 
-    bool ret = ClearCache001TestCheck(g_Descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_1, CACHE_VALUE_STR_1, false);
+    bool ret = ClearCache001TestCheck(g_descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_1, CACHE_VALUE_STR_1, false);
     EXPECT_EQ(ret, true);
-    ret = ClearCache001TestCheck(g_Descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2, false);
+    ret = ClearCache001TestCheck(g_descriptor1, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2, false);
     EXPECT_EQ(ret, true);
-    ret = ClearCache001TestCheck(g_Descriptor1, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2, true);
+    ret = ClearCache001TestCheck(g_descriptor1, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2, true);
     EXPECT_EQ(ret, true);
 
     MessageParcel data1, data2, reply1, reply2;
     ClearCache001TestParcelData(data1, CACHE_KEY_STR_3, CACHE_KEY_INT_1);
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_1, data1, reply1), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_1, data1, reply1), true);
     EXPECT_EQ(ClearCache001TestCheckParcelData(reply1, CACHE_VALUE_STR_3, CACHE_VALUE_INT_1), true);
 
     ClearCache001TestParcelData(data2, CACHE_KEY_INT_1);
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_100, data2, reply2), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_100, data2, reply2), true);
     EXPECT_EQ(ClearCache001TestCheckParcelData(reply2, CACHE_VALUE_INT_1, CACHE_VALUE_STR_3), true);
 
-    ApiCacheManager::GetInstance().ClearCache(g_Descriptor2);
+    ApiCacheManager::GetInstance().ClearCache(g_descriptor2);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 3);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_100);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_1);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
 
     EXPECT_EQ(ClearCache001TestCheckNumber(1, 2), true);
 
     MessageParcel data3, data4, reply3, reply4;
     ClearCache001TestParcelData(data3, CACHE_KEY_STR_3, CACHE_KEY_INT_1);
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_1, data3, reply4), false);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_1, data3, reply4), false);
 
     EXPECT_EQ(data4.WriteInt32(CACHE_KEY_INT_1), true);
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_100, data4, reply4), false);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_100, data4, reply4), false);
 
     // add SA:descriptor2 API_CODE:1, cache: [keystr3, valstr3_valint1], [keystr2, valstr2]
     MessageParcel data5, data6, reply5, reply6;
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_1, EXPIRE_TIME_3S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_1, EXPIRE_TIME_3S);
     ClearCache001TestParcelData(data5, CACHE_KEY_STR_3, CACHE_KEY_INT_1);
     ClearCache001TestParcelData(reply5, CACHE_VALUE_STR_3, CACHE_VALUE_INT_1);
-    EXPECT_EQ(ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor2, CACHE_API_CODE_1, data5, reply5), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PostSendRequest(g_descriptor2, CACHE_API_CODE_1, data5, reply5), true);
 
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor2, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor2, CACHE_API_CODE_1, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
 
     // add SA:descriptor2 API_CODE:100, cache: [keyint1, valint1_valstr3], [keystr2, valstr2]
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_100, EXPIRE_TIME_3S);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_100, EXPIRE_TIME_3S);
     ClearCache001TestParcelData(data6, CACHE_KEY_INT_1);
     ClearCache001TestParcelData(reply6, CACHE_VALUE_INT_1, CACHE_VALUE_STR_3);
-    EXPECT_EQ(ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor2, CACHE_API_CODE_100, data6, reply6), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PostSendRequest(g_descriptor2, CACHE_API_CODE_100, data6, reply6), true);
 
-    EXPECT_EQ(ClearCache001TestPrevSet(g_Descriptor2, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
+    EXPECT_EQ(ClearCache001TestPrevSet(g_descriptor2, CACHE_API_CODE_100, CACHE_KEY_STR_2, CACHE_VALUE_STR_2), true);
 
     ApiCacheManager::GetInstance().ClearCache();
 
     EXPECT_EQ(ClearCache001TestCheckNumber(3, 0), true);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_1);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_100);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_1);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_1);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 0);
 }
 
@@ -908,8 +908,8 @@ void Task001(bool& stop)
     ClearCache001TestParcelData(data2, CACHE_KEY_INT_1, CACHE_KEY_STR_1);
     ClearCache001TestParcelData(reply2, CACHE_VALUE_INT_1, CACHE_VALUE_STR_1);
     while (!stop) {
-        ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_1, data1, reply1);
-        ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor1, CACHE_API_CODE_100, data2, reply2);
+        ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_1, data1, reply1);
+        ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data2, reply2);
     }
 }
 
@@ -925,8 +925,8 @@ void Task002(bool& stop)
     ClearCache001TestParcelData(data2, CACHE_KEY_INT_1, CACHE_KEY_STR_2);
     ClearCache001TestParcelData(reply2, CACHE_VALUE_INT_1, CACHE_VALUE_STR_2);
     while (!stop) {
-        ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor2, CACHE_API_CODE_1, data1, reply1);
-        ApiCacheManager::GetInstance().PostSendRequest(g_Descriptor2, CACHE_API_CODE_100, data2, reply2);
+        ApiCacheManager::GetInstance().PostSendRequest(g_descriptor2, CACHE_API_CODE_1, data1, reply1);
+        ApiCacheManager::GetInstance().PostSendRequest(g_descriptor2, CACHE_API_CODE_100, data2, reply2);
     }
 }
 
@@ -946,10 +946,10 @@ void Task003(bool& stop)
     ClearCache001TestParcelData(data4, CACHE_KEY_INT_1, CACHE_KEY_STR_2);
 
     while (!stop) {
-        ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_1, data1, reply1);
-        ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data2, reply2);
-        ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_1, data3, reply3);
-        ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_100, data4, reply4);
+        ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_1, data1, reply1);
+        ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data2, reply2);
+        ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_1, data3, reply3);
+        ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_100, data4, reply4);
     }
 }
 
@@ -957,34 +957,34 @@ void Task004(bool& stop)
 {
     while (!stop) {
         ApiCacheManager::GetInstance().ClearCache();
-        ApiCacheManager::GetInstance().ClearCache(g_Descriptor2, CACHE_API_CODE_100);
-        ApiCacheManager::GetInstance().ClearCache(g_Descriptor1, CACHE_API_CODE_1);
-        ApiCacheManager::GetInstance().ClearCache(g_Descriptor1, CACHE_API_CODE_100);
-        ApiCacheManager::GetInstance().ClearCache(g_Descriptor3, CACHE_API_CODE_1);
-        ApiCacheManager::GetInstance().ClearCache(g_Descriptor3);
-        ApiCacheManager::GetInstance().ClearCache(g_Descriptor1);
+        ApiCacheManager::GetInstance().ClearCache(g_descriptor2, CACHE_API_CODE_100);
+        ApiCacheManager::GetInstance().ClearCache(g_descriptor1, CACHE_API_CODE_1);
+        ApiCacheManager::GetInstance().ClearCache(g_descriptor1, CACHE_API_CODE_100);
+        ApiCacheManager::GetInstance().ClearCache(g_descriptor3, CACHE_API_CODE_1);
+        ApiCacheManager::GetInstance().ClearCache(g_descriptor3);
+        ApiCacheManager::GetInstance().ClearCache(g_descriptor1);
     }
 }
 
 void Task005(bool& stop)
 {
     while (!stop) {
-        ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_1, 0);
-        ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, 0);
-        ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_1, 0);
-        ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_100, 0);
+        ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_1, 0);
+        ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, 0);
+        ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_1, 0);
+        ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_100, 0);
     }
 }
 
 void Task006(bool& stop)
 {
     while (!stop) {
-        ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_1);
-        ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_100);
-        ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_1);
-        ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_100);
-        ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor3, CACHE_API_CODE_1);
-        ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor3, CACHE_API_CODE_100);
+        ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_1);
+        ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
+        ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
+        ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
+        ApiCacheManager::GetInstance().DelCacheApi(g_descriptor3, CACHE_API_CODE_1);
+        ApiCacheManager::GetInstance().DelCacheApi(g_descriptor3, CACHE_API_CODE_100);
     }
 }
 
@@ -1006,10 +1006,10 @@ HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
     addapiT.join();
     delapiT.join();
 
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_1, 0);
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor1, CACHE_API_CODE_100, 0);
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_1, 0);
-    ApiCacheManager::GetInstance().AddCacheApi(g_Descriptor2, CACHE_API_CODE_100, 0);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_1, 0);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, 0);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_1, 0);
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor2, CACHE_API_CODE_100, 0);
     stop = false;
     std::thread t1(Task001, std::ref(stopAdd));
     std::thread t2(Task002, std::ref(stopAdd));
@@ -1033,22 +1033,22 @@ HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
     ClearCache001TestParcelData(data3, CACHE_KEY_STR_2, CACHE_KEY_INT_1);
     ClearCache001TestParcelData(data4, CACHE_KEY_INT_1, CACHE_KEY_STR_2);
 
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_1, data1, reply1), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_1, data1, reply1), true);
     EXPECT_EQ(ClearCache001TestCheckParcelData(reply1, CACHE_VALUE_STR_1, CACHE_VALUE_INT_1), true);
 
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor1, CACHE_API_CODE_100, data2, reply2), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data2, reply2), true);
     EXPECT_EQ(ClearCache001TestCheckParcelData(reply2, CACHE_VALUE_INT_1, CACHE_VALUE_STR_1), true);
 
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_1, data3, reply3), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_1, data3, reply3), true);
     EXPECT_EQ(ClearCache001TestCheckParcelData(reply3, CACHE_VALUE_STR_2, CACHE_VALUE_INT_1), true);
 
-    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_Descriptor2, CACHE_API_CODE_100, data4, reply4), true);
+    EXPECT_EQ(ApiCacheManager::GetInstance().PreSendRequest(g_descriptor2, CACHE_API_CODE_100, data4, reply4), true);
     EXPECT_EQ(ClearCache001TestCheckParcelData(reply4, CACHE_VALUE_INT_1, CACHE_VALUE_STR_2), true);
 
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_1);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor1, CACHE_API_CODE_100);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_1);
-    ApiCacheManager::GetInstance().DelCacheApi(g_Descriptor2, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_1);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
     return;
 }
 }

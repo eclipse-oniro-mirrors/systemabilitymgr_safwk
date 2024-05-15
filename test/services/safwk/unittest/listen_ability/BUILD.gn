@@ -11,36 +11,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import("//build/ohos.gni")
 import("//build/test.gni")
-import("//foundation/ability/idl_tool/idl_config.gni")
 
 config("listen_ability_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
-    "${target_gen_dir}",
+    "../test_sa_proxy_cache_ability/include",
   ]
-  include_dirs += [ "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/test_sa_proxy_cache_ability/include" ]
-}
-
-idl_gen_interface("listen_ability_interface") {
-  sources = [ "IListenAbility.idl" ]
-  sequenceable_pub_deps = [ "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:api_cache_manager" ]
-  part_name = "safwk"
-  subsystem_name = "systemabilitymgr"
 }
 
 ohos_shared_library("listen_test") {
+  sources = [
+    "src/listen_ability.cpp",
+    "src/listen_ability_proxy.cpp",
+    "src/listen_ability_stub.cpp",
+  ]
+
   configs = [
     ":listen_ability_config",
     "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
   ]
-  sources = [ "src/listen_ability.cpp" ]
 
   deps = [
-    ":liblisten_ability_interface_proxy",
-    ":liblisten_ability_interface_stub",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:api_cache_manager",
     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/test_sa_proxy_cache_ability:test_sa_proxy_cache",
