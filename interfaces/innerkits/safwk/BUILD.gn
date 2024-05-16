@@ -39,6 +39,13 @@ config("api_cache_manager_config") {
 }
 
 ohos_shared_library("system_ability_fwk") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../../../cfi_blocklist.txt"
+  }
   version_script = "libsystem_ability_fwk.versionscript"
   sources = [
     "../../../services/safwk/src/local_ability_manager.cpp",
