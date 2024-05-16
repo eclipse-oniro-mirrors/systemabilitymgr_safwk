@@ -56,7 +56,7 @@ public:
         ApiCacheManager::GetInstance().DelCacheApi(GetDescriptor(), ADD_VOLUME);
     }
 
-    ErrCode AddVolume(
+    int32_t AddVolume(
         int32_t volume) override;
 
     ErrCode TestSaCallSa(

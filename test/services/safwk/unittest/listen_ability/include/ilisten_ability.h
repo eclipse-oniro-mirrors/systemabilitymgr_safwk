@@ -25,7 +25,7 @@ class IListenAbility : public IRemoteBroker {
 public:
     DECLARE_INTERFACE_DESCRIPTOR(u"OHOS.IListenAbility");
 
-    virtual ErrCode AddVolume(
+    virtual int32_t AddVolume(
         int32_t volume) = 0;
     virtual ErrCode TestSaCallSa(
         int32_t input, double& output) = 0;

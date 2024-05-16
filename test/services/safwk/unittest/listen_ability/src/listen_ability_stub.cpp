@@ -25,11 +25,8 @@ int32_t ListenAbilityStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
     switch (code) {
         case ADD_VOLUME: {
             int32_t volume = data.ReadInt32();
-            ErrCode errCode = AddVolume(volume);
-            if (!reply.WriteInt32(errCode)) {
-                return ERR_INVALID_VALUE;
-            }
-            return ERR_NONE;
+            bool ret = reply.WriteInt32(AddVolume(volume));
+            return (ret ? ERR_OK : ERR_FLATTEN_OBJECT);
         }
         case COMMAND_TEST_SA_CALL_SA: {
             return StubTestSaCallSa(data, reply);

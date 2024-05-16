@@ -17,7 +17,7 @@
 #include "safwk_log.h"
 
 namespace OHOS {
-ErrCode ListenAbilityProxy::AddVolume(
+int32_t ListenAbilityProxy::AddVolume(
     int32_t volume)
 {
     MessageParcel data;
