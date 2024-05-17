@@ -85,7 +85,7 @@ int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
     }
 
     if (CheckPermission(code) == false) {
-        HILOGW(TAG, "check permission failed! code:%{public}u, callingPid:%{public}d, callingTokenId:%{public}d",
+        HILOGW(TAG, "check permission failed! code:%{public}u, callingPid:%{public}d, callingTokenId:%{public}u",
             code, IPCSkeleton::GetCallingPid(), IPCSkeleton::GetCallingTokenID());
         return ERR_PERMISSION_DENIED;
     }
