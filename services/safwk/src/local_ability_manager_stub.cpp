@@ -85,7 +85,8 @@ int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
     }
 
     if (CheckPermission(code) == false) {
-        HILOGW(TAG, "check permission failed!");
+        HILOGW(TAG, "check permission failed! code:%{public}u, callingPid:%{public}d, callingTokenId:%{public}u",
+            code, IPCSkeleton::GetCallingPid(), IPCSkeleton::GetCallingTokenID());
         return ERR_PERMISSION_DENIED;
     }
     HILOGD(TAG, "check permission success!");
@@ -106,10 +107,11 @@ int32_t LocalAbilityManagerStub::StartAbilityInner(MessageParcel& data, MessageP
     int32_t saId = -1;
     bool ret = data.ReadInt32(saId);
     if (!ret) {
+        HILOGW(TAG, "read saId failed!");
         return ERR_NULL_OBJECT;
     }
     if (!CheckInputSysAbilityId(saId)) {
-        HILOGW(TAG, "read saId failed!");
+        HILOGW(TAG, "check SA:%{public}d id failed!", saId);
         return ERR_NULL_OBJECT;
     }
     int64_t begin = GetTickCount();
