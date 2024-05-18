@@ -36,6 +36,11 @@
             "description" : "Permission required for telephony to access AbillityManagerService."
         },
         {
+            "name" : "ohos.permission.MODIFY_AUDIO_SETTINGS",
+            "said" : "4005",
+            "description" : "permission required for telephony to set microphone mute."
+        },
+        {
             "name" : "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
             "said" : "401",
             "description" : "Permission required for BMS to grant sensitive permissions."
