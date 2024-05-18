@@ -38,7 +38,7 @@
         {
             "name" : "ohos.permission.MODIFY_AUDIO_SETTINGS",
             "said" : "4005",
-            "description" : "permission required for telephony to set microphone mute."
+            "description" : "permission required for telephony to set audio mode."
         },
         {
             "name" : "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
