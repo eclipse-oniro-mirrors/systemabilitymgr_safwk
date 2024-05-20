@@ -18,6 +18,14 @@ rust_cxx("system_ability_fwk_rust_gen") {
 }
 
 ohos_static_library("system_ability_fwk_rust_cxx") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../../../../cfi_blocklist.txt"
+  }
+
   sources = [ "src/cxx/system_ability_wrapper.cpp" ]
   sources += get_target_outputs(":system_ability_fwk_rust_gen")
 
