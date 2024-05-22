@@ -244,13 +244,16 @@ int32_t LocalAbilityManagerStub::IpcStatCmdProcInner(MessageParcel& data, Messag
     int cmd = -1;
     bool ret = data.ReadInt32(cmd);
     if (!ret) {
+        ::close(fd);
         return ERR_NULL_OBJECT;
     }
     bool result = IpcStatCmdProc(fd, cmd);
     if (!reply.WriteBool(result)) {
         HILOGW(TAG, "IpcStatCmdProc Write result failed!");
+        ::close(fd);
         return ERR_NULL_OBJECT;
     }
+    ::close(fd);
     HILOGD(TAG, "IpcStatCmdProc called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
