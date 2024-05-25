@@ -13,3 +13,5 @@
 
 [cfi]
 type:*OHOS::SystemAbility*
+src:*foundation/systemabilitymgr/samgr/services/safwk/test/services/safwk/unittest/*
+src:*foundation/systemabilitymgr/samgr/services/safwk/test/fuzztest/*
