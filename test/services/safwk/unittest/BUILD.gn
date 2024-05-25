@@ -29,13 +29,6 @@ config("system_ability_all_deps_config") {
 }
 
 ohos_static_library("system_ability_fwk_tdd") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    cfi_no_nvcall = true
-    blocklist = "../../../../cfi_blocklist.txt"
-  }
   sources = [
     "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager.cpp",
@@ -69,13 +62,6 @@ ohos_static_library("system_ability_fwk_tdd") {
 }
 
 ohos_unittest("LocalAbilityManagerTest") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    cfi_no_nvcall = true
-    blocklist = "../../../../cfi_blocklist.txt"
-  }
   module_out_path = module_output_path
   resource_config_file =
       "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
@@ -123,13 +109,6 @@ ohos_unittest("LocalAbilityManagerTest") {
 }
 
 ohos_unittest("SystemAbilityTest") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    cfi_no_nvcall = true
-    blocklist = "../../../../cfi_blocklist.txt"
-  }
   module_out_path = module_output_path
 
   resource_config_file =
@@ -171,13 +150,6 @@ ohos_unittest("SystemAbilityTest") {
 }
 
 ohos_unittest("CacheManagerTest") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    cfi_no_nvcall = true
-    blocklist = "../../../../cfi_blocklist.txt"
-  }
   module_out_path = module_output_path
 
   resource_config_file =
@@ -219,13 +191,6 @@ ohos_unittest("CacheManagerTest") {
 }
 
 ohos_unittest("ExpireLruCacheTest") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    cfi_no_nvcall = true
-    blocklist = "../../../../cfi_blocklist.txt"
-  }
   module_out_path = module_output_path
 
   resource_config_file =
@@ -259,13 +224,6 @@ ohos_unittest("ExpireLruCacheTest") {
 }
 
 ohos_unittest("SaProxyCacheTest") {
-  sanitize = {
-    cfi = true
-    cfi_cross_dso = true
-    debug = false
-    cfi_no_nvcall = true
-    blocklist = "../../../../cfi_blocklist.txt"
-  }
   module_out_path = module_output_path
 
   resource_config_file =

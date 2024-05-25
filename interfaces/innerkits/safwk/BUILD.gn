@@ -46,6 +46,8 @@ ohos_shared_library("system_ability_fwk") {
     cfi_no_nvcall = true
     blocklist = "../../../cfi_blocklist.txt"
   }
+  branch_protector_ret = "pac_ret"
+
   version_script = "libsystem_ability_fwk.versionscript"
   sources = [
     "../../../services/safwk/src/local_ability_manager.cpp",
@@ -87,6 +89,15 @@ ohos_shared_library("system_ability_fwk") {
 }
 
 ohos_shared_library("api_cache_manager") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../../../cfi_blocklist.txt"
+  }
+  branch_protector_ret = "pac_ret"
+
   sources = [ "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp" ]
   public_configs = [ ":api_cache_manager_config" ]
 
