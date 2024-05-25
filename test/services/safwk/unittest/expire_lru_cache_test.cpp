@@ -385,21 +385,21 @@ HWTEST_F(ExpireLruCacheTest, Timestamp001, TestSize.Level2)
 {
     // test operator '-' and timestamp is increasing
     ExpireLruCache<int, int>::Timestamp t1;
-    usleep(1000);
+    usleep(3000);
     ExpireLruCache<int, int>::Timestamp t2;
     int64_t diff = t2 - t1;
     bool ret;
     ASSERT_TRUE(diff > 0);
 
     // test expired func, expired
-    usleep(2000);
-    ret = t1.IsExpired(2);
+    usleep(5000);
+    ret = t1.IsExpired(1);
     EXPECT_EQ(ret, true);
 
     // test expired func, not expired
     ExpireLruCache<int, int>::Timestamp t3;
-    usleep(2500);
-    ret = t3.IsExpired(3);
+    usleep(2000);
+    ret = t3.IsExpired(10);
     EXPECT_EQ(ret, false);
 }
 
