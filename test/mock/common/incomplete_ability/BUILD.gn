@@ -20,8 +20,8 @@ config("test_incomplete_ability_config") {
 
 ohos_shared_library("test_incomplete_ability") {
   sources = [
-    "src/test_incomplete_ability.cpp",
     "src/test_incomplete_ability_proxy.cpp",
+    "src/test_incomplete_ability.cpp",
     "src/test_incomplete_ability_stub.cpp",
   ]
   configs = [ ":test_incomplete_ability_config" ]
