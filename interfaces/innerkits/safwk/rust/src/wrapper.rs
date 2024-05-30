@@ -128,6 +128,14 @@ mod ffi {
 
         fn PublishWrapper(self: Pin<&mut SystemAbilityWrapper>, ability: Box<AbilityStub>) -> bool;
 
+        fn DeserializeOnDemandReasonExtraData(
+            data: Pin<&mut MessageParcel>,
+        ) -> OnDemandReasonExtraData;
+
+        fn SerializeOnDemandReasonExtraData(
+            extraData: &OnDemandReasonExtraData,
+            data: Pin<&mut MessageParcel>,
+        ) -> bool;
     }
 }
 
@@ -185,8 +193,6 @@ impl AbilityWrapper {
         self.inner
             .on_device_level_changed(change_type, level, action)
     }
-
-
 }
 
 pub struct AbilityStub {
@@ -246,18 +252,19 @@ impl Deserialize for OnDemandReasonId {
 
 impl Serialize for OnDemandReasonExtraData {
     fn serialize(&self, parcel: &mut MsgParcel) -> ipc::IpcResult<()> {
-        parcel.write(&self.data)?;
-        parcel.write(&self.code)?;
-        parcel.write(&self.want)
+        if SerializeOnDemandReasonExtraData(self, parcel.pin_mut().unwrap()) {
+            Ok(())
+        } else {
+            Err(IpcStatusCode::Failed)
+        }
     }
 }
 
 impl Deserialize for OnDemandReasonExtraData {
     fn deserialize(parcel: &mut MsgParcel) -> ipc::IpcResult<Self> {
-        let data = parcel.read()?;
-        let code = parcel.read()?;
-        let want = parcel.read()?;
-        Ok(Self { data, code, want })
+        Ok(DeserializeOnDemandReasonExtraData(
+            parcel.pin_mut().unwrap(),
+        ))
     }
 }
 

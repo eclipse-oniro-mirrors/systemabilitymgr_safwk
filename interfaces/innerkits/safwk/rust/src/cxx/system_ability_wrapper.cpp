@@ -118,6 +118,44 @@ bool RegisterAbility(SystemAbilityWrapper *system_ability)
     return SystemAbility::MakeAndRegisterAbility(static_cast<SystemAbility *>(system_ability));
 }
 
+OnDemandReasonExtraData DeserializeOnDemandReasonExtraData(MessageParcel &parcel)
+{
+    OHOS::OnDemandReasonExtraData *reason = parcel.ReadParcelable<OHOS::OnDemandReasonExtraData>();
+
+    if (reason == nullptr) {
+        return OnDemandReasonExtraData{};
+    }
+    rust::vec<rust::string> want;
+    auto map = reason->GetWant();
+    for (auto i = map.begin(); i != map.end(); ++i) {
+        want.push_back(rust::string(i->first.data()));
+        want.push_back(rust::string(i->second.data()));
+    }
+
+    auto res = OnDemandReasonExtraData{
+        .data = rust::string(reason->GetData()),
+        .code = reason->GetCode(),
+        .want = want,
+    };
+    delete reason;
+    return res;
+}
+
+bool SerializeOnDemandReasonExtraData(const OnDemandReasonExtraData &extraData, MessageParcel &parcel)
+{
+    size_t mapInterval = 2;
+    auto data = std::string(extraData.data);
+    auto code = extraData.code;
+    auto want = extraData.want;
+    std::map<std::string, std::string> wantMap;
+
+    for (size_t i = 0; i + 1 < want.size(); i += mapInterval) {
+        wantMap.insert({ want[i].data(), want[i + 1].data() });
+    }
+    OHOS::OnDemandReasonExtraData reason(code, data, wantMap);
+    return parcel.WriteParcelable(&reason);
+}
+
 SystemAbilityOnDemandReason BuildReasonWrapper(const OHOS::SystemAbilityOnDemandReason &reason)
 {
     rust::vec<rust::string> want;

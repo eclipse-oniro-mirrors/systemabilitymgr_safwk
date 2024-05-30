@@ -20,6 +20,7 @@
 
 #include "cxx.h"
 #include "ipc_object_stub.h"
+#include "message_parcel.h"
 #include "safwk_log.h"
 #include "system_ability.h"
 #include "system_ability_ondemand_reason.h"
@@ -66,6 +67,9 @@ protected:
 private:
     AbilityWrapper *ability_;
 };
+
+OnDemandReasonExtraData DeserializeOnDemandReasonExtraData(MessageParcel &data);
+bool SerializeOnDemandReasonExtraData(const OnDemandReasonExtraData &extraData, MessageParcel &data);
 
 void StopAbility(int32_t systemAbilityId);
 bool CancelIdle(SystemAbilityWrapper *systemAbilityWrapper);
