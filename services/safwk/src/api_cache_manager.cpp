@@ -105,7 +105,7 @@ void ApiCacheManager::ClearCache(const std::u16string& descriptor, int32_t apiCo
 bool ApiCacheManager::PreSendRequest(const std::u16string& descriptor, uint32_t apiCode, const MessageParcel& data,
     MessageParcel& reply)
 {
-    uint8_t *key = (uint8_t *)data.GetData();
+    uint8_t *key = reinterpret_cast<uint8_t *>(data.GetData());
     size_t keySize = data.GetDataSize();
     std::vector<uint8_t> keyVec(key, key + keySize);
 
@@ -132,7 +132,7 @@ bool ApiCacheManager::PreSendRequest(const std::u16string& descriptor, uint32_t 
 bool ApiCacheManager::PostSendRequest(const std::u16string& descriptor, uint32_t apiCode, const MessageParcel& data,
     MessageParcel& reply)
 {
-    uint8_t *key = (uint8_t *)data.GetData();
+    uint8_t *key = reinterpret_cast<uint8_t *>(data.GetData());
     size_t keySize = data.GetDataSize();
     std::vector<uint8_t> keyVec(key, key + keySize);
 
@@ -145,7 +145,7 @@ bool ApiCacheManager::PostSendRequest(const std::u16string& descriptor, uint32_t
         return false;
     }
 
-    uint8_t *value = (uint8_t *)reply.GetData();
+    uint8_t *value = reinterpret_cast<uint8_t *>(reply.GetData());
     size_t valueSize = reply.GetDataSize();
     std::vector<uint8_t> valueVec(value, value + valueSize);
 
