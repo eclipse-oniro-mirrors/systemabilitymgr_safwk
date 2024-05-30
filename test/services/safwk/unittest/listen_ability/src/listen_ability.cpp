@@ -52,7 +52,9 @@ ErrCode ListenAbility::TestSaCallSa(int32_t input, double& output)
         sptr<ISystemAbilityManager> systemAbilityManager =
             SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
         sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(DISTRIBUTED_SCHED_TEST_TT_ID);
-        TestSa1493Proxy_ = iface_cast<ITestSaProxyCache>(remoteObject);
+        if (remoteObject != nullptr) {
+            TestSa1493Proxy_ = iface_cast<ITestSaProxyCache>(remoteObject);
+        }
     }
     if (TestSa1493Proxy_ == nullptr) {
         HiLog::Info(LABEL, "TestSa1493Proxy_ is nullptr");
