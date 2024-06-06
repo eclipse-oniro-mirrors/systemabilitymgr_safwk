@@ -240,7 +240,7 @@ void SystemAbility::Stop()
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
 
     {
-        SamgrXCollie samgrXCollie("safwk::onStop_" + ToString(saId_));
+        SamgrXCollie samgrXCollie("safwk--onStop_" + ToString(saId_));
         OnStop(onDemandStopReason);
     }
 
