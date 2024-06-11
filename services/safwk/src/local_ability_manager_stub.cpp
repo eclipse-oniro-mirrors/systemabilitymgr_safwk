@@ -227,11 +227,10 @@ int32_t LocalAbilityManagerStub::SendStrategyToSAInner(MessageParcel& data, Mess
         return ERR_NULL_OBJECT;
     }
     bool result = SendStrategyToSA(type, saId, level, aciton);
-    if (!reply.WriteBool(result)) {
-        HILOGW(TAG, "SendStrategyToSA Write result failed!");
+    if (!result) {
+        HILOGE(TAG, "SendStrategyToSA:%{public}d called failed", saId);
         return ERR_NULL_OBJECT;
     }
-    HILOGD(TAG, "SendStrategyToSA called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
 
