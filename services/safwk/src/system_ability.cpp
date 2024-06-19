@@ -101,9 +101,11 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
 
 bool SystemAbility::CancelIdle()
 {
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    if (abilityState_ != SystemAbilityState::IDLE) {
-        return true;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (abilityState_ != SystemAbilityState::IDLE) {
+            return true;
+        }
     }
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
