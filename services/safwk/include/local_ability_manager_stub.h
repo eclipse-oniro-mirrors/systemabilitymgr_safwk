@@ -35,7 +35,38 @@ protected:
     static bool CheckInputSysAbilityId(int32_t systemAbilityId);
 
 private:
-    int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
+    static int32_t _StartAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->StartAbilityInner(data, reply);
+    }
+    static int32_t _StopAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->StopAbilityInner(data, reply);
+    }    
+    static int32_t _ActiveAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->ActiveAbilityInner(data, reply);
+    }    
+    static int32_t _IdleAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->IdleAbilityInner(data, reply);
+    }    
+    static int32_t _SendStrategyToSAInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->SendStrategyToSAInner(data, reply);
+    }    
+    static int32_t _IpcStatCmdProcInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->IpcStatCmdProcInner(data, reply);
+    }    
+    static int32_t _FfrtDumperProcInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->FfrtDumperProcInner(data, reply);
+    }    
+    static int32_t _SystemAbilityExtProcInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->SystemAbilityExtProcInner(data, reply);
+    }    int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t StopAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t ActiveAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t IdleAbilityInner(MessageParcel& data, MessageParcel& reply);
@@ -48,7 +79,7 @@ private:
     static bool CheckPermission(uint32_t code);
 
     using LocalAbilityManagerStubFunc =
-        int32_t (LocalAbilityManagerStub::*)(MessageParcel& data, MessageParcel& reply);
+        int32_t (*)(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply);
     std::map<uint32_t, LocalAbilityManagerStubFunc> memberFuncMap_;
 };
 }

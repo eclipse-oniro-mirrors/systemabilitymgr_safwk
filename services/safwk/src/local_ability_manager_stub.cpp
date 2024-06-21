@@ -43,21 +43,21 @@ const std::string PERMISSION_MANAGE = "ohos.permission.MANAGE_SYSTEM_ABILITY";
 LocalAbilityManagerStub::LocalAbilityManagerStub()
 {
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::START_ABILITY_TRANSACTION)] =
-        &LocalAbilityManagerStub::StartAbilityInner;
+        LocalAbilityManagerStub::_StartAbilityInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::STOP_ABILITY_TRANSACTION)] =
-        &LocalAbilityManagerStub::StopAbilityInner;
+        LocalAbilityManagerStub::_StopAbilityInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::ACTIVE_ABILITY_TRANSACTION)] =
-        &LocalAbilityManagerStub::ActiveAbilityInner;
+        LocalAbilityManagerStub::_ActiveAbilityInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IDLE_ABILITY_TRANSACTION)] =
-        &LocalAbilityManagerStub::IdleAbilityInner;
+        LocalAbilityManagerStub::_IdleAbilityInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SEND_STRATEGY_TO_SA_TRANSACTION)] =
-        &LocalAbilityManagerStub::SendStrategyToSAInner;
+        LocalAbilityManagerStub::_SendStrategyToSAInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IPC_STAT_CMD_TRANSACTION)] =
-        &LocalAbilityManagerStub::IpcStatCmdProcInner;
+        LocalAbilityManagerStub::_IpcStatCmdProcInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::FFRT_DUMPER_TRANSACTION)] =
-        &LocalAbilityManagerStub::FfrtDumperProcInner;
+        LocalAbilityManagerStub::_FfrtDumperProcInner;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)] =
-        &LocalAbilityManagerStub::SystemAbilityExtProcInner;
+        LocalAbilityManagerStub::_SystemAbilityExtProcInner;
 }
 
 bool LocalAbilityManagerStub::CheckPermission(uint32_t code)
@@ -93,10 +93,7 @@ int32_t LocalAbilityManagerStub::OnRemoteRequest(uint32_t code,
 
     auto iter = memberFuncMap_.find(code);
     if (iter != memberFuncMap_.end()) {
-        auto memberFunc = iter->second;
-        if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
-        }
+        return iter->second(this, data, reply);
     }
     HILOGW(TAG, "unknown request code!");
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
