@@ -67,6 +67,7 @@ private:
     {
         return stub->SystemAbilityExtProcInner(data, reply);
     }    int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
+    int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t StopAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t ActiveAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t IdleAbilityInner(MessageParcel& data, MessageParcel& reply);
