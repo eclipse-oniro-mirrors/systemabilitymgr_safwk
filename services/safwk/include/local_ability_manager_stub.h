@@ -35,35 +35,35 @@ protected:
     static bool CheckInputSysAbilityId(int32_t systemAbilityId);
 
 private:
-    static int32_t _StartAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalStartAbility(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->StartAbilityInner(data, reply);
     }
-    static int32_t _StopAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalStopAbility(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->StopAbilityInner(data, reply);
     }
-    static int32_t _ActiveAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalActiveAbility(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->ActiveAbilityInner(data, reply);
     }
-    static int32_t _IdleAbilityInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalIdleAbility(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->IdleAbilityInner(data, reply);
     }
-    static int32_t _SendStrategyToSAInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalSendStrategyToSA(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->SendStrategyToSAInner(data, reply);
     }
-    static int32_t _IpcStatCmdProcInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalIpcStatCmdProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
-        return stub->IpcStatCmdProcInner(data, reply);
+        return stub->IpcStatCmdProc(data, reply);
     }
-    static int32_t _FfrtDumperProcInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalFfrtDumperProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
-        return stub->FfrtDumperProcInner(data, reply);
+        return stub->FfrtDumperProc(data, reply);
     }
-    static int32_t _SystemAbilityExtProcInner(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    static int32_t LocalSystemAbilityExtProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->SystemAbilityExtProcInner(data, reply);
     }

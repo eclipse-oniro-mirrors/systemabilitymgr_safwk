@@ -43,21 +43,21 @@ const std::string PERMISSION_MANAGE = "ohos.permission.MANAGE_SYSTEM_ABILITY";
 LocalAbilityManagerStub::LocalAbilityManagerStub()
 {
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::START_ABILITY_TRANSACTION)] =
-        LocalAbilityManagerStub::_StartAbilityInner;
+        LocalAbilityManagerStub::LocalStartAbility;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::STOP_ABILITY_TRANSACTION)] =
-        LocalAbilityManagerStub::_StopAbilityInner;
+        LocalAbilityManagerStub::LocalStopAbility;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::ACTIVE_ABILITY_TRANSACTION)] =
-        LocalAbilityManagerStub::_ActiveAbilityInner;
+        LocalAbilityManagerStub::LocalActiveAbility;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IDLE_ABILITY_TRANSACTION)] =
-        LocalAbilityManagerStub::_IdleAbilityInner;
+        LocalAbilityManagerStub::LocalIdleAbility;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SEND_STRATEGY_TO_SA_TRANSACTION)] =
-        LocalAbilityManagerStub::_SendStrategyToSAInner;
+        LocalAbilityManagerStub::LocalSendStrategyToSA;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::IPC_STAT_CMD_TRANSACTION)] =
-        LocalAbilityManagerStub::_IpcStatCmdProcInner;
+        LocalAbilityManagerStub::LocalIpcStatCmdProc;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::FFRT_DUMPER_TRANSACTION)] =
-        LocalAbilityManagerStub::_FfrtDumperProcInner;
+        LocalAbilityManagerStub::LocalFfrtDumperProc;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)] =
-        LocalAbilityManagerStub::_SystemAbilityExtProcInner;
+        LocalAbilityManagerStub::LocalSystemAbilityExtProc;
 }
 
 bool LocalAbilityManagerStub::CheckPermission(uint32_t code)
