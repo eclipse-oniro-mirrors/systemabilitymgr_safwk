@@ -57,11 +57,11 @@ private:
     }
     static int32_t LocalIpcStatCmdProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
-        return stub->IpcStatCmdProc(data, reply);
+        return stub->IpcStatCmdProcInner(data, reply);
     }
     static int32_t LocalFfrtDumperProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
-        return stub->FfrtDumperProc(data, reply);
+        return stub->FfrtDumperProcInner(data, reply);
     }
     static int32_t LocalSystemAbilityExtProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
