@@ -484,7 +484,7 @@ bool LocalAbilityManager::StartAbility(int32_t systemAbilityId, const std::strin
     LOGI("StartSa recv start SA:%{public}d req", systemAbilityId);
     nlohmann::json startReason = ParseUtil::StringToJsonObj(eventStr);
     SetStartReason(systemAbilityId, startReason);
-    auto task = std::bind(&LocalAbilityManager::StartOndemandSystemAbility, this, systemAbilityId);
+    auto task = [this, systemAbilityId] {this->StartOndemandSystemAbility(systemAbilityId);};
     std::thread thread(task);
     thread.detach();
     return true;
@@ -503,7 +503,7 @@ bool LocalAbilityManager::StopAbility(int32_t systemAbilityId, const std::string
     LOGI("StopSa recv stop SA:%{public}d req", systemAbilityId);
     nlohmann::json stopReason = ParseUtil::StringToJsonObj(eventStr);
     SetStopReason(systemAbilityId, stopReason);
-    auto task = std::bind(&LocalAbilityManager::StopOndemandSystemAbility, this, systemAbilityId);
+    auto task = [this, systemAbilityId] {this->StopOndemandSystemAbility(systemAbilityId);};
     std::thread thread(task);
     thread.detach();
     return true;
@@ -699,7 +699,7 @@ void LocalAbilityManager::StartPhaseTasks(const std::list<SystemAbility*>& syste
             HILOGD(TAG, "add phase task for SA:%{public}d", systemAbility->GetSystemAbilitId());
             std::lock_guard<std::mutex> autoLock(startPhaseLock_);
             ++startTaskNum_;
-            auto task = std::bind(&LocalAbilityManager::StartSystemAbilityTask, this, systemAbility);
+            auto task = [this, systemAbility] {this->StartSystemAbilityTask(systemAbility);};
             initPool_->AddTask(task);
         }
     }
