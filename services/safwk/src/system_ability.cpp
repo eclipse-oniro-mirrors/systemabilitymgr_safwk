@@ -235,6 +235,7 @@ void SystemAbility::Stop()
             return;
         }
     }
+    LOGD("Stop OnStop-SA:%{public}d", saId_);
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");
