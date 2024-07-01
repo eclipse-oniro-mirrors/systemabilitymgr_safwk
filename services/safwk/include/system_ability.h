@@ -223,8 +223,8 @@ protected:
 
 private:
     void Start();
-    void Idle(const SystemAbilityOnDemandReason& idleReason, int32_t& delayTime);
-    void Active(const SystemAbilityOnDemandReason& activeReason);
+    void Idle(SystemAbilityOnDemandReason& idleReason, int32_t& delayTime);
+    void Active(SystemAbilityOnDemandReason& activeReason);
     void Stop();
     void SADump();
     int32_t GetSystemAbilitId() const;
