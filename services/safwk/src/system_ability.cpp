@@ -187,7 +187,7 @@ void SystemAbility::Start()
     ReportSaLoadDuration(saId_, SA_LOAD_ON_START, duration);
 }
 
-void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
+void SystemAbility::Idle(SystemAbilityOnDemandReason& idleReason,
     int32_t& delayTime)
 {
     {
@@ -197,6 +197,7 @@ void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
             return;
         }
     }
+    GetOnDemandReasonExtraData(idleReason);
     LOGD("Idle SA::%{public}d", saId_);
     int64_t begin = GetTickCount();
     delayTime = OnIdle(idleReason);
@@ -208,7 +209,7 @@ void SystemAbility::Idle(const SystemAbilityOnDemandReason& idleReason,
         saId_, (GetTickCount() - begin));
 }
 
-void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
+void SystemAbility::Active(SystemAbilityOnDemandReason& activeReason)
 {
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
@@ -217,6 +218,7 @@ void SystemAbility::Active(const SystemAbilityOnDemandReason& activeReason)
             return;
         }
     }
+    GetOnDemandReasonExtraData(activeReason);
     LOGD("Active SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     OnActive(activeReason);
@@ -240,6 +242,7 @@ void SystemAbility::Stop()
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
     SystemAbilityOnDemandReason onDemandStopReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
+    GetOnDemandReasonExtraData(onDemandStopReason);
 
     {
         SamgrXCollie samgrXCollie("safwk--onStop_" + ToString(saId_));
