@@ -631,6 +631,7 @@ void LocalAbilityManager::StartDependSaTask(SystemAbility* ability)
     }
     vector<int32_t> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
     if (unpreparedDeps.empty()) {
+        HILOGI(TAG, "SA:%{public}d's dependen all start", ability->GetSystemAbilitId());
         ability->Start();
     } else {
         for (const auto& unpreparedDep : unpreparedDeps) {
