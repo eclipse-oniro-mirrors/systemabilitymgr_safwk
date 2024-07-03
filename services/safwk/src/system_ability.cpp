@@ -238,7 +238,17 @@ void SystemAbility::Stop()
         }
     }
     LOGD("Stop OnStop-SA:%{public}d", saId_);
+    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgrProxy == nullptr) {
+        HILOGE(TAG, "failed to get samgrProxy");
+        return;
+    }
     int64_t begin = GetTickCount();
+    int32_t ret = samgrProxy->RemoveSystemAbility(saId_);
+    KHILOGI(TAG, "%{public}s to rm SA:%{public}d,spend:%{public}" PRId64 "ms",
+        (ret == ERR_OK) ? "suc" : "fail", saId_, (GetTickCount() - begin));
+
+    begin = GetTickCount();
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
     SystemAbilityOnDemandReason onDemandStopReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
@@ -256,17 +266,6 @@ void SystemAbility::Stop()
     KHILOGI(TAG, "OnStop-SA:%{public}d finished,spend:%{public}" PRId64 "ms",
         saId_, duration);
     ReportSaUnLoadDuration(saId_, SA_UNLOAD_ON_STOP, duration);
-
-    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (samgrProxy == nullptr) {
-        HILOGE(TAG, "failed to get samgrProxy");
-        return;
-    }
-
-    begin = GetTickCount();
-    int32_t ret = samgrProxy->RemoveSystemAbility(saId_);
-    KHILOGI(TAG, "%{public}s to rm SA:%{public}d,spend:%{public}" PRId64 "ms",
-        (ret == ERR_OK) ? "suc" : "fail", saId_, (GetTickCount() - begin));
 }
 
 void SystemAbility::SADump()
