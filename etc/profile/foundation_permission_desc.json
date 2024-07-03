@@ -244,6 +244,11 @@
             "name" : "ohos.permission.CONNECT_STATIC_SUBSCRIBER_EXTENSION",
             "said" : "180",
             "description" : "Permission required for CES to connect static subscriber extension."
+        },
+        {
+            "name" : "ohos.permission.ACCESS_USER_AUTH_INTERNAL",
+            "said" : "3704",
+            "description" : "Permission required for ScreenLock to observer user auth state."
         }
     ],
     "restart" : [
