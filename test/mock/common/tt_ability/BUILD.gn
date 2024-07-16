@@ -20,8 +20,8 @@ config("test_tt_ability_config") {
 
 ohos_shared_library("test_tt_ability") {
   sources = [
-    "src/test_tt_ability_proxy.cpp",
     "src/test_tt_ability.cpp",
+    "src/test_tt_ability_proxy.cpp",
     "src/test_tt_ability_stub.cpp",
   ]
   configs = [ ":test_tt_ability_config" ]
