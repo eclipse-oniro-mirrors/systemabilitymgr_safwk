@@ -180,7 +180,7 @@ void SystemAbility::Start()
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     isRunning_ = true;
     int64_t duration = GetTickCount() - begin;
-    KHILOGI(TAG, "OnStart-SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, duration);
     ReportSaLoadDuration(saId_, SA_LOAD_ON_START, duration);
 }
