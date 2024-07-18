@@ -35,6 +35,7 @@ constexpr const char* EVENT_TYPE = "eventId";
 constexpr const char* EVENT_NAME = "name";
 constexpr const char* EVENT_VALUE = "value";
 constexpr const char* EVENT_EXTRA_DATA_ID = "extraDataId";
+constexpr const char* MALLOPT_CONFIG_SEPARATOR = ":";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_JSON = "/system/usr/default.json";
@@ -181,7 +182,7 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
     std::vector<std::string> malloptStrList;
 #endif
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_M == nullptr) {
+        if (PARAM_PREFIX_M.compare(argv[i]) == 0) {
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
             malloptStrList.emplace_back(argv[i + 1]);
 #endif
@@ -217,7 +218,7 @@ int main(int argc, char *argv[])
     // Load ondemand system abilities related shared libraries from specific json-format profile
     // when this process starts.
     int32_t saId = DEFAULT_SAID;
-    if (argc > ONDEMAND_LOAD) {
+    if (argc > ondemandLoad) {
         nlohmann::json eventMap;
         if (eventIndex >= argc) {
             HILOGE(TAG, "sa services path config error!");

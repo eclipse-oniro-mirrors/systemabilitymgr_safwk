@@ -18,7 +18,6 @@
 #include <utility>
 
 #include "cxx.h"
-#include "safwk_log.h"
 #include "system_ability.h"
 #include "system_ability_ondemand_reason.h"
 #include "wrapper.rs.h"
@@ -114,7 +113,6 @@ void SystemAbilityWrapper::OnDeviceLevelChanged(int32_t type, int32_t level, std
 
 bool RegisterAbility(SystemAbilityWrapper *system_ability)
 {
-    HILOGD(TAG, "register_ability_");
     return SystemAbility::MakeAndRegisterAbility(static_cast<SystemAbility *>(system_ability));
 }
 
