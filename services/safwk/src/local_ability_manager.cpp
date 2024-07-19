@@ -820,13 +820,13 @@ void LocalAbilityManager::SetStopReason(int32_t saId, const nlohmann::json& even
     saIdToStopReason_[saId] = event;
 }
 
-nlohmann::json& LocalAbilityManager::GetStartReason(int32_t saId)
+nlohmann::json LocalAbilityManager::GetStartReason(int32_t saId)
 {
     std::lock_guard<std::mutex> autoLock(ReasonLock_);
     return saIdToStartReason_[saId];
 }
 
-nlohmann::json& LocalAbilityManager::GetStopReason(int32_t saId)
+nlohmann::json LocalAbilityManager::GetStopReason(int32_t saId)
 {
     std::lock_guard<std::mutex> autoLock(ReasonLock_);
     return saIdToStopReason_[saId];
