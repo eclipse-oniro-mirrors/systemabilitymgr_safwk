@@ -35,7 +35,7 @@ constexpr const char* EVENT_TYPE = "eventId";
 constexpr const char* EVENT_NAME = "name";
 constexpr const char* EVENT_VALUE = "value";
 constexpr const char* EVENT_EXTRA_DATA_ID = "extraDataId";
-constexpr const char* MALLOPT_CONFIG_SEPARATOR = ":";
+constexpr const char* MALLOPT_CONFIG_SEPARATOR [[maybe_unused]] = ":";
 using ProcessNameSetFunc = std::function<void(const string&)>;
 
 constexpr auto DEFAULT_JSON = "/system/usr/default.json";
