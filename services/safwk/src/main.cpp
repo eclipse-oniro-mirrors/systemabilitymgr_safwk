@@ -182,7 +182,7 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
     std::vector<std::string> malloptStrList;
 #endif
     for (int i = 0; i < argc - 1; ++i) {
-        if (PARAM_PREFIX_M.compare(argv[i]) == 0) {
+        if (strcmp(PARAM_PREFIX_M, argv[i]) == 0) {
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
             malloptStrList.emplace_back(argv[i + 1]);
 #endif
