@@ -47,8 +47,8 @@ ohos_rust_systemtest("rust_safwk_sdv_test") {
   ]
 
   external_deps = [
-    "access_token:libnativetoken",
-    "access_token:libtoken_setproc",
+    "access_token:libnativetoken_shared",
+    "access_token:libtokensetproc_shared",
     "ipc:ipc_rust",
     "samgr:samgr_rust",
   ]
