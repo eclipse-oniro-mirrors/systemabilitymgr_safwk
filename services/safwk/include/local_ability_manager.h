@@ -62,8 +62,8 @@ public:
     void DoStartSAProcess(const std::string& profilePath, int32_t saId);
     void SetStartReason(int32_t systemAbilityId, const nlohmann::json& event);
     void SetStopReason(int32_t systemAbilityId, const nlohmann::json& event);
-    nlohmann::json& GetStartReason(int32_t systemAbilityId);
-    nlohmann::json& GetStopReason(int32_t systemAbilityId);
+    nlohmann::json GetStartReason(int32_t systemAbilityId);
+    nlohmann::json GetStopReason(int32_t systemAbilityId);
     SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
     bool SendStrategyToSA(int32_t type, int32_t systemAbilityId, int32_t level, std::string& action) override;
     bool IpcStatCmdProc(int32_t fd, int32_t cmd) override;
