@@ -128,6 +128,9 @@ void FuzzLocalAbilityManager(const uint8_t* rawData, size_t size)
 void FuzzIpcStatCmdProc(const uint8_t* rawData, size_t size)
 {
     SaMockPermission::MockPermission();
+    g_baseFuzzData = rawData;
+    g_baseFuzzSize = size;
+    g_baseFuzzPos = 0;
     MessageParcel data;
     data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
     int32_t fd = GetData<int32_t>();
