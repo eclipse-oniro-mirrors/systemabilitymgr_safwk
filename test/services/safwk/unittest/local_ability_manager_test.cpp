@@ -1196,6 +1196,7 @@ HWTEST_F(LocalAbilityManagerTest, OnStopAbility002, TestSize.Level2)
     mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     bool ret = LocalAbilityManager::GetInstance().OnStopAbility(SAID);
+    delete mockSa;
     EXPECT_TRUE(ret);
 }
 
@@ -1229,6 +1230,7 @@ HWTEST_F(LocalAbilityManagerTest, ActiveAbility002, TestSize.Level2)
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     mockSa->abilityState_ = SystemAbilityState::ACTIVE;
     bool ret = LocalAbilityManager::GetInstance().ActiveAbility(SAID, activeReason);
+    delete mockSa;
     EXPECT_TRUE(ret);
 }
 
@@ -1265,6 +1267,7 @@ HWTEST_F(LocalAbilityManagerTest, IdleAbility002, TestSize.Level2)
     mockSa->abilityState_ = SystemAbilityState::IDLE;
     int delayTime = 0;
     bool ret = LocalAbilityManager::GetInstance().IdleAbility(SAID, idleReason, delayTime);
+    delete mockSa;
     EXPECT_TRUE(ret);
 }
 
@@ -1343,6 +1346,7 @@ HWTEST_F(LocalAbilityManagerTest, SendStrategyToSA002, TestSize.Level2)
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
     std::string action = "";
     bool ret = LocalAbilityManager::GetInstance().SendStrategyToSA(1, SAID, 1, action);
+    delete mockSa;
     EXPECT_TRUE(ret);
 }
 
