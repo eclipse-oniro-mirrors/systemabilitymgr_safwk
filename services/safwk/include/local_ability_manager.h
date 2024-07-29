@@ -29,6 +29,8 @@
 #include "single_instance.h"
 #include "system_ability_ondemand_reason.h"
 #include "system_ability_status_change_stub.h"
+#include "if_system_ability_manager.h"
+#include "timer.h"
 
 namespace OHOS {
 // Check all dependencies's availability before the timeout period ended, [200, 60000].
@@ -73,7 +75,7 @@ public:
 
 private:
     LocalAbilityManager();
-    ~LocalAbilityManager() = default;
+    ~LocalAbilityManager();
 
     bool AddLocalAbilityManager();
     void RegisterOnDemandSystemAbility(int32_t saId);
@@ -102,6 +104,15 @@ private:
     bool OnStartAbility(int32_t systemAbilityId);
     bool OnStopAbility(int32_t systemAbilityId);
     std::string GetTraceTag(const std::string& profilePath);
+    bool IsResident();
+    bool IsConfigUnused();
+    void InitUnusedCfg();
+    void StartTimedQuery();
+    void IdentifyUnusedResident();
+    void IdentifyUnusedOndemand();
+    bool NoNeedCheckUnused(int32_t saId);
+    void LimitUnusedTimeout(int32_t saId, int32_t timeout);
+    bool GetSaLastRequestTime(const sptr<ISystemAbilityManager>& samgr, int32_t saId, uint64_t& lastRequestTime);
 
     std::map<int32_t, SystemAbility*> abilityMap_;
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
@@ -128,6 +139,10 @@ private:
 
     // Thread pool used to start system abilities in parallel.
     std::unique_ptr<ThreadPool> initPool_;
+    std::unique_ptr<Utils::Timer> idleTimer_;
+    // longtime-unusedtimeout map
+    std::shared_mutex unusedCfgMapLock_;
+    std::map<int32_t, int32_t> unusedCfgMap_;
 };
 }
 #endif
