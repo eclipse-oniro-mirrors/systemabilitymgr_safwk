@@ -253,11 +253,6 @@
     ],
     "restart" : [
         {
-            "name" : "unset_bootevent bootevent.wms.fullscreen.ready",
-            "said" : "180",
-            "description" : "before restart foundation process, unset bootevent.wms.fullscreen.ready"
-        },
-        {
             "name" : "unset_bootevent bootevent.appfwk.ready",
             "said" : "180",
             "description" : "before restart foundation process, unset bootevent.appfwk.ready"
