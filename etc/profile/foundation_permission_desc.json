@@ -21,11 +21,6 @@
             "description" : "permission required for telephony to write call log."
         },
         {
-            "name" : "ohos.permission.START_SYSTEM_DIALOG",
-            "said" : "4005",
-            "description" : "permission required for telephony to start system dialog."
-        },
-        {
             "name" : "ohos.permission.READ_CONTACTS",
             "said" : "4005",
             "description" : "permission required for telephony to read contacts info."
@@ -34,6 +29,11 @@
             "name" : "ohos.permission.START_ABILITIES_FROM_BACKGROUND",
             "said" : "4005",
             "description" : "Permission required for telephony to access AbillityManagerService."
+        },
+        {
+            "name" : "ohos.permission.START_SYSTEM_DIALOG",
+            "said" : "4005",
+            "description" : "permission required for telephony to start system dialog."
         },
         {
             "name" : "ohos.permission.MODIFY_AUDIO_SETTINGS",
@@ -205,7 +205,7 @@
             "said" : "4005",
             "description" : "Permission required for telephony to access spamshield service."
         },
-        {
+            {
             "name" : "ohos.permission.APPROXIMATELY_LOCATION",
             "said" : "4005",
             "description" : "Permission required for location earthquake alarm."
@@ -221,14 +221,14 @@
             "description" : "Permission required for location earthquake alarm."
         },
         {
-            "name" : "ohos.permission.CAPTURE_SCREEN",
-            "said" : "4607",
-            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
-        },
-        {
             "name" : "ohos.permission.REQUIRE_FORM",
             "said" : "403",
             "description" : "Permission required for FMS to access theme manager service."
+        },
+        {
+            "name" : "ohos.permission.CAPTURE_SCREEN",
+            "said" : "4607",
+            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
         },
         {
             "name" : "ohos.permission.MANAGE_MISSIONS",
