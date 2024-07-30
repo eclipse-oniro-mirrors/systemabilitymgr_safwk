@@ -251,7 +251,7 @@
             "description" : "Permission required for ScreenLock to observer user auth state."
         }
     ],
-    "restart" : [        
+    "restart" : [
         {
             "name" : "unset_bootevent bootevent.appfwk.ready",
             "said" : "180",
