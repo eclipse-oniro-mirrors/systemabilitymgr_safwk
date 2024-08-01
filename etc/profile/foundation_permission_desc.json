@@ -201,6 +201,11 @@
             "description" : "Native uses the Bluetooth interface"
         },
         {
+            "name" : "ohos.permission.REQUIRE_FORM",
+            "said" : "403",
+            "description" : "Permission required for FMS to access theme manager service."
+        },
+        {
             "name" : "ohos.permission.ACCESS_SPAMSHIELD_SERVICE",
             "said" : "4005",
             "description" : "Permission required for telephony to access spamshield service."
@@ -219,11 +224,6 @@
             "name" : "ohos.permission.LOCATION_IN_BACKGROUND",
             "said" : "4005",
             "description" : "Permission required for location earthquake alarm."
-        },
-        {
-            "name" : "ohos.permission.REQUIRE_FORM",
-            "said" : "403",
-            "description" : "Permission required for FMS to access theme manager service."
         },
         {
             "name" : "ohos.permission.CAPTURE_SCREEN",
