@@ -213,6 +213,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level2)
     {
         g_mockReturn = ERR_TIMED_OUT;
         sptr<MockIRemoteObject> iRemoteObject = sptr<MockIRemoteObject>(new (std::nothrow) MockIRemoteObject());
+        EXPECT_TRUE(iRemoteObject != nullptr);
         TestSaProxyCacheProxy p(iRemoteObject);
         std::string input("hello_test");
         std::string output;
@@ -228,6 +229,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level2)
     {
         g_mockReturn = ERR_OK;
         sptr<MockIRemoteObject> iRemoteObject = sptr<MockIRemoteObject>(new (std::nothrow) MockIRemoteObject());
+        EXPECT_TRUE(iRemoteObject != nullptr);
         TestSaProxyCacheProxy p(iRemoteObject);
 
         double retDouble;
