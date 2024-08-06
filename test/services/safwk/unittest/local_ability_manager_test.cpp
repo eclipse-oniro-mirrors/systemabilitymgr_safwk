@@ -1462,5 +1462,225 @@ HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProc002, TestSize.Level2)
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     delete sysAby;
 }
+/**
+ * @tc.name: SendStrategyToSAInner001
+ * @tc.desc: test SendStrategyToSAInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSAInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().SendStrategyToSAInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: SendStrategyToSAInner002
+ * @tc.desc: test SendStrategyToSAInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSAInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int type = 1;
+    data.WriteInt32(type);
+    int32_t ret = LocalAbilityManager::GetInstance().SendStrategyToSAInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: SendStrategyToSAInner003
+ * @tc.desc: test SendStrategyToSAInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSAInner003, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int type = 1;
+    data.WriteInt32(type);
+    int32_t saId = -1;
+    data.WriteInt32(saId);
+    int32_t ret = LocalAbilityManager::GetInstance().SendStrategyToSAInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: SendStrategyToSAInner004
+ * @tc.desc: test SendStrategyToSAInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSAInner004, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int type = 1;
+    data.WriteInt32(type);
+    int32_t saId = 1;
+    data.WriteInt32(saId);
+    int32_t ret = LocalAbilityManager::GetInstance().SendStrategyToSAInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: SendStrategyToSAInner005
+ * @tc.desc: test SendStrategyToSAInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSAInner005, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int type = 1;
+    data.WriteInt32(type);
+    int32_t saId = 1;
+    data.WriteInt32(saId);
+    int level = 1;
+    data.WriteInt32(level);
+    int32_t ret = LocalAbilityManager::GetInstance().SendStrategyToSAInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: SendStrategyToSAInner006
+ * @tc.desc: test SendStrategyToSAInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SendStrategyToSAInner006, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int type = 1;
+    data.WriteInt32(type);
+    int32_t saId = 1;
+    data.WriteInt32(saId);
+    int level = 1;
+    data.WriteInt32(level);
+    std::string action = "";
+    data.WriteString(action);
+    int32_t ret = LocalAbilityManager::GetInstance().SendStrategyToSAInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: IpcStatCmdProcInner001
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProcInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().IpcStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: IpcStatCmdProcInner002
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProcInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t fd = 1;
+    data.WriteFileDescriptor(fd);
+    int32_t ret = LocalAbilityManager::GetInstance().IpcStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+}
+
+/**
+ * @tc.name: IpcStatCmdProcInner002
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProcInner003, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t fd = 1;
+    int cmd = -1;
+    data.WriteInt32(cmd);
+    data.WriteFileDescriptor(fd);
+    int32_t ret = LocalAbilityManager::GetInstance().IpcStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
+}
+
+/**
+ * @tc.name: FfrtDumperProcInner001
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, FfrtDumperProcInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    std::string ffrtDumperInfo = "Test Ffrt Dumper Info";
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtDumperProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
+}
+
+/**
+ * @tc.name: SystemAbilityExtProcInner001
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner001, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProcInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+}
+
+/**
+ * @tc.name: SystemAbilityExtProcInner002
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner002, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int saId = 1;
+    data.WriteInt32(saId);
+    int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProcInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+}
+
+/**
+ * @tc.name: SystemAbilityExtProcInner003
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner003, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int saId = -1;
+    data.WriteInt32(saId);
+    int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProcInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+}
+
+/**
+ * @tc.name: SystemAbilityExtProcInner003
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner003, TestSize.Level2)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    int saId = 1;
+    data.WriteInt32(saId);
+    std::string extension = "TestExtension";
+    data.WriteString(extension);
+    int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProcInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+}
 } // namespace SAFWK
 } // namespace OHOS
