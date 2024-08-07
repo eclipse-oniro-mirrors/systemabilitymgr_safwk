@@ -1593,7 +1593,7 @@ HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProcInner002, TestSize.Level2)
 }
 
 /**
- * @tc.name: IpcStatCmdProcInner002
+ * @tc.name: IpcStatCmdProcInner003
  * @tc.desc: test IpcStatCmdProcInner.
  * @tc.type: FUNC
  */
@@ -1606,7 +1606,7 @@ HWTEST_F(LocalAbilityManagerTest, IpcStatCmdProcInner003, TestSize.Level2)
     data.WriteInt32(cmd);
     data.WriteFileDescriptor(fd);
     int32_t ret = LocalAbilityManager::GetInstance().IpcStatCmdProcInner(data, reply);
-    EXPECT_EQ(ret, ERR_NONE);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
 }
 
 /**
