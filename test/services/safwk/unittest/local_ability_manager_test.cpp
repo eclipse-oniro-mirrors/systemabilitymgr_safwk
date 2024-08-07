@@ -384,7 +384,9 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener002, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener003, TestSize.Level1)
 {
-    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back(MUT_SAID);
+    std::pair<int32_t, int32_t> key = std::make_pair(SAID, MUT_SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[key] =
+        new LocalAbilityManager::SystemAbilityListener(MUT_SAID);
     bool res = LocalAbilityManager::GetInstance().AddSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
 }
@@ -396,8 +398,12 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener003, TestSize.Level1)
  */
 HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener004, TestSize.Level1)
 {
-    LocalAbilityManager::GetInstance().listenerMap_[VAILD_SAID].push_back(VAILD_SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[VAILD_SAID].push_back(SAID);
+    std::pair<int32_t, int32_t> key1 = std::make_pair(VAILD_SAID, VAILD_SAID);
+    std::pair<int32_t, int32_t> key2 = std::make_pair(VAILD_SAID, SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[key1] = 
+        new LocalAbilityManager::SystemAbilityListener(VAILD_SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[key2] =
+        new LocalAbilityManager::SystemAbilityListener(SAID);
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     bool res = LocalAbilityManager::GetInstance().AddSystemAbilityListener(VAILD_SAID, VAILD_SAID);
     EXPECT_TRUE(res);
@@ -444,7 +450,9 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener003, TestSize.Level
  */
 HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener004, TestSize.Level3)
 {
-    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back(MUT_SAID);
+    std::pair<int32_t, int32_t> key = std::make_pair(SAID, MUT_SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[key] = 
+        new LocalAbilityManager::SystemAbilityListener(MUT_SAID);
     bool res = LocalAbilityManager::GetInstance().RemoveSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
 }
@@ -496,10 +504,8 @@ HWTEST_F(LocalAbilityManagerTest, OnStartAbility002, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, GetAbility001, TestSize.Level1)
 {
     std::string deviceId = "";
-    int32_t removeAbility = 2;
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     SystemAbility* res = LocalAbilityManager::GetInstance().GetAbility(SAID);
-    LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, removeAbility);
     EXPECT_EQ(res, nullptr);
 }
 
@@ -511,12 +517,9 @@ HWTEST_F(LocalAbilityManagerTest, GetAbility001, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, GetAbility002, TestSize.Level1)
 {
     std::string deviceId = "";
-    int32_t removeAbility = 2;
     MockSaRealize *sysAby = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
     SystemAbility* res = LocalAbilityManager::GetInstance().GetAbility(SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back(MUT_SAID);
-    LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, removeAbility);
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     delete sysAby;
     EXPECT_NE(res, nullptr);
@@ -530,10 +533,8 @@ HWTEST_F(LocalAbilityManagerTest, GetAbility002, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, GetRunningStatus001, TestSize.Level1)
 {
     std::string deviceId = "";
-    int32_t removeAbility = 2;
     bool res = LocalAbilityManager::GetInstance().GetRunningStatus(SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[SAID].clear();
-    LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, removeAbility);
+    LocalAbilityManager::GetInstance().listenerMap_.clear();
     EXPECT_FALSE(res);
 }
 
@@ -931,7 +932,8 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest001, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
+    LocalAbilityManager::SystemAbilityListener *sysListener =
+        new LocalAbilityManager::SystemAbilityListener(SAID);
     sysListener->OnAddSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(0, data, reply, option);
     delete sysListener;
@@ -950,7 +952,8 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest002, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
+    LocalAbilityManager::SystemAbilityListener *sysListener =
+        new LocalAbilityManager::SystemAbilityListener(INVALID_SAID);
     sysListener->OnAddSystemAbility(INVALID_SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(0, data, reply, option);
     delete sysListener;
@@ -969,7 +972,8 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest003, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
+    LocalAbilityManager::SystemAbilityListener *sysListener =
+        new LocalAbilityManager::SystemAbilityListener(INVALID_SAID);
     sysListener->OnRemoveSystemAbility(INVALID_SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
@@ -989,7 +993,8 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest004, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
+    LocalAbilityManager::SystemAbilityListener *sysListener =
+        new LocalAbilityManager::SystemAbilityListener(SAID);
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
@@ -1010,7 +1015,8 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest005, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
+    LocalAbilityManager::SystemAbilityListener *sysListener =
+        new LocalAbilityManager::SystemAbilityListener(SAID);
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
@@ -1304,21 +1310,6 @@ HWTEST_F(LocalAbilityManagerTest, FfrtDumperProc001, TestSize.Level2)
     std::string ffrtDumperInfo;
     bool result = LocalAbilityManager::GetInstance().FfrtDumperProc(ffrtDumperInfo);
     EXPECT_TRUE(result);
-}
-
-/**
- * @tc.name: FindAndNotifyAbilityListeners001
- * @tc.desc: test FindAndNotifyAbilityListeners with listenerMap_ is empty
- * @tc.type: FUNC
- * @tc.require: I7G7DL
- */
-HWTEST_F(LocalAbilityManagerTest, FindAndNotifyAbilityListeners001, TestSize.Level2)
-{
-    int32_t code = 1;
-    std::string deviceId = "";
-    LocalAbilityManager::GetInstance().listenerMap_.clear();
-    LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, code);
-    EXPECT_TRUE(LocalAbilityManager::GetInstance().listenerMap_.empty());
 }
 
 /**
