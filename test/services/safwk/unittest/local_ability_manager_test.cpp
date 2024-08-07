@@ -1667,11 +1667,11 @@ HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner003, TestSize.Level2)
 }
 
 /**
- * @tc.name: SystemAbilityExtProcInner003
+ * @tc.name: SystemAbilityExtProcInner004
  * @tc.desc: test IpcStatCmdProcInner.
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner003, TestSize.Level2)
+HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner004, TestSize.Level2)
 {
     MessageParcel data;
     MessageParcel reply;
