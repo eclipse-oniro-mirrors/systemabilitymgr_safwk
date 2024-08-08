@@ -308,7 +308,7 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
     }
 
     std::pair<int32_t, int32_t> key = std::make_pair(systemAbilityId, listenerSaId);
-    sptr<ISystemAbilityStatusChange> listener = NULL;
+    sptr<ISystemAbilityStatusChange> listener = nullptr;
     {
         std::lock_guard<std::mutex> autoLock(listenerLock_);
         auto iter = listenerMap_.find(key);
@@ -317,12 +317,9 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
             listenerMap_.erase(iter);
             LOGI("RmSaListener SA:%{public}d,listenerSA:%{public}d", systemAbilityId, listenerSaId);
         }
-
-        sptr<ISystemAbilityStatusChange> listener = new SystemAbilityListener(listenerSaId);
-        listenerMap_[key] = listener;
     }
 
-    if (listener == NULL) {
+    if (listener == nullptr) {
         HILOGW(TAG, "SA:%{public}d,listenerSA:%{public}d,listener is null!", systemAbilityId, listenerSaId);
         return true;
     }
