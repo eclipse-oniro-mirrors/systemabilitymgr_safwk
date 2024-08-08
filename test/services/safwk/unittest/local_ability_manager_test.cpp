@@ -400,7 +400,7 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener004, TestSize.Level1)
 {
     std::pair<int32_t, int32_t> key1 = std::make_pair(VAILD_SAID, VAILD_SAID);
     std::pair<int32_t, int32_t> key2 = std::make_pair(VAILD_SAID, SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[key1] = 
+    LocalAbilityManager::GetInstance().listenerMap_[key1] =
         new LocalAbilityManager::SystemAbilityListener(VAILD_SAID);
     LocalAbilityManager::GetInstance().listenerMap_[key2] =
         new LocalAbilityManager::SystemAbilityListener(SAID);
@@ -451,7 +451,7 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener003, TestSize.Level
 HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener004, TestSize.Level3)
 {
     std::pair<int32_t, int32_t> key = std::make_pair(SAID, MUT_SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[key] = 
+    LocalAbilityManager::GetInstance().listenerMap_[key] =
         new LocalAbilityManager::SystemAbilityListener(MUT_SAID);
     bool res = LocalAbilityManager::GetInstance().RemoveSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
