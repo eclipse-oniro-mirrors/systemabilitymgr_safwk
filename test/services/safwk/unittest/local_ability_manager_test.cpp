@@ -1462,6 +1462,7 @@ HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProc002, TestSize.Level2)
     LocalAbilityManager::GetInstance().abilityMap_.clear();
     delete sysAby;
 }
+
 /**
  * @tc.name: SendStrategyToSAInner001
  * @tc.desc: test SendStrategyToSAInner.
