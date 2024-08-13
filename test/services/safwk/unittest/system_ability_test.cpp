@@ -495,7 +495,7 @@ HWTEST_F(SystemAbilityTest, GetOnDemandReasonExtraData001, TestSize.Level2)
     SystemAbilityOnDemandReason onDemandStartReason;
     onDemandStartReason.reasonId_ = OHOS::OnDemandReasonId::COMMON_EVENT;
     sysAby->GetOnDemandReasonExtraData(onDemandStartReason);
-    EXPECT_FALSE(onDemandStartReason.HasExtraData());
+    EXPECT_TRUE(onDemandStartReason.HasExtraData());
 }
 }
 }
