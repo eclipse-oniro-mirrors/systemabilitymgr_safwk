@@ -98,7 +98,6 @@ ohos_unittest("LocalAbilityManagerTest") {
     "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
     "//foundation/systemabilitymgr/safwk/test/mock/common/tt_ability:test_tt_ability",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability:listen_test",
-    "//third_party/googletest:gtest_main",
   ]
 
   if (target_cpu == "arm") {
@@ -107,6 +106,7 @@ ohos_unittest("LocalAbilityManagerTest") {
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "ipc:ipc_core",
@@ -143,10 +143,7 @@ ohos_unittest("SystemAbilityTest") {
   configs =
       [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
-  deps = [
-    ":system_ability_fwk_tdd",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ ":system_ability_fwk_tdd" ]
 
   if (target_cpu == "arm") {
     cflags = [ "-DBINDER_IPC_32BIT" ]
@@ -157,6 +154,7 @@ ohos_unittest("SystemAbilityTest") {
     "access_token:libnativetoken_shared",
     "access_token:libtokensetproc_shared",
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_common",
@@ -186,7 +184,6 @@ ohos_unittest("CacheManagerTest") {
     "listen_ability:listen_test",
     "test_sa_proxy_cache_ability:test_sa_proxy_cache",
     "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
-    "//third_party/googletest:gtest_main",
   ]
 
   if (target_cpu == "arm") {
@@ -198,6 +195,7 @@ ohos_unittest("CacheManagerTest") {
     "access_token:libnativetoken_shared",
     "access_token:libtokensetproc_shared",
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_core",
     "samgr:samgr_common",
@@ -223,7 +221,6 @@ ohos_unittest("ExpireLruCacheTest") {
   deps = [
     ":system_ability_fwk_tdd",
     "listen_ability:listen_test",
-    "//third_party/googletest:gtest_main",
   ]
 
   if (target_cpu == "arm") {
@@ -232,6 +229,7 @@ ohos_unittest("ExpireLruCacheTest") {
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_core",
   ]
@@ -259,8 +257,6 @@ ohos_unittest("SaProxyCacheTest") {
     ":system_ability_fwk_tdd",
     "listen_ability:listen_test",
     "test_sa_proxy_cache_ability:test_sa_proxy_cache",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   if (target_cpu == "arm") {
@@ -269,6 +265,8 @@ ohos_unittest("SaProxyCacheTest") {
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "ipc:ipc_core",
   ]
