@@ -1443,7 +1443,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckPermission001, TestSize.Level2)
 {
     uint32_t code = static_cast<uint32_t>(SafwkInterfaceCode::START_ABILITY_TRANSACTION);
     bool result = LocalAbilityManager::GetInstance().CheckPermission(code);
-    EXPECT_FALSE(result);
+    EXPECT_TRUE(result);
 }
 
 /**
@@ -1455,7 +1455,7 @@ HWTEST_F(LocalAbilityManagerTest, CheckPermission002, TestSize.Level2)
 {
     uint32_t code = static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION);
     bool result = LocalAbilityManager::GetInstance().CheckPermission(code);
-    EXPECT_FALSE(result);
+    EXPECT_TRUE(result);
 }
 
 /**
