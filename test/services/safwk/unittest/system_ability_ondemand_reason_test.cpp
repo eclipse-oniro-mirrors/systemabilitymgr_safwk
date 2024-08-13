@@ -131,6 +131,40 @@ HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling001, TestSize.Level2)
 }
 
 /**
+ * @tc.name: Unmarshalling002
+ * @tc.desc: test Unmarshalling
+ * @tc.type: FUNC
+ * @tc.require: I6Y5L8
+ */
+HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling002, TestSize.Level2)
+{
+    OnDemandReasonExtraData onDemandReasonExtraData;
+    Parcel parcel;
+    int32_t code = 0;
+    parcel.WriteInt32(code);
+    OnDemandReasonExtraData* ret = onDemandReasonExtraData.Unmarshalling(parcel);
+    EXPECT_EQ(ret, nullptr);
+}
+
+/**
+ * @tc.name: Unmarshalling003
+ * @tc.desc: test Unmarshalling
+ * @tc.type: FUNC
+ * @tc.require: I6Y5L8
+ */
+HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling003, TestSize.Level2)
+{
+    OnDemandReasonExtraData onDemandReasonExtraData;
+    Parcel parcel;
+    int32_t code = 0;
+    parcel.WriteInt32(code);
+    std::string data = "test";
+    parcel.WriteString(data);
+    OnDemandReasonExtraData* ret = onDemandReasonExtraData.Unmarshalling(parcel);
+    EXPECT_NE(ret, nullptr);
+}
+
+/**
  * @tc.name: SystemAbilityOnDemandReasonSetName001
  * @tc.desc: test SystemAbilityOnDemandReasonSetName, set SystemAbilityOnDemandReason's reasonName_
  * @tc.type: FUNC
@@ -213,5 +247,24 @@ HWTEST_F(SystemAbilityOndemandReasonTest, GetExtraData001, TestSize.Level2)
     systemAbilityOnDemandReason.SetExtraData(onDemandReasonExtraData);
     string ret = systemAbilityOnDemandReason.GetExtraData().data_;
     EXPECT_EQ(ret, DATA);
+}
+
+/**
+ * @tc.name: SystemAbilityOnDemandReason001
+ * @tc.desc: test SystemAbilityOnDemandReason
+ * @tc.type: FUNC
+ * @tc.require: I6Y5L8
+ */
+HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReason001, TestSize.Level2)
+{
+    OnDemandReasonId reasonId = OnDemandReasonId::DEVICE_ONLINE;
+    std::string reasonName = "testreasonname";
+    std::string reasonValue = "testreasonvalue";
+    int64_t extraDataId = 1;
+    SystemAbilityOnDemandReason reason(reasonId, reasonName, reasonValue, extraDataId);
+    EXPECT_EQ(reason.reasonId_, reasonId);
+    EXPECT_EQ(reason.reasonName_, reasonName);
+    EXPECT_EQ(reason.reasonValue_, reasonValue);
+    EXPECT_EQ(reason.extraDataId_, extraDataId);
 }
 }

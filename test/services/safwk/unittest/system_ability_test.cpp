@@ -471,5 +471,31 @@ HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
     EXPECT_EQ(ret, capability);
 }
 
+/**
+ * @tc.name: SADump001
+ * @tc.desc: Check SADump
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(SystemAbilityTest, SADump001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->SADump();
+}
+
+/**
+ * @tc.name: GetOnDemandReasonExtraData001
+ * @tc.desc: Check GetOnDemandReasonExtraData
+ * @tc.type: FUNC
+ * @tc.require: I73XRZ
+ */
+HWTEST_F(SystemAbilityTest, GetOnDemandReasonExtraData001, TestSize.Level2)
+{
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    SystemAbilityOnDemandReason onDemandStartReason;
+    onDemandStartReason.reasonId_ = OHOS::OnDemandReasonId::COMMON_EVENT;
+    sysAby->GetOnDemandReasonExtraData(onDemandStartReason);
+    EXPECT_FALSE(onDemandStartReason.HasExtraData());
+}
 }
 }

@@ -998,8 +998,9 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest004, TestSize.Level2)
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
-    EXPECT_EQ(result, ERR_PERMISSION_DENIED);
+    EXPECT_EQ(result, ERR_NULL_OBJECT);
 }
+
 /**
  * @tc.name: OnRemoteRequest005
  * @tc.desc: OnRemoteRequest005
@@ -1020,7 +1021,47 @@ HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest005, TestSize.Level2)
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
-    EXPECT_EQ(result, ERR_PERMISSION_DENIED);
+    EXPECT_EQ(result, ERR_NONE);
+}
+
+/**
+ * @tc.name: OnRemoteRequest006
+ * @tc.desc: OnRemoteRequest006
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest006, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    data.WriteInt32(STARTCODE);
+    std::string eventStr = "test";
+    data.WriteString(eventStr);
+    MessageParcel reply;
+    MessageOption option;
+    uint32_t code = 1;
+    auto iter = LocalAbilityManager::GetInstance().memberFuncMap_.find(code);
+    LocalAbilityManager::GetInstance().OnRemoteRequest(code, data, reply, option);
+    EXPECT_NE(iter, LocalAbilityManager::GetInstance().memberFuncMap_.end());
+}
+
+/**
+ * @tc.name: OnRemoteRequest007
+ * @tc.desc: OnRemoteRequest007
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, OnRemoteRequest007, TestSize.Level2)
+{
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    data.WriteInt32(STARTCODE);
+    std::string eventStr = "test";
+    data.WriteString(eventStr);
+    MessageParcel reply;
+    MessageOption option;
+    uint32_t code = 0;
+    auto iter = LocalAbilityManager::GetInstance().memberFuncMap_.find(code);
+    LocalAbilityManager::GetInstance().OnRemoteRequest(code, data, reply, option);
+    EXPECT_EQ(iter, LocalAbilityManager::GetInstance().memberFuncMap_.end());
 }
 
 /**
