@@ -1715,5 +1715,111 @@ HWTEST_F(LocalAbilityManagerTest, SystemAbilityExtProcInner004, TestSize.Level2)
     int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProcInner(data, reply);
     EXPECT_EQ(ret, INVALID_DATA);
 }
+
+/**
+ * @tc.name: NeedCheckUnused001
+ * @tc.desc: test NeedCheckUnused001
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, NeedCheckUnused001, TestSize.Level1)
+{
+    int32_t saId = 3002;
+    auto ret = LocalAbilityManager::GetInstance().NoNeedCheckUnused(saId);
+    EXPECT_EQ(ret, true);
+
+    saId = 1494;
+    ret = LocalAbilityManager::GetInstance().NoNeedCheckUnused(saId);
+    EXPECT_EQ(ret, false);
+}
+
+/**
+ * @tc.name: IsResident001
+ * @tc.desc: test IsResident001, check process is resident process
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IsResident001, TestSize.Level1)
+{
+    MockSaRealize *mockSa = new MockSaRealize(VAILD_SAID, true);
+    LocalAbilityManager::GetInstance().abilityMap_[VAILD_SAID] = mockSa;
+    auto ret = LocalAbilityManager::GetInstance().IsResident();
+    delete mockSa;
+    EXPECT_EQ(ret, true);
+    LocalAbilityManager::GetInstance().abilityMap_.clear();
+}
+
+/**
+ * @tc.name: IsResident002
+ * @tc.desc: test IsResident002, check process is resident process
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IsResident002, TestSize.Level1)
+{
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
+    auto ret = LocalAbilityManager::GetInstance().IsResident();
+    delete sysAby;
+    EXPECT_EQ(ret, false);
+    LocalAbilityManager::GetInstance().abilityMap_.clear();
+}
+
+/**
+ * @tc.name: InitUnusedCfg001
+ * @tc.desc: test InitUnusedCfg001, test config longtimeunused-unload
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, InitUnusedCfg001, TestSize.Level1)
+{
+    constexpr int32_t timeoutUpLimit = 60 * 120;
+    constexpr int32_t timeoutLowLimit = 60 * 1;
+
+    EXPECT_EQ(LocalAbilityManager::GetInstance().IsConfigUnused(), false);
+
+    auto& saProfileList = LocalAbilityManager::GetInstance().profileParser_->saProfiles_;
+    SaProfile saInfo1;
+    saInfo1.runOnCreate = false;
+    saInfo1.saId = 1;
+    saInfo1.stopOnDemand.unusedTimeout = timeoutUpLimit + 1;
+    saProfileList.push_back(saInfo1);
+
+    SaProfile saInfo2;
+    saInfo2.runOnCreate = false;
+    saInfo2.saId = 2;
+    saInfo2.stopOnDemand.unusedTimeout = timeoutLowLimit - 1;
+    saProfileList.push_back(saInfo2);
+
+    SaProfile saInfo3;
+    saInfo3.runOnCreate = false;
+    saInfo3.saId = 3;
+    saInfo3.stopOnDemand.unusedTimeout = timeoutLowLimit * 10;
+    saProfileList.push_back(saInfo3);
+
+    SaProfile saInfo4;
+    saInfo4.runOnCreate = false;
+    saInfo4.saId = 4;
+    saInfo4.stopOnDemand.unusedTimeout = -1;
+    saProfileList.push_back(saInfo4);
+
+    SaProfile saInfo5;
+    saInfo5.runOnCreate = true;
+    saInfo5.saId = 5;
+    saInfo5.stopOnDemand.unusedTimeout = 200;
+    saProfileList.push_back(saInfo5);
+
+    LocalAbilityManager::GetInstance().InitUnusedCfg();
+    auto& unUsedCfgMap = LocalAbilityManager::GetInstance().unusedCfgMap_;
+    EXPECT_EQ(unUsedCfgMap.count(saInfo1.saId), 1);
+    EXPECT_EQ(unUsedCfgMap[saInfo1.saId], timeoutUpLimit * 1000);
+
+    EXPECT_EQ(unUsedCfgMap.count(saInfo2.saId), 1);
+    EXPECT_EQ(unUsedCfgMap[saInfo2.saId], timeoutLowLimit * 1000);
+
+    EXPECT_EQ(unUsedCfgMap.count(saInfo3.saId), 1);
+    EXPECT_EQ(unUsedCfgMap[saInfo3.saId], timeoutLowLimit * 10000);
+
+    EXPECT_EQ(unUsedCfgMap.count(saInfo4.saId), 0);
+
+    EXPECT_EQ(unUsedCfgMap.count(saInfo5.saId), 0);
+    EXPECT_EQ(LocalAbilityManager::GetInstance().IsConfigUnused(), true);
+}
 } // namespace SAFWK
 } // namespace OHOS

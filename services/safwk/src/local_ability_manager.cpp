@@ -32,6 +32,9 @@
 #include "string_ex.h"
 #include "system_ability_ondemand_reason.h"
 #include "local_ability_manager_dumper.h"
+#include "timer.h"
+#include "hisysevent_adapter.h"
+#include "system_ability_definition.h"
 
 namespace OHOS {
 using std::u16string;
@@ -42,8 +45,14 @@ namespace {
 constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
 constexpr int32_t DEFAULT_SAID = -1;
+constexpr int32_t UNUSED_RESIDENT_TIMER_INTERVAL = 1000 * 60 * 10;
+constexpr int32_t UNUSED_ONDEMAND_TIMER_INTERVAL = 1000 * 60 * 1;
+constexpr int32_t ONDEMAND_SA_UNUSED_TIMEOUT_LOWLIMIT = UNUSED_ONDEMAND_TIMER_INTERVAL;
+constexpr int32_t ONDEMAND_SA_UNUSED_TIMEOUT_UPLIMIT = 1000 * 60 * 120;
+constexpr int32_t RESIDENT_SA_UNUSED_TIMEOUT = 1000 * 60 * 10;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
+constexpr int32_t TIME_S_TO_MS = 1000;
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 5; // .json length
@@ -78,6 +87,13 @@ LocalAbilityManager::LocalAbilityManager()
     initPool_ = std::make_unique<ThreadPool>(INIT_POOL);
 }
 
+LocalAbilityManager::~LocalAbilityManager()
+{
+    if (idleTimer_ != nullptr) {
+        idleTimer_->Shutdown();
+    }
+}
+
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
 {
     startBegin_ = GetTickCount();
@@ -107,6 +123,7 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
         }
     }
 
+    StartTimedQuery();
     IPCSkeleton::JoinWorkThread();
     HILOGE(TAG, "JoinWorkThread stop, will exit");
 }
@@ -920,5 +937,167 @@ int32_t LocalAbilityManager::SystemAbilityExtProc(const std::string& extension, 
         return INVALID_DATA;
     }
     return ability->OnExtension(extension, *callback->data_, *callback->reply_);
+}
+
+bool LocalAbilityManager::IsResident()
+{
+    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+    for (const auto& it : abilityMap_) {
+        if ((it.second != nullptr) && (it.second->IsRunOnCreate())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool LocalAbilityManager::NoNeedCheckUnused(int32_t saId)
+{
+    std::set<int32_t> saIdWhiteList = { PLAYER_DISTRIBUTED_SERVICE_ID };
+    return saIdWhiteList.find(saId) != saIdWhiteList.end();
+}
+
+bool LocalAbilityManager::IsConfigUnused()
+{
+    std::shared_lock<std::shared_mutex> readLock(unusedCfgMapLock_);
+    HILOGI(TAG, "unusedCfgMap_ size:%{public}zu", unusedCfgMap_.size());
+    return !unusedCfgMap_.empty();
+}
+
+void LocalAbilityManager::LimitUnusedTimeout(int32_t saId, int32_t timeout)
+{
+    int64_t millisecTimeout = static_cast<int64_t>(timeout * TIME_S_TO_MS);
+    if (millisecTimeout < ONDEMAND_SA_UNUSED_TIMEOUT_LOWLIMIT) {
+        unusedCfgMap_[saId] = ONDEMAND_SA_UNUSED_TIMEOUT_LOWLIMIT;
+    } else if (millisecTimeout > ONDEMAND_SA_UNUSED_TIMEOUT_UPLIMIT) {
+        unusedCfgMap_[saId] = ONDEMAND_SA_UNUSED_TIMEOUT_UPLIMIT;
+    } else {
+        unusedCfgMap_[saId] = millisecTimeout;
+    }
+}
+
+void LocalAbilityManager::InitUnusedCfg()
+{
+    auto saProfileList = profileParser_->GetAllSaProfiles();
+    std::shared_lock<std::shared_mutex> writeLock(unusedCfgMapLock_);
+    for (const auto& saProfile : saProfileList) {
+        if (!saProfile.runOnCreate && saProfile.stopOnDemand.unusedTimeout != -1) {
+            LimitUnusedTimeout(saProfile.saId, saProfile.stopOnDemand.unusedTimeout);
+        }
+    }
+}
+
+bool LocalAbilityManager::GetSaLastRequestTime(const sptr<ISystemAbilityManager>& samgr,
+    int32_t saId, uint64_t& lastRequestTime)
+{
+    sptr<IRemoteObject> object = samgr->CheckSystemAbility(saId);
+    if (object == nullptr) {
+        HILOGD(TAG, "SA:%{public}d is not register", saId);
+        return false;
+    }
+    sptr<IPCObjectStub> saStub = reinterpret_cast<IPCObjectStub*>(object.GetRefPtr());
+    if (saStub == nullptr) {
+        HILOGE(TAG, "SA:%{public}d stub is nullptr", saId);
+        return false;
+    }
+    lastRequestTime = saStub->GetLastRequestTime();
+    HILOGI(TAG, "SA:%{public}d last request time %{public}" PRIu64, saId, lastRequestTime);
+
+    return true;
+}
+
+void LocalAbilityManager::IdentifyUnusedResident()
+{
+    auto cur = std::chrono::steady_clock::now();
+    uint64_t currTime = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
+        cur.time_since_epoch()).count());
+
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        HILOGE(TAG, "failed to get samgrProxy");
+        return;
+    }
+
+    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+    for (const auto& it : abilityMap_) {
+        int32_t saId = it.first;
+        uint64_t lastRequestTime = 0;
+        bool ret = GetSaLastRequestTime(samgr, saId, lastRequestTime);
+        if ((ret != true) || (currTime <= lastRequestTime)) {
+            continue;
+        }
+        uint64_t idleTime = currTime - lastRequestTime;
+        uint64_t threshold = static_cast<uint64_t>(RESIDENT_SA_UNUSED_TIMEOUT);
+        HILOGD(TAG, "resident SA:%{public}d, idleTime:%{public}" PRIu64 ", longtime-unused threshold:%{public}" PRIu64,
+            saId, idleTime, threshold);
+        if (idleTime > threshold) {
+            ReportSAIdle(saId, "long time unused:" + ToString(idleTime));
+            HILOGI(TAG, "resident SA:%{public}d, longtime:%{public}" PRIu64 "unused", saId, idleTime);
+        }
+    }
+}
+
+void LocalAbilityManager::IdentifyUnusedOndemand()
+{
+    auto cur = std::chrono::steady_clock::now();
+    uint64_t currTime = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
+        cur.time_since_epoch()).count());
+
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        HILOGE(TAG, "failed to get samgrProxy");
+        return;
+    }
+
+    std::shared_lock<std::shared_mutex> readLock(unusedCfgMapLock_);
+    for (const auto& it : unusedCfgMap_) {
+        int32_t saId = it.first;
+        uint64_t lastRequestTime;
+        bool ret = GetSaLastRequestTime(samgr, saId, lastRequestTime);
+        if ((ret != true) || (currTime <= lastRequestTime)) {
+            continue;
+        }
+        uint64_t threshold = it.second;
+        uint64_t idleTime = currTime - lastRequestTime;
+        HILOGD(TAG, "ondemand SA:%{public}d, idleTime:%{public}" PRIu64 ", longtime-unused threshold:%{public}" PRIu64,
+            saId, idleTime, threshold);
+        if (idleTime > threshold) {
+            samgr->UnloadSystemAbility(saId);
+            HILOGI(TAG, "ondemand SA:%{public}d, longtime:%{public}" PRIu64 "unused", saId, idleTime);
+        }
+    }
+}
+
+void LocalAbilityManager::StartTimedQuery()
+{
+    int32_t timerInterval = 0;
+    std::function<void()> timerCallback;
+
+    {
+        std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+        for (const auto& it : abilityMap_) {
+            if (NoNeedCheckUnused(it.first)) {
+                HILOGI(TAG, "SA:%{public}d no need check unused", it.first);
+                return;
+            }
+        }
+    }
+
+    if (IsResident()) {
+        timerInterval = UNUSED_RESIDENT_TIMER_INTERVAL;
+        timerCallback = std::bind(&LocalAbilityManager::IdentifyUnusedResident, this);
+    } else {
+        InitUnusedCfg();
+        if (IsConfigUnused()) {
+            timerInterval = UNUSED_ONDEMAND_TIMER_INTERVAL;
+            timerCallback = std::bind(&LocalAbilityManager::IdentifyUnusedOndemand, this);
+        }
+    }
+
+    if ((timerInterval != 0) && (timerCallback)) {
+        idleTimer_ = std::make_unique<Utils::Timer>("IdleSaReport");
+        idleTimer_->Setup();
+        auto timerId = idleTimer_->Register(timerCallback, timerInterval);
+        HILOGI(TAG, "StartIdleTimer timerId:%{public}u, interval:%{public}d", timerId, timerInterval);
+    }
 }
 }
