@@ -80,16 +80,18 @@ private:
     void FindAndStartPhaseTasks(int32_t saId);
     void StartPhaseTasks(const std::list<SystemAbility*>& startTasks);
     void CheckTrustSa(const std::string& path, const std::string& process, const std::list<SaProfile>& saInfos);
-    sptr<ISystemAbilityStatusChange> GetSystemAbilityStatusChange();
-    void FindAndNotifyAbilityListeners(int32_t systemAbilityId, const std::string& deviceId, int32_t code);
     void NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId,
         const std::string& deviceId, int32_t code);
     void WaitForTasks();
     void StartDependSaTask(SystemAbility* ability);
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {
     public:
+        SystemAbilityListener(int32_t listenerSaId) : listenerSaId_(listenerSaId) {}
         void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
         void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
+        int32_t GetListenerSaId() { return listenerSaId_; }
+    private:
+        int32_t listenerSaId_;
     };
 
     bool CheckAndGetProfilePath(const std::string& profilePath, std::string& realProfilePath);
@@ -114,10 +116,9 @@ private:
     // Check dependent sa status every 50 ms, it equals 50000us.
     const int32_t CHECK_DEPENDENT_SA_PERIOD = 50000;
 
-    sptr<ISystemAbilityStatusChange> statusChangeListener_;
-    std::map<int32_t, std::list<int32_t>> listenerMap_;
-    std::mutex ReasonLock_;
     std::mutex listenerLock_;
+    std::map<std::pair<int32_t, int32_t>, sptr<ISystemAbilityStatusChange>> listenerMap_;
+    std::mutex ReasonLock_;
     std::shared_ptr<ParseUtil> profileParser_;
 
     std::condition_variable startPhaseCV_;
