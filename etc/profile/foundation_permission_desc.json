@@ -201,11 +201,6 @@
             "description" : "Native uses the Bluetooth interface"
         },
         {
-            "name" : "ohos.permission.REQUIRE_FORM",
-            "said" : "403",
-            "description" : "Permission required for FMS to access theme manager service."
-        },
-        {
             "name" : "ohos.permission.ACCESS_SPAMSHIELD_SERVICE",
             "said" : "4005",
             "description" : "Permission required for telephony to access spamshield service."
@@ -226,14 +221,34 @@
             "description" : "Permission required for location earthquake alarm."
         },
         {
-            "name" : "ohos.permission.ACCESS_USER_AUTH_INTERNAL",
-            "said" : "3704",
-            "description" : "Permission required for ScreenLock to observer user auth state."
+            "name" : "ohos.permission.REQUIRE_FORM",
+            "said" : "403",
+            "description" : "Permission required for FMS to access theme manager service."
+        },
+        {
+            "name" : "ohos.permission.CAPTURE_SCREEN",
+            "said" : "4607",
+            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
         },
         {
             "name" : "ohos.permission.MANAGE_MISSIONS",
             "said" : "180",
             "description" : "Permission required for ams to move scene_board to foreground or background."
+        },
+        {
+            "name" : "ohos.permission.CONNECT_FORM_EXTENSION",
+            "said" : "180",
+            "description" : "Permission required for FMS to connect form extension."
+        },
+        {
+            "name" : "ohos.permission.CONNECT_STATIC_SUBSCRIBER_EXTENSION",
+            "said" : "180",
+            "description" : "Permission required for CES to connect static subscriber extension."
+        },
+        {
+            "name" : "ohos.permission.ACCESS_USER_AUTH_INTERNAL",
+            "said" : "3704",
+            "description" : "Permission required for ScreenLock to observer user auth state."
         }
     ],
     "restart" : [
