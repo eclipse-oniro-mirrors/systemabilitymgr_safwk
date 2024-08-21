@@ -464,23 +464,12 @@ HWTEST_F(SystemAbilityTest, IsRunOnCreate002, TestSize.Level2)
 HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
 {
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->SADump();
     SystemAbilityOnDemandReason onDemandStartReason;
     sysAby->GetOnDemandReasonExtraData(onDemandStartReason);
     std::string capability;
     auto ret = sysAby->GetLibPath();
     EXPECT_EQ(ret, capability);
-}
-
-/**
- * @tc.name: SADump001
- * @tc.desc: Check SADump
- * @tc.type: FUNC
- * @tc.require: I73XRZ
- */
-HWTEST_F(SystemAbilityTest, SADump001, TestSize.Level2)
-{
-    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
-    sysAby->SADump();
 }
 
 /**
