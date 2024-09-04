@@ -183,6 +183,10 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
     std::vector<std::string> malloptStrList;
 #endif
+    if (argc < ARGC_LIMIT) {
+        HILOGE(TAG, "argc is too small");
+        return;
+    }
     for (int i = 0; i < argc - 1; ++i) {
         if (strcmp(PARAM_PREFIX_M, argv[i]) == 0) {
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
