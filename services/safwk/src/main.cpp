@@ -53,6 +53,7 @@ constexpr int EVENT_INDEX = 2;
 constexpr int DEFAULT_SAID = -1;
 constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
+constexpr int ARGC_LIMIT = 2;
 constexpr int PARTEVENT_NUM = 5;
 constexpr int MAX_LENGTH = 2000;
 constexpr int MALLOPT_CONFIG_LEN = 2;
