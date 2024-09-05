@@ -1099,7 +1099,7 @@ void LocalAbilityManager::StartTimedQuery()
     }
 
     if ((timerInterval != 0) && (timerCallback)) {
-        idleTimer_ = std::make_unique<Utils::Timer>("IdleSaReport");
+        idleTimer_ = std::make_unique<Utils::Timer>("OS_IdleSaReport");
         idleTimer_->Setup();
         auto timerId = idleTimer_->Register(timerCallback, timerInterval);
         HILOGI(TAG, "StartIdleTimer timerId:%{public}u, interval:%{public}d", timerId, timerInterval);
