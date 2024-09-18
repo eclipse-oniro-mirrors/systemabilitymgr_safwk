@@ -104,7 +104,7 @@ bool SystemAbility::CancelIdle()
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::IDLE) {
-            LOGW("cannot CancelIdle SA:%{public}d,sta is %{public}d", saId_, abilityState_);
+            LOGD("cannot CancelIdle SA:%{public}d,sta is %{public}d", saId_, abilityState_);
             return true;
         }
     }
