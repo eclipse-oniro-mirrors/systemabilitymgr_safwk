@@ -53,7 +53,7 @@ ohos_fuzztest("SystemAbilityFwkFuzzTest") {
     "c_utils:utils",
     "hilog:libhilog",
     "hitrace:hitrace_meter",
-    "ipc:ipc_single",
+    "ipc:ipc_core",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
   ]
