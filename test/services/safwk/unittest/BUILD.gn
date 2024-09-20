@@ -109,7 +109,7 @@ ohos_unittest("LocalAbilityManagerTest") {
     "c_utils:utils",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_common",
     "samgr:samgr_proxy",
   ]
@@ -158,7 +158,7 @@ ohos_unittest("SystemAbilityTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_common",
   ]
 }
@@ -199,7 +199,7 @@ ohos_unittest("CacheManagerTest") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_common",
   ]
 }
@@ -233,7 +233,7 @@ ohos_unittest("ExpireLruCacheTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 
@@ -270,7 +270,7 @@ ohos_unittest("SaProxyCacheTest") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 

@@ -37,7 +37,7 @@ ohos_shared_library("test_demo_sa") {
 
   external_deps = [
     "c_utils:utils",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 
   part_name = "safwk"
