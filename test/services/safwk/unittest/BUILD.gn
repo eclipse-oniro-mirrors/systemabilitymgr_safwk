@@ -161,7 +161,7 @@ ohos_unittest("SystemAbilityTest") {
     "c_utils:utils",
     "googletest:gtest_main",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_common",
   ]
 }
@@ -202,7 +202,7 @@ ohos_unittest("CacheManagerTest") {
     "c_utils:utils",
     "googletest:gtest_main",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_common",
   ]
 }
@@ -236,7 +236,7 @@ ohos_unittest("ExpireLruCacheTest") {
     "c_utils:utils",
     "googletest:gtest_main",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 
@@ -273,7 +273,7 @@ ohos_unittest("SaProxyCacheTest") {
     "googletest:gmock_main",
     "googletest:gtest_main",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
 }
 

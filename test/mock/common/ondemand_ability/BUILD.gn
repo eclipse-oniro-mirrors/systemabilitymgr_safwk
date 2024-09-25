@@ -37,7 +37,7 @@ ohos_shared_library("test_ondemand_ability") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
   ]
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"

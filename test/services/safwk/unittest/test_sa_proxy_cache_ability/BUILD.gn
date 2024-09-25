@@ -36,7 +36,7 @@ ohos_shared_library("test_sa_proxy_cache") {
 
   external_deps += [
     "c_utils:utils",
-    "ipc:ipc_core",
+    "ipc:ipc_single",
     "samgr:samgr_proxy",
   ]
   part_name = "safwk"
