@@ -36,6 +36,7 @@
 #include "timer.h"
 #include "hisysevent_adapter.h"
 #include "system_ability_definition.h"
+#include "samgr_xcollie.h"
 
 namespace OHOS {
 using std::u16string;
@@ -54,6 +55,7 @@ constexpr int32_t RESIDENT_SA_UNUSED_TIMEOUT = 1000 * 60 * 10;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 constexpr int32_t TIME_S_TO_MS = 1000;
+constexpr int32_t MAX_DEPEND_TIMEOUT = 65;
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 5; // .json length
@@ -609,20 +611,23 @@ void LocalAbilityManager::StartDependSaTask(SystemAbility* ability)
     size_t lastSize = CheckDependencyStatus(ability->GetDependSa()).size();
     HILOGI(TAG, "SA:%{public}d's depend timeout:%{public}" PRId64 " ms,depend size:%{public}zu",
         ability->GetSystemAbilitId(), dependTimeout, lastSize);
-    while (lastSize > 0) {
-        int64_t end = GetTickCount();
-        int64_t duration = ((end >= start) ? (end - start) : (INT64_MAX - end + start));
-        if (duration < dependTimeout) {
-            usleep(CHECK_DEPENDENT_SA_PERIOD);
-        } else {
-            break;
+    {
+        SamgrXCollie samgrXCollie("DependSaTimeout_" + ToString(ability->GetSystemAbilitId()), MAX_DEPEND_TIMEOUT);
+        while (lastSize > 0) {
+            int64_t end = GetTickCount();
+            int64_t duration = ((end >= start) ? (end - start) : (INT64_MAX - end + start));
+            if (duration < dependTimeout) {
+                usleep(CHECK_DEPENDENT_SA_PERIOD);
+            } else {
+                break;
+            }
+            vector<int32_t> temp = CheckDependencyStatus(ability->GetDependSa());
+            size_t curSize = temp.size();
+            if (curSize != lastSize) {
+                HILOGI(TAG, "SA:%{public}d's depend left:%{public}zu", ability->GetSystemAbilitId(), curSize);
+            }
+            lastSize = curSize;
         }
-        vector<int32_t> temp = CheckDependencyStatus(ability->GetDependSa());
-        size_t curSize = temp.size();
-        if (curSize != lastSize) {
-            HILOGI(TAG, "SA:%{public}d's depend left:%{public}zu", ability->GetSystemAbilitId(), curSize);
-        }
-        lastSize = curSize;
     }
     vector<int32_t> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
     if (unpreparedDeps.empty()) {
