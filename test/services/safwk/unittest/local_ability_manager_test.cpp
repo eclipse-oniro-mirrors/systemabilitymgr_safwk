@@ -156,6 +156,7 @@ HWTEST_F(LocalAbilityManagerTest, DoStartSAProcess002, TestSize.Level2)
     auto ability = sm->GetSystemAbility(SAID);
     EXPECT_EQ(ability, nullptr);
     DTEST_LOG << "DoStartSAProcess002 end" << std::endl;
+}
 
 /**
  * @tc.name: DoStartSAProcess003
