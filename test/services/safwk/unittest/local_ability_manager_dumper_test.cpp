@@ -59,9 +59,11 @@ void LocalAbilityManagerDumperTest::TearDown()
  */
 HWTEST_F(LocalAbilityManagerDumperTest, StartIpcStatistics001, TestSize.Level2)
 {
+    DTEST_LOG << "StartIpcStatistics001 start" << std::endl;
     std::string result;
     bool ret = LocalAbilityManagerDumper::StartIpcStatistics(result);
     EXPECT_EQ(ret, true);
+    DTEST_LOG << "StartIpcStatistics001 end" << std::endl;
 }
 
 /**
@@ -72,9 +74,11 @@ HWTEST_F(LocalAbilityManagerDumperTest, StartIpcStatistics001, TestSize.Level2)
  */
 HWTEST_F(LocalAbilityManagerDumperTest, StopIpcStatistics001, TestSize.Level2)
 {
+    DTEST_LOG << "StopIpcStatistics001 start" << std::endl;
     std::string result;
     bool ret = LocalAbilityManagerDumper::StopIpcStatistics(result);
     EXPECT_EQ(ret, true);
+    DTEST_LOG << "StopIpcStatistics001 end" << std::endl;
 }
 
 /**
@@ -85,8 +89,10 @@ HWTEST_F(LocalAbilityManagerDumperTest, StopIpcStatistics001, TestSize.Level2)
  */
 HWTEST_F(LocalAbilityManagerDumperTest, GetIpcStatistics001, TestSize.Level2)
 {
+    DTEST_LOG << "GetIpcStatistics001 start" << std::endl;
     std::string result;
     bool ret = LocalAbilityManagerDumper::GetIpcStatistics(result);
     EXPECT_EQ(ret, true);
+    DTEST_LOG << "GetIpcStatistics001 end" << std::endl;
 }
 }
