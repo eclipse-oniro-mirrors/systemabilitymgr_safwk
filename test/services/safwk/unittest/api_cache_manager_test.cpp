@@ -84,6 +84,7 @@ void CacheManagerTest::TearDown()
  */
 HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level2)
 {
+    DTEST_LOG << "AddAndDeleteCacheAPI001 start" << std::endl;
     ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_100S);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 1);
 
@@ -102,6 +103,7 @@ HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level2)
 
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 0);
+    DTEST_LOG << "AddAndDeleteCacheAPI001 end" << std::endl;
 }
 
 /**
@@ -112,6 +114,7 @@ HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level2)
  */
 HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
 {
+    DTEST_LOG << "PreSendRequest001 start" << std::endl;
     bool ret;
 
     MessageParcel data1;
@@ -165,6 +168,7 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data6, reply6);
     EXPECT_EQ(ret, false);
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
+    DTEST_LOG << "PreSendRequest001 end" << std::endl;
 }
 
 void LRUTest001AddCache1()
@@ -495,6 +499,7 @@ void LRUTest001AddCache9()
  */
 HWTEST_F(CacheManagerTest, LRUTest001, TestSize.Level2)
 {
+    DTEST_LOG << "LRUTest001 start" << std::endl;
     bool ret;
     ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_1S);
     float keyFloat = 0.012345;
@@ -556,6 +561,7 @@ HWTEST_F(CacheManagerTest, LRUTest001, TestSize.Level2)
         EXPECT_EQ(retDouble, valDouble);
     }
     ApiCacheManager::GetInstance().ClearCache();
+    DTEST_LOG << "LRUTest001 end" << std::endl;
 }
 
 void ClearCache001TestParcelData(MessageParcel& data, const std::u16string& data1, int32_t data2)
@@ -830,6 +836,7 @@ bool ClearCache001TestCheckNumber(int32_t cacheSize, int32_t apiNums)
  */
 HWTEST_F(CacheManagerTest, ClearCache001, TestSize.Level2)
 {
+    DTEST_LOG << "ClearCache001 start" << std::endl;
     ClearCache001TestStep1AddCache();
 
     ApiCacheManager::GetInstance().ClearCache(g_descriptor1, CACHE_API_CODE_100);
@@ -894,6 +901,7 @@ HWTEST_F(CacheManagerTest, ClearCache001, TestSize.Level2)
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
     EXPECT_EQ(ApiCacheManager::GetInstance().caches_.size(), 0);
+    DTEST_LOG << "ClearCache001 end" << std::endl;
 }
 
 void Task001(bool& stop)
@@ -996,6 +1004,7 @@ void Task006(bool& stop)
  */
 HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
 {
+    DTEST_LOG << "Conc001 start" << std::endl;
     bool stop = false;
     bool stopAdd = false;
 
@@ -1050,5 +1059,6 @@ HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
     return;
+    DTEST_LOG << "Conc001 end" << std::endl;
 }
 }

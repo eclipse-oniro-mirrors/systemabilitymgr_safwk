@@ -76,6 +76,7 @@ void ExpireLruCacheTest::TearDown()
  */
 HWTEST_F(ExpireLruCacheTest, ConstructorTest001, TestSize.Level2)
 {
+    DTEST_LOG << "ConstructorTest001 start" << std::endl;
     {
         ExpireLruCache<std::vector<char>, std::vector<char>> cache;
         EXPECT_EQ(cache.size_, 8);
@@ -99,6 +100,7 @@ HWTEST_F(ExpireLruCacheTest, ConstructorTest001, TestSize.Level2)
         EXPECT_EQ(cache.size_, 100);
         EXPECT_EQ(cache.expireTimeMilliSec_, 2000);
     }
+    DTEST_LOG << "ConstructorTest001 end" << std::endl;
 }
 
 bool ExpirelruCacheTestCheckNums(ExpireLruCache<std::vector<char>, std::vector<char>>& cache, size_t expectNums)
@@ -156,6 +158,7 @@ bool ExpirelruCacheTestCheckGetRet(ExpireLruCache<std::vector<char>, std::vector
  */
 HWTEST_F(ExpireLruCacheTest, ADD_GET_CLEAR_Test001, TestSize.Level2)
 {
+    DTEST_LOG << "ADD_GET_CLEAR_Test001 start" << std::endl;
     ExpireLruCache<std::vector<char>, std::vector<char>> cache;
 
     cache.Add(g_Key1, g_Val1);
@@ -206,6 +209,7 @@ HWTEST_F(ExpireLruCacheTest, ADD_GET_CLEAR_Test001, TestSize.Level2)
         retVal = cache.Get(g_Key4);
         ASSERT_TRUE(retVal == nullptr);
     }
+    DTEST_LOG << "ADD_GET_CLEAR_Test001 end" << std::endl;
 }
 
 /**
@@ -216,6 +220,7 @@ HWTEST_F(ExpireLruCacheTest, ADD_GET_CLEAR_Test001, TestSize.Level2)
  */
 HWTEST_F(ExpireLruCacheTest, LRUTest001, TestSize.Level2)
 {
+    DTEST_LOG << "LRUTest001 start" << std::endl;
     // cacheMapSize 3 expireTime 10000000us
     ExpireLruCache<std::vector<char>, std::vector<char>> cache(3, 10000);
 
@@ -258,6 +263,7 @@ HWTEST_F(ExpireLruCacheTest, LRUTest001, TestSize.Level2)
         EXPECT_EQ(retVal, nullptr);
     }
     EXPECT_EQ(ExpirelruCacheTestCheckNums(cache, 3), true);
+    DTEST_LOG << "LRUTest001 end" << std::endl;
 }
 
 /**
@@ -268,6 +274,7 @@ HWTEST_F(ExpireLruCacheTest, LRUTest001, TestSize.Level2)
  */
 HWTEST_F(ExpireLruCacheTest, LRUTest002, TestSize.Level2)
 {
+    DTEST_LOG << "LRUTest002 start" << std::endl;
     // cacheMapSize 3 expireTime 40000us
     ExpireLruCache<std::vector<char>, std::vector<char>> cache(3, 40);
 
@@ -312,6 +319,7 @@ HWTEST_F(ExpireLruCacheTest, LRUTest002, TestSize.Level2)
         auto retVal = cache.Get(g_Key5);
         EXPECT_EQ(*retVal, g_Val5);
     }
+    DTEST_LOG << "LRUTest002 end" << std::endl;
 }
 
 /**
@@ -322,6 +330,7 @@ HWTEST_F(ExpireLruCacheTest, LRUTest002, TestSize.Level2)
  */
 HWTEST_F(ExpireLruCacheTest, GetTest001, TestSize.Level2)
 {
+    DTEST_LOG << "GetTest001 start" << std::endl;
     ExpireLruCache<std::vector<char>, std::vector<char>> cache(3, 50);
 
     {
@@ -373,6 +382,7 @@ HWTEST_F(ExpireLruCacheTest, GetTest001, TestSize.Level2)
             iterB++;
         }
     }
+    DTEST_LOG << "GetTest001 end" << std::endl;
 }
 
 /**
@@ -383,6 +393,7 @@ HWTEST_F(ExpireLruCacheTest, GetTest001, TestSize.Level2)
  */
 HWTEST_F(ExpireLruCacheTest, Timestamp001, TestSize.Level2)
 {
+    DTEST_LOG << "Timestamp001 start" << std::endl;
     // test operator '-' and timestamp is increasing
     ExpireLruCache<int, int>::Timestamp t1;
     usleep(3000);
@@ -401,6 +412,7 @@ HWTEST_F(ExpireLruCacheTest, Timestamp001, TestSize.Level2)
     usleep(2000);
     ret = t3.IsExpired(10);
     EXPECT_EQ(ret, false);
+    DTEST_LOG << "Timestamp001 end" << std::endl;
 }
 
 /**
@@ -411,6 +423,7 @@ HWTEST_F(ExpireLruCacheTest, Timestamp001, TestSize.Level2)
  */
 HWTEST_F(ExpireLruCacheTest, RemoveTest001, TestSize.Level2)
 {
+    DTEST_LOG << "RemoveTest001 start" << std::endl;
     ExpireLruCache<std::vector<char>, std::vector<char>> cache(3, 2000);
 
     cache.Add(g_Key1, g_Val1);
@@ -455,5 +468,6 @@ HWTEST_F(ExpireLruCacheTest, RemoveTest001, TestSize.Level2)
         auto retval1 = cache.Get(g_Key1);
         EXPECT_EQ(retval1, nullptr);
     }
+    DTEST_LOG << "RemoveTest001 end" << std::endl;
 }
 }

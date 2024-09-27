@@ -78,6 +78,7 @@ bool CheckCallGetDoubleFuncIpcTimes(sptr<ITestSaProxyCache>& proxy, int32_t inpu
  */
 HWTEST_F(SaProxyCacheTest, SaProxyCacheTest001, TestSize.Level2)
 {
+    DTEST_LOG << "SaProxyCacheTest001 start" << std::endl;
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(DISTRIBUTED_SCHED_TEST_TT_ID);
@@ -140,6 +141,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest001, TestSize.Level2)
     EXPECT_EQ(proxy->GetStringFunc(input, output), ERR_OK);
     EXPECT_EQ(output, "AABBBBAA");
     EXPECT_EQ(proxy->TestGetIpcSendRequestTimes(), 14);
+    DTEST_LOG << "SaProxyCacheTest001 end" << std::endl;
 }
 
 class MockIRemoteObject : public IRemoteObject {
@@ -210,6 +212,7 @@ public:
  */
 HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level2)
 {
+    DTEST_LOG << "SaProxyCacheTest002 start" << std::endl;
     {
         g_mockReturn = ERR_TIMED_OUT;
         sptr<MockIRemoteObject> iRemoteObject = sptr<MockIRemoteObject>(new (std::nothrow) MockIRemoteObject());
@@ -240,6 +243,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level2)
         ret = p.GetDoubleFunc(100, retDouble);
         EXPECT_EQ(p.TestGetIpcSendRequestTimes(), 2);
     }
+    DTEST_LOG << "SaProxyCacheTest002 end" << std::endl;
 }
 
 /**
@@ -250,6 +254,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level2)
  */
 HWTEST_F(SaProxyCacheTest, SaProxyCacheTest003, TestSize.Level2)
 {
+    DTEST_LOG << "SaProxyCacheTest003 start" << std::endl;
     std::vector<bool> input;
     std::vector<int8_t> output;
     std::vector<int8_t> expect;
@@ -289,6 +294,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest003, TestSize.Level2)
     EXPECT_EQ(ret, ERR_OK);
     EXPECT_EQ((output == expect), 1);
     EXPECT_EQ(proxy->TestGetIpcSendRequestTimes(), 1);
+    DTEST_LOG << "SaProxyCacheTest003 end" << std::endl;
 }
 
 /**
@@ -299,20 +305,18 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest003, TestSize.Level2)
  */
 HWTEST_F(SaProxyCacheTest, SaProxyCacheTest004, TestSize.Level2)
 {
+    DTEST_LOG << "SaProxyCacheTest004 start" << std::endl;
     sptr<ISystemAbilityManager> systemAbilityManager =
         SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(DISTRIBUTED_SCHED_TEST_TT_ID);
     sptr<ITestSaProxyCache> proxy = iface_cast<ITestSaProxyCache>(remoteObject);
-    EXPECT_NE(proxy, nullptr);
 
     sptr<IRemoteObject> remoteObject1 = systemAbilityManager->GetSystemAbility(1494);
     sptr<IListenAbility> listenProxy = iface_cast<IListenAbility>(remoteObject1);
-    EXPECT_NE(listenProxy, nullptr);
 
     int pid;
     double retDouble, retDouble2;
     auto ret = proxy->GetSaPid(pid);
-    EXPECT_EQ(ret, ERR_OK);
 
     std::string cmd = "kill -9 ";
     cmd += std::to_string(pid);
@@ -359,5 +363,32 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest004, TestSize.Level2)
 
     EXPECT_EQ(listenProxy->AddVolume(100), 101);
     EXPECT_EQ(listenProxy->TestClearSa1493Proxy_(), ERR_OK);
+    DTEST_LOG << "SaProxyCacheTest004 end" << std::endl;
+}
+
+/**
+ * @tc.name: SaProxyCacheTest005
+ * @tc.desc: test clear cache when sa stub exits
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SaProxyCacheTest, SaProxyCacheTest005, TestSize.Level2)
+{
+    DTEST_LOG << "SaProxyCacheTest005 start" << std::endl;
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(DISTRIBUTED_SCHED_TEST_TT_ID);
+    sptr<ITestSaProxyCache> proxy = iface_cast<ITestSaProxyCache>(remoteObject);
+    EXPECT_NE(proxy, nullptr);
+
+    sptr<IRemoteObject> remoteObject1 = systemAbilityManager->GetSystemAbility(1494);
+    sptr<IListenAbility> listenProxy = iface_cast<IListenAbility>(remoteObject1);
+    EXPECT_NE(listenProxy, nullptr);
+
+    int pid;
+    double retDouble, retDouble2;
+    auto ret = proxy->GetSaPid(pid);
+    EXPECT_EQ(ret, ERR_OK);
+    DTEST_LOG << "SaProxyCacheTest005 end" << std::endl;
 }
 }

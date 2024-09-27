@@ -68,10 +68,12 @@ void SystemAbilityOndemandReasonTest::TearDown()
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetData001, TestSize.Level2)
 {
+    DTEST_LOG << "OnDemandReasonExtraDataGetData001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     onDemandReasonExtraData.data_ = DATA;
     string ret = onDemandReasonExtraData.GetData();
     EXPECT_EQ(ret, DATA);
+    DTEST_LOG << "OnDemandReasonExtraDataGetData001 end" << std::endl;
 }
 
 /**
@@ -82,10 +84,12 @@ HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetData001, Tes
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetCode001, TestSize.Level2)
 {
+    DTEST_LOG << "OnDemandReasonExtraDataGetCode001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     onDemandReasonExtraData.code_ = CODE;
     int32_t ret = onDemandReasonExtraData.GetCode();
     EXPECT_EQ(ret, CODE);
+    DTEST_LOG << "OnDemandReasonExtraDataGetCode001 end" << std::endl;
 }
 
 /**
@@ -96,10 +100,12 @@ HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetCode001, Tes
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetWant001, TestSize.Level2)
 {
+    DTEST_LOG << "OnDemandReasonExtraDataGetWant001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     onDemandReasonExtraData.want_["test"] = "test";
     map testwant = onDemandReasonExtraData.GetWant();
     EXPECT_FALSE(testwant.empty());
+    DTEST_LOG << "OnDemandReasonExtraDataGetWant001 end" << std::endl;
 }
 
 /**
@@ -110,10 +116,12 @@ HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetWant001, Tes
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, Marshalling001, TestSize.Level2)
 {
+    DTEST_LOG << "Marshalling001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     Parcel parcel;
     bool ret = onDemandReasonExtraData.Marshalling(parcel);
     EXPECT_TRUE(ret);
+    DTEST_LOG << "Marshalling001 end" << std::endl;
 }
 
 /**
@@ -124,10 +132,12 @@ HWTEST_F(SystemAbilityOndemandReasonTest, Marshalling001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling001, TestSize.Level2)
 {
+    DTEST_LOG << "Unmarshalling001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     Parcel parcel;
     OnDemandReasonExtraData* ret = onDemandReasonExtraData.Unmarshalling(parcel);
     EXPECT_EQ(ret, nullptr);
+    DTEST_LOG << "Unmarshalling001 end" << std::endl;
 }
 
 /**
@@ -138,12 +148,14 @@ HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling002, TestSize.Level2)
 {
+    DTEST_LOG << "Unmarshalling002 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     Parcel parcel;
     int32_t code = 0;
     parcel.WriteInt32(code);
     OnDemandReasonExtraData* ret = onDemandReasonExtraData.Unmarshalling(parcel);
     EXPECT_EQ(ret, nullptr);
+    DTEST_LOG << "Unmarshalling002 end" << std::endl;
 }
 
 /**
@@ -154,6 +166,7 @@ HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling003, TestSize.Level2)
 {
+    DTEST_LOG << "Unmarshalling003 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
     Parcel parcel;
     int32_t code = 0;
@@ -162,6 +175,7 @@ HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling003, TestSize.Level2)
     parcel.WriteString(data);
     OnDemandReasonExtraData* ret = onDemandReasonExtraData.Unmarshalling(parcel);
     EXPECT_NE(ret, nullptr);
+    DTEST_LOG << "Unmarshalling003 end" << std::endl;
 }
 
 /**
@@ -172,9 +186,11 @@ HWTEST_F(SystemAbilityOndemandReasonTest, Unmarshalling003, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReasonSetName001, TestSize.Level2)
 {
+    DTEST_LOG << "SystemAbilityOnDemandReasonSetName001 start" << std::endl;
     SystemAbilityOnDemandReason systemAbilityOnDemandReason;
     systemAbilityOnDemandReason.SetName(REASON_NAME);
     EXPECT_EQ(systemAbilityOnDemandReason.reasonName_, REASON_NAME);
+    DTEST_LOG << "SystemAbilityOnDemandReasonSetName001 end" << std::endl;
 }
 
 /**
@@ -185,9 +201,11 @@ HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReasonSetName001,
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReasonSetValue001, TestSize.Level2)
 {
+    DTEST_LOG << "SystemAbilityOnDemandReasonSetValue001 start" << std::endl;
     SystemAbilityOnDemandReason systemAbilityOnDemandReason;
     systemAbilityOnDemandReason.SetValue(REASON_VALUE);
     EXPECT_EQ(systemAbilityOnDemandReason.reasonValue_, REASON_VALUE);
+    DTEST_LOG << "SystemAbilityOnDemandReasonSetValue001 end" << std::endl;
 }
 
 /**
@@ -198,10 +216,12 @@ HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReasonSetValue001
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, GetExtraDataId001, TestSize.Level2)
 {
+    DTEST_LOG << "GetExtraDataId001 start" << std::endl;
     SystemAbilityOnDemandReason systemAbilityOnDemandReason;
     systemAbilityOnDemandReason.extraDataId_ = EXTRA_DATA_ID;
     int64_t ret = systemAbilityOnDemandReason.GetExtraDataId();
     EXPECT_EQ(ret, EXTRA_DATA_ID);
+    DTEST_LOG << "GetExtraDataId001 end" << std::endl;
 }
 
 /**
@@ -212,9 +232,11 @@ HWTEST_F(SystemAbilityOndemandReasonTest, GetExtraDataId001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, SetExtraDataId001, TestSize.Level2)
 {
+    DTEST_LOG << "SetExtraDataId001 start" << std::endl;
     SystemAbilityOnDemandReason systemAbilityOnDemandReason;
     systemAbilityOnDemandReason.SetExtraDataId(EXTRA_DATA_ID);
     EXPECT_EQ(systemAbilityOnDemandReason.extraDataId_, EXTRA_DATA_ID);
+    DTEST_LOG << "SetExtraDataId001 end" << std::endl;
 }
 
 /**
@@ -225,12 +247,14 @@ HWTEST_F(SystemAbilityOndemandReasonTest, SetExtraDataId001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, SetExtraData001, TestSize.Level2)
 {
+    DTEST_LOG << "SetExtraData001 start" << std::endl;
     SystemAbilityOnDemandReason systemAbilityOnDemandReason;
     OnDemandReasonExtraData onDemandReasonExtraData;
     onDemandReasonExtraData.data_ = DATA;
     systemAbilityOnDemandReason.SetExtraData(onDemandReasonExtraData);
     string ret = systemAbilityOnDemandReason.extraData_.GetData();
     EXPECT_EQ(ret, DATA);
+    DTEST_LOG << "SetExtraData001 end" << std::endl;
 }
 
 /**
@@ -241,12 +265,14 @@ HWTEST_F(SystemAbilityOndemandReasonTest, SetExtraData001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, GetExtraData001, TestSize.Level2)
 {
+    DTEST_LOG << "GetExtraData001 start" << std::endl;
     SystemAbilityOnDemandReason systemAbilityOnDemandReason;
     OnDemandReasonExtraData onDemandReasonExtraData;
     onDemandReasonExtraData.data_ = DATA;
     systemAbilityOnDemandReason.SetExtraData(onDemandReasonExtraData);
     string ret = systemAbilityOnDemandReason.GetExtraData().data_;
     EXPECT_EQ(ret, DATA);
+    DTEST_LOG << "GetExtraData001 end" << std::endl;
 }
 
 /**
@@ -257,6 +283,7 @@ HWTEST_F(SystemAbilityOndemandReasonTest, GetExtraData001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReason001, TestSize.Level2)
 {
+    DTEST_LOG << "SystemAbilityOnDemandReason001 start" << std::endl;
     OnDemandReasonId reasonId = OnDemandReasonId::DEVICE_ONLINE;
     std::string reasonName = "testreasonname";
     std::string reasonValue = "testreasonvalue";
@@ -266,5 +293,6 @@ HWTEST_F(SystemAbilityOndemandReasonTest, SystemAbilityOnDemandReason001, TestSi
     EXPECT_EQ(reason.reasonName_, reasonName);
     EXPECT_EQ(reason.reasonValue_, reasonValue);
     EXPECT_EQ(reason.extraDataId_, extraDataId);
+    DTEST_LOG << "SystemAbilityOnDemandReason001 end" << std::endl;
 }
 }

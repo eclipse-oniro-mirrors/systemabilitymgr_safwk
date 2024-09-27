@@ -146,10 +146,12 @@ int32_t MockLocalAbilityManager::SystemAbilityExtProc(const std::string& extensi
  */
 HWTEST_F(SystemAbilityTest, RemoveSystemAbilityListener001, TestSize.Level2)
 {
+    DTEST_LOG << "RemoveSystemAbilityListener001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->AddSystemAbilityListener(LISTENER_ID);
     bool res = sysAby->RemoveSystemAbilityListener(LISTENER_ID);
     EXPECT_EQ(res, true);
+    DTEST_LOG << "RemoveSystemAbilityListener001 end" << std::endl;
 }
 
 /**
@@ -160,8 +162,10 @@ HWTEST_F(SystemAbilityTest, RemoveSystemAbilityListener001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility001, TestSize.Level2)
 {
+    DTEST_LOG << "MakeAndRegisterAbility001 start" << std::endl;
     bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));
     EXPECT_EQ(res, false);
+    DTEST_LOG << "MakeAndRegisterAbility001 end" << std::endl;
 }
 
 /**
@@ -172,10 +176,12 @@ HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility002, TestSize.Level2)
 {
+    DTEST_LOG << "MakeAndRegisterAbility002 start" << std::endl;
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(TEST_RESOURCE_PATH + "1489.json");
     EXPECT_EQ(ret, true);
     bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));
     EXPECT_EQ(res, true);
+    DTEST_LOG << "MakeAndRegisterAbility002 start" << std::endl;
 }
 
 /**
@@ -186,9 +192,11 @@ HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Publish001, TestSize.Level2)
 {
+    DTEST_LOG << "Publish001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     bool ret = sysAby->Publish(nullptr);
     EXPECT_FALSE(ret);
+    DTEST_LOG << "Publish001 end" << std::endl;
 }
 
 /**
@@ -199,6 +207,7 @@ HWTEST_F(SystemAbilityTest, Publish001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Publish002, TestSize.Level2)
 {
+    DTEST_LOG << "Publish002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sptr<IRemoteObject> obj(new MockLocalAbilityManager());
     bool ret = sysAby->Publish(obj);
@@ -208,6 +217,7 @@ HWTEST_F(SystemAbilityTest, Publish002, TestSize.Level2)
     sysAby->Start();
     sysAby->Stop();
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::NOT_LOADED);
+    DTEST_LOG << "Publish002 end" << std::endl;
 }
 
 /**
@@ -218,10 +228,12 @@ HWTEST_F(SystemAbilityTest, Publish002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, SetDependTimeout001, TestSize.Level2)
 {
+    DTEST_LOG << "SetDependTimeout001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->SetDependTimeout(0);
     sysAby->SetDependTimeout(MOCK_DEPEND_TIMEOUT);
     EXPECT_EQ(sysAby->GetDependTimeout(), MOCK_DEPEND_TIMEOUT);
+    DTEST_LOG << "SetDependTimeout001 end" << std::endl;
 }
 
 /**
@@ -232,9 +244,11 @@ HWTEST_F(SystemAbilityTest, SetDependTimeout001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, GetSystemAbility001, TestSize.Level2)
 {
+    DTEST_LOG << "GetSystemAbility001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sptr<IRemoteObject> obj = sysAby->GetSystemAbility(-1);
     EXPECT_TRUE(obj == nullptr);
+    DTEST_LOG << "GetSystemAbility001 end" << std::endl;
 }
 
 /**
@@ -245,10 +259,12 @@ HWTEST_F(SystemAbilityTest, GetSystemAbility001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, CancelIdle001, TestSize.Level2)
 {
+    DTEST_LOG << "CancelIdle001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::NOT_LOADED;
     int32_t ret = sysAby->CancelIdle();
     EXPECT_TRUE(ret);
+    DTEST_LOG << "CancelIdle001 end" << std::endl;
 }
 
 /**
@@ -259,10 +275,12 @@ HWTEST_F(SystemAbilityTest, CancelIdle001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, CancelIdle002, TestSize.Level2)
 {
+    DTEST_LOG << "CancelIdle002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
     int32_t ret = sysAby->CancelIdle();
     EXPECT_FALSE(ret);
+    DTEST_LOG << "CancelIdle002 end" << std::endl;
 }
 
 /**
@@ -273,10 +291,12 @@ HWTEST_F(SystemAbilityTest, CancelIdle002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Start001, TestSize.Level2)
 {
+    DTEST_LOG << "Start001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
     sysAby->Start();
     EXPECT_FALSE(sysAby->isRunning_);
+    DTEST_LOG << "Start001 end" << std::endl;
 }
 
 /**
@@ -287,10 +307,12 @@ HWTEST_F(SystemAbilityTest, Start001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Start002, TestSize.Level2)
 {
+    DTEST_LOG << "Start002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::NOT_LOADED;
     sysAby->Start();
     EXPECT_TRUE(sysAby->isRunning_);
+    DTEST_LOG << "Start002 end" << std::endl;
 }
 
 /**
@@ -301,12 +323,14 @@ HWTEST_F(SystemAbilityTest, Start002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Idle001, TestSize.Level2)
 {
+    DTEST_LOG << "Idle001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
     SystemAbilityOnDemandReason idleReason;
     int32_t delayTime = 123;
     sysAby->Idle(idleReason, delayTime);
     EXPECT_EQ(sysAby->abilityState_,  SystemAbilityState::IDLE);
+    DTEST_LOG << "Idle001 end" << std::endl;
 }
 
 /**
@@ -317,6 +341,7 @@ HWTEST_F(SystemAbilityTest, Idle001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Idle002, TestSize.Level2)
 {
+    DTEST_LOG << "Idle002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
     SystemAbilityOnDemandReason idleReason;
@@ -324,6 +349,7 @@ HWTEST_F(SystemAbilityTest, Idle002, TestSize.Level2)
     int32_t noDelayTime = 0;
     sysAby->Idle(idleReason, noDelayTime);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
+    DTEST_LOG << "Idle002 end" << std::endl;
 }
 
 /**
@@ -334,6 +360,7 @@ HWTEST_F(SystemAbilityTest, Idle002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Idle003, TestSize.Level2)
 {
+    DTEST_LOG << "Idle003 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
     SystemAbilityOnDemandReason idleReason;
@@ -341,6 +368,7 @@ HWTEST_F(SystemAbilityTest, Idle003, TestSize.Level2)
     int32_t delayTime = 123;
     sysAby->Idle(idleReason, delayTime);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::IDLE);
+    DTEST_LOG << "Idle003 end" << std::endl;
 }
 
 /**
@@ -351,11 +379,13 @@ HWTEST_F(SystemAbilityTest, Idle003, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Active001, TestSize.Level2)
 {
+    DTEST_LOG << "Active001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::ACTIVE;
     SystemAbilityOnDemandReason activeReason;
     sysAby->Active(activeReason);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
+    DTEST_LOG << "Active001 end" << std::endl;
 }
 
 /**
@@ -366,12 +396,14 @@ HWTEST_F(SystemAbilityTest, Active001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, Active002, TestSize.Level2)
 {
+    DTEST_LOG << "Active002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->abilityState_ = SystemAbilityState::IDLE;
     SystemAbilityOnDemandReason activeReason;
     activeReason.SetId(OnDemandReasonId::DEVICE_ONLINE);
     sysAby->Active(activeReason);
     EXPECT_EQ(sysAby->abilityState_, SystemAbilityState::ACTIVE);
+    DTEST_LOG << "Active002 end" << std::endl;
 }
 
 /**
@@ -382,9 +414,11 @@ HWTEST_F(SystemAbilityTest, Active002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, GetLibPath001, TestSize.Level2)
 {
+    DTEST_LOG << "GetLibPath001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->libPath_ = TEST_RESOURCE_PATH;
     EXPECT_EQ(sysAby->libPath_, TEST_RESOURCE_PATH);
+    DTEST_LOG << "GetLibPath001 end" << std::endl;
 }
 
 /**
@@ -395,9 +429,11 @@ HWTEST_F(SystemAbilityTest, GetLibPath001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, IsRunOnCreate001, TestSize.Level2)
 {
+    DTEST_LOG << "IsRunOnCreate001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->isRunOnCreate_ = true;
     EXPECT_TRUE(sysAby->isRunOnCreate_);
+    DTEST_LOG << "IsRunOnCreate001 end" << std::endl;
 }
 
 /**
@@ -408,10 +444,12 @@ HWTEST_F(SystemAbilityTest, IsRunOnCreate001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, OnIdle001, TestSize.Level2)
 {
+    DTEST_LOG << "OnIdle001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     SystemAbilityOnDemandReason idleReason;
     int32_t ret = sysAby->OnIdle(idleReason);
     EXPECT_EQ(ret, 0);
+    DTEST_LOG << "OnIdle001 end" << std::endl;
 }
 
 /**
@@ -422,11 +460,13 @@ HWTEST_F(SystemAbilityTest, OnIdle001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, GetCapability001, TestSize.Level2)
 {
+    DTEST_LOG << "GetCapability001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->OnDump();
     std::u16string capability;
     auto ret = sysAby->GetCapability();
     EXPECT_EQ(ret, capability);
+    DTEST_LOG << "GetCapability001 end" << std::endl;
 }
 
 /**
@@ -437,9 +477,11 @@ HWTEST_F(SystemAbilityTest, GetCapability001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, GetAbilityState001, TestSize.Level2)
 {
+    DTEST_LOG << "GetAbilityState001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     SystemAbilityState ret = sysAby->GetAbilityState();
     EXPECT_EQ(ret, SystemAbilityState::NOT_LOADED);
+    DTEST_LOG << "GetAbilityState001 end" << std::endl;
 }
 
 /**
@@ -450,9 +492,11 @@ HWTEST_F(SystemAbilityTest, GetAbilityState001, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, IsRunOnCreate002, TestSize.Level2)
 {
+    DTEST_LOG << "IsRunOnCreate002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     bool ret = sysAby->IsRunOnCreate();
     EXPECT_FALSE(ret);
+    DTEST_LOG << "IsRunOnCreate002 end" << std::endl;
 }
 
 /**
@@ -463,6 +507,7 @@ HWTEST_F(SystemAbilityTest, IsRunOnCreate002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
 {
+    DTEST_LOG << "GetLibPath002 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     sysAby->SADump();
     SystemAbilityOnDemandReason onDemandStartReason;
@@ -470,6 +515,7 @@ HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
     std::string capability;
     auto ret = sysAby->GetLibPath();
     EXPECT_EQ(ret, capability);
+    DTEST_LOG << "GetLibPath002 end" << std::endl;
 }
 
 /**
@@ -480,11 +526,13 @@ HWTEST_F(SystemAbilityTest, GetLibPath002, TestSize.Level2)
  */
 HWTEST_F(SystemAbilityTest, GetOnDemandReasonExtraData001, TestSize.Level2)
 {
+    DTEST_LOG << "GetOnDemandReasonExtraData001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
     SystemAbilityOnDemandReason onDemandStartReason;
     onDemandStartReason.reasonId_ = OHOS::OnDemandReasonId::COMMON_EVENT;
     sysAby->GetOnDemandReasonExtraData(onDemandStartReason);
     EXPECT_TRUE(onDemandStartReason.HasExtraData());
+    DTEST_LOG << "GetOnDemandReasonExtraData001 end" << std::endl;
 }
 }
 }
