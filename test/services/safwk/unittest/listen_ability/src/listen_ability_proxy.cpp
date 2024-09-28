@@ -33,7 +33,11 @@ int32_t ListenAbilityProxy::AddVolume(
         return result;
     }
 
-    Remote()->SendRequest(ADD_VOLUME, data, reply, option);
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        return ERR_INVALID_DATA;
+    }
+    remote->SendRequest(ADD_VOLUME, data, reply, option);
     ApiCacheManager::GetInstance().PostSendRequest(GetDescriptor(), ADD_VOLUME, data, reply);
     result = reply.ReadInt32();
     return result;
