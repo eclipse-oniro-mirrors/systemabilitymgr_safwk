@@ -62,6 +62,13 @@
                 },
                 {
                     "header": {
+                        "header_base": [],
+                        "header_files": []
+                    },
+                    "name": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_ondemand_reason"
+                },
+                {
+                    "header": {
                         "header_base": "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk",
                         "header_files": [
                             "api_cache_manager.h"

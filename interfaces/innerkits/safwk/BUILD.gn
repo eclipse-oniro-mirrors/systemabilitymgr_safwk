@@ -88,6 +88,29 @@ ohos_shared_library("system_ability_fwk") {
   subsystem_name = "systemabilitymgr"
 }
 
+ohos_static_library("system_ability_ondemand_reason") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../../../cfi_blocklist.txt"
+  }
+  branch_protector_ret = "pac_ret"
+
+  sources = [ "../../../services/safwk/src/system_ability_ondemand_reason.cpp" ]
+
+  public_configs = [ ":system_ability_all_deps_config" ]
+
+  external_deps = [
+    "c_utils:utils",
+    "samgr:samgr_common",
+  ]
+
+  part_name = "safwk"
+  subsystem_name = "systemabilitymgr"
+}
+
 ohos_shared_library("api_cache_manager") {
   sanitize = {
     cfi = true
