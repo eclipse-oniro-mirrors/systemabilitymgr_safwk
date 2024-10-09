@@ -63,6 +63,15 @@ template <class T> T GetData()
     return object;
 }
 
+std::string BuildStringFromData(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return "";
+    }
+    std::string strVal(reinterpret_cast<const char *>(data), size);
+    return strVal;
+}
+
 uint32_t ConvertToUint32(const uint8_t* ptr)
 {
     if (ptr == nullptr) {
@@ -82,9 +91,10 @@ void FuzzLocalAbilityManager(const uint8_t* rawData, size_t size)
     int32_t listenSaId = GetData<int32_t>();
     int32_t dependSaId = GetData<int32_t>();
     std::vector<int32_t> dependSas = {dependSaId};
-    std::string profilePath = GetData<std::string>();
-    std::string procName = GetData<std::string>();
-    std::string eventStr = GetData<std::string>();
+    std::string strVal = BuildStringFromData(rawData, size);
+    std::string profilePath = strVal;
+    std::string procName = strVal;
+    std::string eventStr = strVal;
     SaProfile saProfile = {Str8ToStr16(procName), systemAbilityId};
     std::list<SaProfile> saInfos = {saProfile};
 
