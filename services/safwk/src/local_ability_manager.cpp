@@ -30,6 +30,7 @@
 #include "safwk_log.h"
 #include "file_ex.h"
 #include "string_ex.h"
+#include "hisysevent_adapter.h"
 #include "system_ability_ondemand_reason.h"
 #include "local_ability_manager_dumper.h"
 #include "samgr_xcollie.h"
@@ -86,6 +87,7 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
     HILOGD(TAG, "SA:%{public}d", saId);
     string realProfilePath = "";
     if (!CheckAndGetProfilePath(profilePath, realProfilePath)) {
+        ReportSaMainExit("DoStartSAProcess invalid path");
         HILOGE(TAG, "DoStartSAProcess invalid path");
         return;
     }
@@ -94,16 +96,19 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
         HITRACE_METER_NAME(HITRACE_TAG_SAMGR, traceTag);
         bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
         if (!ret) {
+            ReportSaMainExit("InitSaProfiles no right profile");
             HILOGE(TAG, "InitSystemAbilityProfiles no right profile, will exit");
             return;
         }
         ret = CheckSystemAbilityManagerReady();
         if (!ret) {
+            ReportSaMainExit("CheckSamgrReady failed");
             HILOGE(TAG, "CheckSystemAbilityManagerReady failed! will exit");
             return;
         }
         ret = Run(saId);
         if (!ret) {
+            ReportSaMainExit("SA Run failed");
             HILOGE(TAG, "Run failed! will exit");
             return;
         }
