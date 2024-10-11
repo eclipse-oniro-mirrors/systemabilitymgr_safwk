@@ -25,6 +25,7 @@
 #include "securec.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
+#include "hisysevent_adapter.h"
 
 using namespace OHOS;
 using std::string;
@@ -228,11 +229,13 @@ int main(int argc, char *argv[])
     if (argc > ondemandLoad) {
         nlohmann::json eventMap;
         if (eventIndex >= argc) {
+            ReportSaMainExit("sa services path config error");
             HILOGE(TAG, "sa services path config error!");
             return 0;
         }
         saId = ParseArgv(argv, eventMap, eventIndex);
         if (!CheckSaId(saId)) {
+            ReportSaMainExit("saId is invalid");
             HILOGE(TAG, "saId is invalid!");
             return 0;
         }
