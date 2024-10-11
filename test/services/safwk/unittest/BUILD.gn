@@ -81,8 +81,8 @@ ohos_unittest("LocalAbilityManagerTest") {
 
   sources = [
     "./local_ability_manager_dumper_test.cpp",
-    "./local_ability_manager_test.cpp",
     "./local_ability_manager_stub_test.cpp",
+    "./local_ability_manager_test.cpp",
     "./mock_accesstoken_kit.cpp",
     "./mock_sa_realize.cpp",
     "./system_ability_ondemand_reason_test.cpp",
