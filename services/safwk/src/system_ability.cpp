@@ -201,7 +201,7 @@ void SystemAbility::Idle(SystemAbilityOnDemandReason& idleReason,
         }
     }
     GetOnDemandReasonExtraData(idleReason);
-    LOGI("Idle-SA::%{public}d", saId_);
+    LOGI("Idle-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     delayTime = OnIdle(idleReason);
     LOGI("OnIdle-SA:%{public}d end,spend:%{public}" PRId64 "ms",
