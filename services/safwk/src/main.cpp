@@ -71,7 +71,6 @@ static void StartMemoryHook(const string& processName)
     if (retParam <= 0 || strncmp(paramValue, targetPrefix, targetPrefixLen) != 0) {
         return;
     }
-
     if (processName.find(paramValue + targetPrefixLen) == 0) {
         const int hookSignal = 36;
         HILOGI(TAG, "raise hook signal %{public}d to %{public}s", hookSignal, processName.c_str());
@@ -92,6 +91,7 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
         }
         string profileName = fileName.substr(0, dotPos);
         setProcessName(profileName);
+        StartMemoryHook(profileName);
         if (dotPos > MAX_LEN_PID_NAME) {
             dotPos = MAX_LEN_PID_NAME;
         }
@@ -100,7 +100,6 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
         if (ret != 0) {
             HILOGI(TAG, "call the system API prctl failed!");
         }
-        StartMemoryHook(profileName);
     }
 }
 
