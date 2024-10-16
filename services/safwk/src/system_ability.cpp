@@ -104,6 +104,7 @@ bool SystemAbility::CancelIdle()
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::IDLE) {
+            LOGD("cannot CancelIdle SA:%{public}d,sta is %{public}d", saId_, abilityState_);
             return true;
         }
     }
@@ -112,6 +113,7 @@ bool SystemAbility::CancelIdle()
         HILOGE(TAG, "failed to get samgrProxy");
         return false;
     }
+    LOGI("CancelIdle-SA:%{public}d", saId_);
     int32_t result = samgrProxy->CancelUnloadSystemAbility(saId_);
     return result == ERR_OK;
 }
@@ -166,25 +168,26 @@ void SystemAbility::Start()
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::NOT_LOADED) {
+            LOGW("cannot Start SA:%{public}d,sta is %{public}d", saId_, abilityState_);
             return;
         }
     }
-    LOGD("Start OnStart-SA:%{public}d", saId_);
-    int64_t begin = GetTickCount();
-    HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
     nlohmann::json startReason = LocalAbilityManager::GetInstance().GetStartReason(saId_);
     SystemAbilityOnDemandReason onDemandStartReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(startReason);
     GetOnDemandReasonExtraData(onDemandStartReason);
+    LOGI("Start-SA:%{public}d", saId_);
+    HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
+    int64_t begin = GetTickCount();
 
     OnStart(onDemandStartReason);
 
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    isRunning_ = true;
     int64_t duration = GetTickCount() - begin;
-    KHILOGI(TAG, "OnStart SA:%{public}d finished, spend:%{public}" PRId64 " ms",
+    KHILOGI(TAG, "OnStart-SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, duration);
     ReportSaLoadDuration(saId_, SA_LOAD_ON_START, duration);
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    isRunning_ = true;
 }
 
 void SystemAbility::Idle(SystemAbilityOnDemandReason& idleReason,
@@ -193,20 +196,20 @@ void SystemAbility::Idle(SystemAbilityOnDemandReason& idleReason,
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::ACTIVE) {
-            HILOGI(TAG, "cannot idle SA:%{public}d", saId_);
+            LOGW("cannot Idle SA:%{public}d,sta is %{public}d", saId_, abilityState_);
             return;
         }
     }
     GetOnDemandReasonExtraData(idleReason);
-    LOGD("Idle SA::%{public}d", saId_);
+    LOGI("Idle-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     delayTime = OnIdle(idleReason);
+    LOGI("OnIdle-SA:%{public}d end,spend:%{public}" PRId64 "ms",
+        saId_, (GetTickCount() - begin));
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     if (delayTime == 0) {
         abilityState_ = SystemAbilityState::IDLE;
     }
-    LOGI("Idle SA:%{public}d end,spend:%{public}" PRId64 "ms",
-        saId_, (GetTickCount() - begin));
 }
 
 void SystemAbility::Active(SystemAbilityOnDemandReason& activeReason)
@@ -214,18 +217,18 @@ void SystemAbility::Active(SystemAbilityOnDemandReason& activeReason)
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::IDLE) {
-            HILOGI(TAG, "cannot active SA:%{public}d", saId_);
+            LOGW("cannot Active SA:%{public}d,sta is %{public}d", saId_, abilityState_);
             return;
         }
     }
     GetOnDemandReasonExtraData(activeReason);
-    LOGD("Active SA:%{public}d", saId_);
+    LOGI("Active-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
     OnActive(activeReason);
+    LOGI("OnActive-SA:%{public}d end,spend:%{public}" PRId64 "ms",
+        saId_, (GetTickCount() - begin));
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     abilityState_ = SystemAbilityState::ACTIVE;
-    LOGI("Active SA:%{public}d end,spend:%{public}" PRId64 "ms",
-        saId_, (GetTickCount() - begin));
 }
 
 void SystemAbility::Stop()
@@ -234,35 +237,34 @@ void SystemAbility::Stop()
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ == SystemAbilityState::NOT_LOADED) {
+            LOGW("cannot Stop SA:%{public}d,sta is %{public}d", saId_, abilityState_);
             return;
         }
     }
-    LOGD("Stop OnStop-SA:%{public}d", saId_);
-    int64_t begin = GetTickCount();
     nlohmann::json stopReason = LocalAbilityManager::GetInstance().GetStopReason(saId_);
     SystemAbilityOnDemandReason onDemandStopReason =
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(stopReason);
     GetOnDemandReasonExtraData(onDemandStopReason);
 
+    LOGI("Stop-SA:%{public}d", saId_);
+    int64_t begin = GetTickCount();
     {
         SamgrXCollie samgrXCollie("safwk--onStop_" + ToString(saId_));
         OnStop(onDemandStopReason);
     }
-
-    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
-    abilityState_ = SystemAbilityState::NOT_LOADED;
-    isRunning_ = false;
     int64_t duration = GetTickCount() - begin;
     KHILOGI(TAG, "OnStop-SA:%{public}d finished,spend:%{public}" PRId64 "ms",
         saId_, duration);
     ReportSaUnLoadDuration(saId_, SA_UNLOAD_ON_STOP, duration);
-    
+
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    abilityState_ = SystemAbilityState::NOT_LOADED;
+    isRunning_ = false;
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");
         return;
     }
-
     begin = GetTickCount();
     int32_t ret = samgrProxy->RemoveSystemAbility(saId_);
     KHILOGI(TAG, "%{public}s to rm SA:%{public}d,spend:%{public}" PRId64 "ms",
