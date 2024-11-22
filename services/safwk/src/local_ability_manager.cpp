@@ -298,25 +298,32 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
         HILOGE(TAG, "failed to get samgrProxy");
         return false;
     }
-
-    std::size_t listenerSaIdListSize = 0;
+    bool isNeedNotify = false;
+    size_t listenerListSize = 0;
     {
         HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
         std::lock_guard<std::mutex> autoLock(listenerLock_);
-        auto& listenerSaIdList = listenerMap_[systemAbilityId];
-        auto iter = std::find_if(listenerSaIdList.begin(), listenerSaIdList.end(), [listenerSaId](int32_t SaId) {
-            return SaId == listenerSaId;
+        auto& listenerList = listenerMap_[systemAbilityId];
+        auto iter = std::find_if(listenerList.begin(), listenerList.end(),
+            [listenerSaId](const std::pair<int32_t, ListenerState>& listener) {
+            return listener.first == listenerSaId;
         });
-        if (iter == listenerSaIdList.end()) {
-            listenerSaIdList.emplace_back(listenerSaId);
+        if (listenerList.size() > 0) {
+            sptr<IRemoteObject> object = samgrProxy->CheckSystemAbility(systemAbilityId);
+            if (object != nullptr) {
+                isNeedNotify = true;
+            }
         }
-        listenerSaIdListSize = listenerSaIdList.size();
+        if (iter == listenerList.end()) {
+            listenerList.push_back({listenerSaId,
+                (isNeedNotify) ? ListenerState::NOTIFIED : ListenerState::INIT});
+        }
+        listenerListSize = listenerList.size();
         LOGI("AddSaListener SA:%{public}d,listenerSA:%{public}d,size:%{public}zu", systemAbilityId, listenerSaId,
-            listenerSaIdList.size());
+            listenerList.size());
     }
-    if (listenerSaIdListSize > 1) {
-        sptr<IRemoteObject> object = samgrProxy->CheckSystemAbility(systemAbilityId);
-        if (object != nullptr) {
+    if (listenerListSize > 1) {
+        if (isNeedNotify) {
             NotifyAbilityListener(systemAbilityId, listenerSaId, "",
                 ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
         }
@@ -344,16 +351,17 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
         if (listenerMap_.count(systemAbilityId) == 0) {
             return true;
         }
-        auto& listenerSaIdList = listenerMap_[systemAbilityId];
-        auto iter = std::find_if(listenerSaIdList.begin(), listenerSaIdList.end(), [listenerSaId](int32_t SaId) {
-            return SaId == listenerSaId;
+        auto& listenerList = listenerMap_[systemAbilityId];
+        auto iter = std::find_if(listenerList.begin(), listenerList.end(),
+            [listenerSaId](const std::pair<int32_t, ListenerState>& listener) {
+            return listener.first == listenerSaId;
         });
-        if (iter != listenerSaIdList.end()) {
-            listenerSaIdList.erase(iter);
+        if (iter != listenerList.end()) {
+            listenerList.erase(iter);
         }
         HILOGI(TAG, "SA:%{public}d, size:%{public}zu", systemAbilityId,
-            listenerSaIdList.size());
-        if (!listenerSaIdList.empty()) {
+            listenerList.size());
+        if (!listenerList.empty()) {
             return true;
         }
         listenerMap_.erase(systemAbilityId);
@@ -408,10 +416,26 @@ void LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
     {
         std::lock_guard<std::mutex> autoLock(listenerLock_);
         auto iter = listenerMap_.find(systemAbilityId);
-        if (iter != listenerMap_.end()) {
-            listenerSaIdList = iter->second;
-        } else {
+        if (iter == listenerMap_.end()) {
             HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
+            return;
+        }
+        if (code == ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY) {
+            for (auto& listener : iter->second) {
+                if (listener.second == ListenerState::INIT) {
+                    listenerSaIdList.push_back(listener.first);
+                    listener.second = ListenerState::NOTIFIED;
+                } else {
+                    HILOGW(TAG, "listener SA:%{public}d has been notified add", listener.first);
+                }
+            }
+        } else if (code == ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY) {
+            for (auto& listener : iter->second) {
+                listenerSaIdList.push_back(listener.first);
+                if (listener.second == ListenerState::NOTIFIED) {
+                    listener.second = ListenerState::INIT;
+                }
+            }
         }
     }
     for (auto listenerSaId : listenerSaIdList) {

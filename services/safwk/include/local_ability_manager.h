@@ -38,6 +38,11 @@ const int32_t MIN_DEPENDENCY_TIMEOUT = 200;
 const int32_t MAX_DEPENDENCY_TIMEOUT = 60000;
 const int32_t DEFAULT_DEPENDENCY_TIMEOUT = 6000;
 
+enum ListenerState {
+    INIT,
+    NOTIFIED
+};
+
 class LocalAbilityManager : public LocalAbilityManagerStub {
     DECLARE_SINGLE_INSTANCE_BASE(LocalAbilityManager);
 
@@ -125,8 +130,9 @@ private:
     // Check dependent sa status every 50 ms, it equals 50000us.
     const int32_t CHECK_DEPENDENT_SA_PERIOD = 50000;
 
+    std::mutex listenerLock_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_;
-    std::map<int32_t, std::list<int32_t>> listenerMap_;
+    std::map<int32_t, std::list<std::pair<int32_t, ListenerState>>> listenerMap_;
     std::mutex ReasonLock_;
     std::shared_ptr<ParseUtil> profileParser_;
 
