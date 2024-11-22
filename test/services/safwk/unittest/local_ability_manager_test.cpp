@@ -423,9 +423,7 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener002, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener003, TestSize.Level1)
 {
     DTEST_LOG << "AddSystemAbilityListener003 start" << std::endl;
-    std::pair<int32_t, int32_t> key = std::make_pair(SAID, MUT_SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[key] =
-        new LocalAbilityManager::SystemAbilityListener(MUT_SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back({MUT_SAID, ListenerState::INIT});
     bool res = LocalAbilityManager::GetInstance().AddSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
     DTEST_LOG << "AddSystemAbilityListener003 end" << std::endl;
@@ -439,12 +437,8 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener003, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener004, TestSize.Level1)
 {
     DTEST_LOG << "AddSystemAbilityListener004 start" << std::endl;
-    std::pair<int32_t, int32_t> key1 = std::make_pair(VAILD_SAID, VAILD_SAID);
-    std::pair<int32_t, int32_t> key2 = std::make_pair(VAILD_SAID, SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[key1] =
-        new LocalAbilityManager::SystemAbilityListener(VAILD_SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[key2] =
-        new LocalAbilityManager::SystemAbilityListener(SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[VAILD_SAID].push_back({VAILD_SAID, ListenerState::INIT});
+    LocalAbilityManager::GetInstance().listenerMap_[VAILD_SAID].push_back({SAID, ListenerState::INIT});
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     bool res = LocalAbilityManager::GetInstance().AddSystemAbilityListener(VAILD_SAID, VAILD_SAID);
     EXPECT_TRUE(res);
@@ -499,12 +493,25 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener003, TestSize.Level
 HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener004, TestSize.Level3)
 {
     DTEST_LOG << "RemoveSystemAbilityListener004 start" << std::endl;
-    std::pair<int32_t, int32_t> key = std::make_pair(SAID, MUT_SAID);
-    LocalAbilityManager::GetInstance().listenerMap_[key] =
-        new LocalAbilityManager::SystemAbilityListener(MUT_SAID);
+    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back({MUT_SAID, ListenerState::INIT});
     bool res = LocalAbilityManager::GetInstance().RemoveSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
     DTEST_LOG << "RemoveSystemAbilityListener004 end" << std::endl;
+}
+
+/**
+ * @tc.name: FindAndNotifyAbilityListeners001
+ * @tc.desc: test FindAndNotifyAbilityListeners with listenerMap_ is empty
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerTest, FindAndNotifyAbilityListeners001, TestSize.Level2)
+{
+    int32_t code = 1;
+    std::string deviceId = "";
+    LocalAbilityManager::GetInstance().listenerMap_.clear();
+    LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, code);
+    EXPECT_TRUE(LocalAbilityManager::GetInstance().listenerMap_.empty());
 }
 
 /**
