@@ -160,6 +160,15 @@ protected:
     virtual void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId);
 
     /**
+     * OnSvcCmd, OnSvcCmd will be called when svc cmd is send
+     *
+     * @param fd, used to dump execution information.
+     * @param args, command args.
+     * @return int32_t, error code.
+     */
+    virtual int32_t OnSvcCmd(int32_t fd, const std::vector<std::u16string>& args);
+
+    /**
      * GetSystemAbility, get systemability.
      *
      * @param systemAbilityId, The said number that needs to be obtained.
