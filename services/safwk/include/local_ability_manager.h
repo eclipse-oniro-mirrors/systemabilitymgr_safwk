@@ -38,6 +38,11 @@ const int32_t MIN_DEPENDENCY_TIMEOUT = 200;
 const int32_t MAX_DEPENDENCY_TIMEOUT = 60000;
 const int32_t DEFAULT_DEPENDENCY_TIMEOUT = 6000;
 
+enum ListenerState {
+    INIT,
+    NOTIFIED
+};
+
 class LocalAbilityManager : public LocalAbilityManagerStub {
     DECLARE_SINGLE_INSTANCE_BASE(LocalAbilityManager);
 
@@ -82,18 +87,16 @@ private:
     void FindAndStartPhaseTasks(int32_t saId);
     void StartPhaseTasks(const std::list<SystemAbility*>& startTasks);
     void CheckTrustSa(const std::string& path, const std::string& process, const std::list<SaProfile>& saInfos);
+    sptr<ISystemAbilityStatusChange> GetSystemAbilityStatusChange();
+    void FindAndNotifyAbilityListeners(int32_t systemAbilityId, const std::string& deviceId, int32_t code);
     void NotifyAbilityListener(int32_t systemAbilityId, int32_t listenerSaId,
         const std::string& deviceId, int32_t code);
     void WaitForTasks();
     void StartDependSaTask(SystemAbility* ability);
     class SystemAbilityListener : public SystemAbilityStatusChangeStub {
     public:
-        SystemAbilityListener(int32_t listenerSaId) : listenerSaId_(listenerSaId) {}
         void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
         void OnRemoveSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
-        int32_t GetListenerSaId() { return listenerSaId_; }
-    private:
-        int32_t listenerSaId_;
     };
 
     bool CheckAndGetProfilePath(const std::string& profilePath, std::string& realProfilePath);
@@ -128,7 +131,8 @@ private:
     const int32_t CHECK_DEPENDENT_SA_PERIOD = 50000;
 
     std::mutex listenerLock_;
-    std::map<std::pair<int32_t, int32_t>, sptr<ISystemAbilityStatusChange>> listenerMap_;
+    sptr<ISystemAbilityStatusChange> statusChangeListener_;
+    std::map<int32_t, std::list<std::pair<int32_t, ListenerState>>> listenerMap_;
     std::mutex ReasonLock_;
     std::shared_ptr<ParseUtil> profileParser_;
 
