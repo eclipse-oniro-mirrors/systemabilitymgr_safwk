@@ -231,6 +231,11 @@
             "description" : "Permission required for telephony to access hsdr service."
         },
         {
+            "name" : "ohos.permission.ACCESS_CAR_DISTRIBUTED_ENGINE",
+            "said" : "4005",
+            "description" : "Permission required for telephony to access car distributed engine."
+        },
+        {
             "name" : "ohos.permission.CAPTURE_SCREEN",
             "said" : "4607",
             "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
