@@ -236,6 +236,11 @@
             "description" : "Permission required for telephony to access car distributed engine."
         },
         {
+            "name" : "ohos.permission.START_RESTORE_NOTIFICATION",
+            "said" : "3203",
+            "description" : "Permission required for ans to access backup service."
+        },
+        {
             "name" : "ohos.permission.CAPTURE_SCREEN",
             "said" : "4607",
             "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
