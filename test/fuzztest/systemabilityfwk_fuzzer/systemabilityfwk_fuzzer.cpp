@@ -92,7 +92,7 @@ void FuzzListener(const uint8_t* rawData, size_t size)
     int32_t listenerSaId = GetData<int32_t>();
     LocalAbilityManager::GetInstance().NotifyAbilityListener(systemAbilityId, listenerSaId, "test", 1);
 
-    sptr<ISystemAbilityStatusChange> sysListener = new LocalAbilityManager::SystemAbilityListener(listenerSaId);
+    sptr<ISystemAbilityStatusChange> sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnAddSystemAbility(systemAbilityId, "deviceId");
     sysListener->OnRemoveSystemAbility(systemAbilityId, "deviceId");
 }
