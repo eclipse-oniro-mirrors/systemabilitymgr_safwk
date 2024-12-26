@@ -1028,7 +1028,7 @@ bool LocalAbilityManager::IsResident()
 
 bool LocalAbilityManager::NoNeedCheckUnused(int32_t saId)
 {
-    std::set<int32_t> saIdWhiteList = { PLAYER_DISTRIBUTED_SERVICE_ID };
+    std::set<int32_t> saIdWhiteList = {};
     return saIdWhiteList.find(saId) != saIdWhiteList.end();
 }
 
