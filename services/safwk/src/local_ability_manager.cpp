@@ -60,6 +60,7 @@ constexpr int32_t MAX_DEPEND_TIMEOUT = 65;
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 5; // .json length
 constexpr uint32_t FFRT_DUMP_INFO_ALL = 0;
+constexpr uint32_t MAX_BOOT_PHASE = 3;
 constexpr int FFRT_BUFFER_SIZE = 512 * 1024;
 
 constexpr const char* PROFILES_DIR = "/system/profile/";
@@ -629,6 +630,10 @@ bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saPro
     if (systemAbility == nullptr) {
         HILOGW(TAG, "SA:%{public}d is null", saProfile.saId);
         return false;
+    }
+    if (saProfile.bootPhase > MAX_BOOT_PHASE) {
+        HILOGW(TAG, "invalid boot phase: %{public}d", saProfile.bootPhase);
+        return false
     }
     auto& saList = abilityPhaseMap_[saProfile.bootPhase];
     saList.emplace_back(systemAbility);
