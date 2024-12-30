@@ -630,6 +630,10 @@ bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saPro
         HILOGW(TAG, "SA:%{public}d is null", saProfile.saId);
         return false;
     }
+    if (saProfile.bootPhase > OTHER_START) {
+        HILOGW(TAG, "invalid boot phase: %{public}d", saProfile.bootPhase);
+        return false;
+    }
     auto& saList = abilityPhaseMap_[saProfile.bootPhase];
     saList.emplace_back(systemAbility);
     return true;
