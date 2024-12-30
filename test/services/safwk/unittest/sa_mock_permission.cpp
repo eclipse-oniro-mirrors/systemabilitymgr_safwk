@@ -15,12 +15,15 @@
 
 #include "sa_mock_permission.h"
 
+#ifdef SUPPORT_ACCESS_TOKEN
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
+#endif
 
 namespace OHOS {
 void SaMockPermission::MockPermission()
 {
+#ifdef SUPPORT_ACCESS_TOKEN
     static const char *PERMS[] = {
         "ohos.permission.DISTRIBUTED_DATASYNC"
     };
@@ -37,5 +40,6 @@ void SaMockPermission::MockPermission()
     };
     tokenId = GetAccessTokenId(&infoInstance);
     SetSelfTokenID(tokenId);
+#endif
 }
 }
