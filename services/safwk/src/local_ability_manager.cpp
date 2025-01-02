@@ -743,6 +743,10 @@ bool LocalAbilityManager::InitializeRunOnCreateSaProfiles(uint32_t bootPhase)
         HILOGW(TAG, "sa profile is empty");
         return false;
     }
+    if (saProfile.bootPhase > OTHER_START) {
+        HILOGW(TAG, "invalid boot phase: %{public}d", saProfile.bootPhase);
+        return false;
+    }
     for (const auto& saProfile : saProfileList) {
         if (saProfile.bootPhase != bootPhase) {
             continue;
