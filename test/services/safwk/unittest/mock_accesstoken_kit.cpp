@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#ifdef SUPPORT_ACCESS_TOKEN
 #include "accesstoken_kit.h"
 
 namespace OHOS {
@@ -23,3 +24,4 @@ int AccessTokenKit::VerifyAccessToken(AccessTokenID tokenID, const std::string& 
 }
 }
 }
+#endif

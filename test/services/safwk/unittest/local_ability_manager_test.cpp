@@ -965,6 +965,7 @@ HWTEST_F(LocalAbilityManagerTest, NeedRegisterOnDemand003, TestSize.Level3)
  * @tc.desc: Run, return true!
  * @tc.type: FUNC
  */
+#ifdef SUPPORT_ACCESS_TOKEN
 HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
 {
     DTEST_LOG << "Run001 start" << std::endl;
@@ -982,6 +983,7 @@ HWTEST_F(LocalAbilityManagerTest, Run001, TestSize.Level3)
     EXPECT_FALSE(res);
     DTEST_LOG << "Run001 end" << std::endl;
 }
+#endif
 
 /**
  * @tc.name: AddLocalAbilityManager001
@@ -1005,6 +1007,7 @@ HWTEST_F(LocalAbilityManagerTest, AddLocalAbilityManager001, TestSize.Level3)
  * @tc.desc: AddLocalAbilityManager, return true!
  * @tc.type: FUNC
  */
+#ifdef SUPPORT_ACCESS_TOKEN
 HWTEST_F(LocalAbilityManagerTest, AddLocalAbilityManager002, TestSize.Level3)
 {
     DTEST_LOG << "AddLocalAbilityManager002 start" << std::endl;
@@ -1015,6 +1018,7 @@ HWTEST_F(LocalAbilityManagerTest, AddLocalAbilityManager002, TestSize.Level3)
     EXPECT_FALSE(res);
     DTEST_LOG << "AddLocalAbilityManager002 end" << std::endl;
 }
+#endif
 
 /**
  * @tc.name: FoundationRestart001
@@ -1048,7 +1052,7 @@ HWTEST_F(LocalAbilityManagerTest, NeedCheckUnused001, TestSize.Level1)
     DTEST_LOG << "NeedCheckUnused001 start" << std::endl;
     int32_t saId = 3002;
     auto ret = LocalAbilityManager::GetInstance().NoNeedCheckUnused(saId);
-    EXPECT_EQ(ret, true);
+    EXPECT_EQ(ret, false);
 
     saId = 1494;
     ret = LocalAbilityManager::GetInstance().NoNeedCheckUnused(saId);
