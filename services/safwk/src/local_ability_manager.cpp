@@ -556,6 +556,10 @@ bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saPro
         HILOGW(TAG, "SA:%{public}d is null", saProfile.saId);
         return false;
     }
+    if (saProfile.bootPhase > OTHER_START) {
+        HILOGW(TAG, "invalid boot phase: %{public}d", saProfile.bootPhase);
+        return false;
+    }
     auto& saList = abilityPhaseMap_[saProfile.bootPhase];
     saList.emplace_back(systemAbility);
     return true;
@@ -741,10 +745,6 @@ bool LocalAbilityManager::InitializeRunOnCreateSaProfiles(uint32_t bootPhase)
     auto& saProfileList = profileParser_->GetAllSaProfiles();
     if (saProfileList.empty()) {
         HILOGW(TAG, "sa profile is empty");
-        return false;
-    }
-    if (saProfile.bootPhase > OTHER_START) {
-        HILOGW(TAG, "invalid boot phase: %{public}d", saProfile.bootPhase);
         return false;
     }
     for (const auto& saProfile : saProfileList) {
