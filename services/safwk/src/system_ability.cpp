@@ -203,7 +203,10 @@ void SystemAbility::Idle(SystemAbilityOnDemandReason& idleReason,
     GetOnDemandReasonExtraData(idleReason);
     LOGI("Idle-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
-    delayTime = OnIdle(idleReason);
+    {
+        SamgrXCollie samgrXCollie("safwk--onIdle_" + ToString(saId_));
+        delayTime = OnIdle(idleReason);
+    }
     LOGI("OnIdle-SA:%{public}d end,spend:%{public}" PRId64 "ms",
         saId_, (GetTickCount() - begin));
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
@@ -224,7 +227,10 @@ void SystemAbility::Active(SystemAbilityOnDemandReason& activeReason)
     GetOnDemandReasonExtraData(activeReason);
     LOGI("Active-SA:%{public}d", saId_);
     int64_t begin = GetTickCount();
-    OnActive(activeReason);
+    {
+        SamgrXCollie samgrXCollie("safwk--onActive_" + ToString(saId_));
+        OnActive(activeReason);
+    }
     LOGI("OnActive-SA:%{public}d end,spend:%{public}" PRId64 "ms",
         saId_, (GetTickCount() - begin));
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
