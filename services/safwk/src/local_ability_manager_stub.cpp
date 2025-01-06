@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2021-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +38,7 @@ namespace OHOS {
 namespace {
 const std::string PERMISSION_EXT_TRANSACTION = "ohos.permission.ACCESS_EXT_SYSTEM_ABILITY";
 const std::string PERMISSION_MANAGE = "ohos.permission.MANAGE_SYSTEM_ABILITY";
+const std::string PERMISSION_SVC = "ohos.permission.CONTROL_SVC_CMD";
 }
 
 LocalAbilityManagerStub::LocalAbilityManagerStub()
@@ -58,6 +59,8 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         LocalAbilityManagerStub::LocalFfrtDumperProc;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)] =
         LocalAbilityManagerStub::LocalSystemAbilityExtProc;
+    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SERVICE_CONTROL_CMD_TRANSACTION)] =
+        LocalAbilityManagerStub::LocalServiceControlCmd;
 }
 
 bool LocalAbilityManagerStub::CheckPermission(uint32_t code)
@@ -67,6 +70,8 @@ bool LocalAbilityManagerStub::CheckPermission(uint32_t code)
 
     if (code == static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)) {
         permissionToCheck = PERMISSION_EXT_TRANSACTION;
+    } else if (code == static_cast<uint32_t>(SafwkInterfaceCode::SERVICE_CONTROL_CMD_TRANSACTION)) {
+        permissionToCheck = PERMISSION_SVC;
     } else {
         permissionToCheck = PERMISSION_MANAGE;
     }
@@ -307,5 +312,40 @@ bool LocalAbilityManagerStub::EnforceInterceToken(MessageParcel& data)
 {
     std::u16string interfaceToken = data.ReadInterfaceToken();
     return interfaceToken == LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN;
+}
+
+int32_t LocalAbilityManagerStub::ServiceControlCmdInner(MessageParcel& data, MessageParcel& reply)
+{
+    int32_t systemAbilityId = -1;
+    bool ret = data.ReadInt32(systemAbilityId);
+    if (!ret) {
+        HILOGE(TAG, "ServiceControlCmdInner read systemAbilityId failed");
+        return INVALID_DATA;
+    }
+    if (!CheckInputSysAbilityId(systemAbilityId)) {
+        HILOGE(TAG, "ServiceControlCmdInner check systemAbilityId failed");
+        return INVALID_DATA;
+    }
+
+    int32_t fd = data.ReadFileDescriptor();
+    if (fd < 0) {
+        HILOGE(TAG, "ServiceControlCmdInner get invalid fd");
+        return INVALID_DATA;
+    }
+
+    std::vector<std::u16string> args;
+    ret = data.ReadString16Vector(&args);
+    if (!ret) {
+        HILOGE(TAG, "ServiceControlCmdInner read args failed");
+        ::close(fd);
+        return INVALID_DATA;
+    }
+
+    int32_t result = ServiceControlCmd(fd, systemAbilityId, args);
+    if (result != ERR_NONE) {
+        HILOGE(TAG, "ServiceControlCmdInner failed, result: %{public}d", result);
+    }
+    ::close(fd);
+    return result;
 }
 }
