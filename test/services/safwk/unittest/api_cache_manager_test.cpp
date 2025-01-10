@@ -162,7 +162,7 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     EXPECT_EQ(ret, false);
 
     // cache expiration
-    sleep(4);
+    usleep(1 * 1000 * 1000);
     MessageParcel data6;
     MessageParcel reply6;
     ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data6, reply6);
@@ -1010,7 +1010,7 @@ HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
 
     std::thread addapiT(Task005, std::ref(stop));
     std::thread delapiT(Task006, std::ref(stop));
-    sleep(1);
+    usleep(1 * 1000 * 1000);
     stop = true;
     addapiT.join();
     delapiT.join();
@@ -1025,7 +1025,7 @@ HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
     std::thread t3(Task003, std::ref(stop));
     std::thread t4(Task004, std::ref(stop));
 
-    sleep(5);
+    usleep(1 * 1000 * 1000);
     stop = true;
     usleep(50000);
     stopAdd = true;
