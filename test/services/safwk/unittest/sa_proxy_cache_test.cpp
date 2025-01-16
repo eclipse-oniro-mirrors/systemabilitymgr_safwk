@@ -134,7 +134,7 @@ HWTEST_F(SaProxyCacheTest, SaProxyCacheTest001, TestSize.Level2)
     EXPECT_EQ(CheckCallGetDoubleFuncIpcTimes(proxy, 10, 12), true);
 
     // timeout
-    sleep(5);
+    usleep(1 * 1000 * 1000);
     EXPECT_EQ(CheckCallGetDoubleFuncIpcTimes(proxy, 10, 13), true);
 
     output.clear();
