@@ -1109,7 +1109,7 @@ void LocalAbilityManager::IdentifyUnusedResident()
         }
         uint64_t idleTime = currTime - lastRequestTime;
         uint64_t threshold = static_cast<uint64_t>(RESIDENT_SA_UNUSED_TIMEOUT);
-        HILOGI(TAG, "resident SA:%{public}d, idleTime:%{public}" PRIu64 ", longtime-unused threshold:%{public}" PRIu64,
+        HILOGD(TAG, "resident SA:%{public}d, idleTime:%{public}" PRIu64 ", longtime-unused threshold:%{public}" PRIu64,
             saId, idleTime, threshold);
         if (idleTime > threshold) {
             ReportSAIdle(saId, "long time unused:" + ToString(idleTime));
@@ -1140,7 +1140,7 @@ void LocalAbilityManager::IdentifyUnusedOndemand()
         }
         uint64_t threshold = it.second;
         uint64_t idleTime = currTime - lastRequestTime;
-        HILOGI(TAG, "ondemand SA:%{public}d, idleTime:%{public}" PRIu64 ", longtime-unused threshold:%{public}" PRIu64,
+        HILOGD(TAG, "ondemand SA:%{public}d, idleTime:%{public}" PRIu64 ", longtime-unused threshold:%{public}" PRIu64,
             saId, idleTime, threshold);
         if (idleTime > threshold) {
             samgr->UnloadSystemAbility(saId);
