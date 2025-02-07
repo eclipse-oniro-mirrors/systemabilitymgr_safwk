@@ -13,6 +13,7 @@
 
 import("//build/ohos.gni")
 import("//build/ohos_var.gni")
+import("../../../config.gni")
 import("../../../var.gni")
 
 ################################################################################
@@ -67,6 +68,7 @@ ohos_shared_library("system_ability_fwk") {
     "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
   ]
   all_dependent_configs = [ ":system_ability_all_deps_config" ]
+  defines = []
   if (is_standard_system) {
     external_deps = [
       "access_token:libaccesstoken_sdk",
@@ -77,6 +79,15 @@ ohos_shared_library("system_ability_fwk") {
       "samgr:samgr_common",
       "samgr:samgr_proxy",
     ]
+
+    if (safwk_enable_run_on_demand_qos) {
+      external_deps += [
+        "qos_manager:concurrent_task_client",
+        "qos_manager:qos",
+      ]
+
+      defines += [ "SAFWK_ENABLE_RUN_ON_DEMAND_QOS" ]
+    }
   }
 
   install_images = [ system_base_dir ]
