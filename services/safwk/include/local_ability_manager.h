@@ -77,7 +77,6 @@ public:
     bool FfrtDumperProc(std::string& result) override;
     int32_t SystemAbilityExtProc(const std::string& extension, int32_t said,
         SystemAbilityExtensionPara* callback, bool isAsync = false) override;
-    void IdentifyUnusedResident();
 
 private:
     LocalAbilityManager();
@@ -114,13 +113,11 @@ private:
     bool IsConfigUnused();
     void InitUnusedCfg();
     void StartTimedQuery();
-    void StopTimedQuery();
+    void IdentifyUnusedResident();
     void IdentifyUnusedOndemand();
     bool NoNeedCheckUnused(int32_t saId);
     void LimitUnusedTimeout(int32_t saId, int32_t timeout);
-    bool GetSaLastRequestTime(int32_t saId, uint64_t& lastRequestTime);
-    void StartResidentTimer();
-    void StartOnDemandTimer();
+    bool GetSaLastRequestTime(const sptr<ISystemAbilityManager>& samgr, int32_t saId, uint64_t& lastRequestTime);
 
     std::map<int32_t, SystemAbility*> abilityMap_;
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
@@ -151,8 +148,6 @@ private:
     // longtime-unusedtimeout map
     std::shared_mutex unusedCfgMapLock_;
     std::map<int32_t, int32_t> unusedCfgMap_;
-    uint32_t ondemandTimer_;
-    timer_t residentTimer_;
 };
 }
 #endif

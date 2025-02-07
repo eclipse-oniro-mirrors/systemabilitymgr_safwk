@@ -160,8 +160,9 @@ void FuzzGetSaLastRequestTime(const uint8_t* rawData, size_t size)
     g_baseFuzzSize = size;
     g_baseFuzzPos = 0;
     int32_t systemAbilityId = GetData<int32_t>();
+    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     uint64_t lastRequestTime = 0;
-    LocalAbilityManager::GetInstance().GetSaLastRequestTime(systemAbilityId, lastRequestTime);
+    LocalAbilityManager::GetInstance().GetSaLastRequestTime(samgrProxy, systemAbilityId, lastRequestTime);
 }
 
 void FuzzLocalAbilityManager(const uint8_t* rawData, size_t size)
