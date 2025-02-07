@@ -452,9 +452,4 @@ int32_t SystemAbility::OnExtension(const std::string& extension, MessageParcel& 
 {
     return 0;
 }
-
-sptr<IRemoteObject> SystemAbility::GetAbilityRemoteObject()
-{
-    return publishObj_;
-}
 }
