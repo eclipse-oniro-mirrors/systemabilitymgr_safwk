@@ -39,6 +39,10 @@
 #include "hisysevent_adapter.h"
 #include "system_ability_definition.h"
 #include "samgr_xcollie.h"
+#ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
+#include "qos.h"
+#include "concurrent_task_client.h"
+#endif
 
 namespace OHOS {
 using std::u16string;
@@ -606,7 +610,16 @@ bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
 {
     int64_t begin = GetTickCount();
     LOGD("InitOnDemandSa LoadSaLib SA:%{public}d", saId);
+#ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
+    std::unordered_map<std::string, std::string> payload;
+    payload["pid"] = std::to_string(getpid());
+    ConcurrentTask::ConcurrentTaskClient::GetInstance().RequestAuth(payload);
+    QOS::SetThreadQos(QOS::QosLevel::QOS_USER_INTERACTIVE);
+#endif
     bool result = profileParser_->LoadSaLib(saId);
+#ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
+    QOS::ResetThreadQos();
+#endif
     LOGI("InitOnDemandSa LoadSaLib SA:%{public}d finished,spend:%{public}"
         PRId64 "ms", saId, (GetTickCount() - begin));
     if (!result) {

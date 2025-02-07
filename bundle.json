@@ -14,7 +14,10 @@
     "component": {
         "name": "safwk",
         "subsystem": "systemabilitymgr",
-        "features": [ "safwk_feature_coverage" ],
+        "features": [
+            "safwk_feature_coverage",
+            "safwk_enable_run_on_demand_qos"
+        ],
         "adapted_system_type": [
             "standard"
         ],
@@ -28,7 +31,8 @@
                 "init",
                 "samgr",
                 "c_utils",
-                "access_token"
+                "access_token",
+                "qos_manager"
             ]
         },
         "build": {
