@@ -42,26 +42,6 @@ void SystemAbilityWrapper::StopAbilityWrapper(int32_t systemAbilityId)
     SystemAbility::StopAbility(systemAbilityId);
 }
 
-std::string SystemAbilityWrapper::GetClassName()
-{
-    return std::string("hello");
-}
-
-void SystemAbilityWrapper::OnDump()
-{
-    ability_->OnDump();
-}
-
-void SystemAbilityWrapper::OnStart()
-{
-    ability_->OnStart(this);
-}
-
-void SystemAbilityWrapper::OnStart(const OHOS::SystemAbilityOnDemandReason &startReason)
-{
-    ability_->OnStartWithReason(BuildReasonWrapper(startReason), this);
-}
-
 bool SystemAbilityWrapper::CancelIdleWrapper()
 {
     return this->CancelIdle();
@@ -76,39 +56,65 @@ bool SystemAbilityWrapper::PublishWrapper(rust::Box<AbilityStub> ability)
     return this->Publish(stub);
 }
 
-int32_t SystemAbilityWrapper::OnIdle(const OHOS::SystemAbilityOnDemandReason &idleReason)
+std::string SystemAbilityWrapper::GetClassName()
+{
+    return std::string("hello");
+}
+
+inline void SystemAbilityWrapper::OnDump()
+{
+    ability_->OnDump();
+}
+
+inline void SystemAbilityWrapper::OnStart()
+{
+    ability_->OnStart(this);
+}
+
+inline void SystemAbilityWrapper::OnStart(const OHOS::SystemAbilityOnDemandReason &startReason)
+{
+    ability_->OnStartWithReason(BuildReasonWrapper(startReason), this);
+}
+
+inline int32_t SystemAbilityWrapper::OnIdle(const OHOS::SystemAbilityOnDemandReason &idleReason)
 {
     return ability_->OnIdle(BuildReasonWrapper(idleReason));
 }
 
-void SystemAbilityWrapper::OnActive(const OHOS::SystemAbilityOnDemandReason &activeReason)
+inline void SystemAbilityWrapper::OnActive(const OHOS::SystemAbilityOnDemandReason &activeReason)
 {
     ability_->OnActive(BuildReasonWrapper(activeReason));
 }
 
-void SystemAbilityWrapper::OnStop()
+inline void SystemAbilityWrapper::OnStop()
 {
     ability_->OnStop();
 }
 
-void SystemAbilityWrapper::OnStop(const OHOS::SystemAbilityOnDemandReason &stopReason)
+inline void SystemAbilityWrapper::OnStop(const OHOS::SystemAbilityOnDemandReason &stopReason)
 {
     ability_->OnStopWithReason(BuildReasonWrapper(stopReason));
 }
 
-void SystemAbilityWrapper::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
+inline void SystemAbilityWrapper::OnAddSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     ability_->OnAddSystemAbility(systemAbilityId, deviceId);
 }
 
-void SystemAbilityWrapper::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
+inline void SystemAbilityWrapper::OnRemoveSystemAbility(int32_t systemAbilityId, const std::string &deviceId)
 {
     ability_->OnRemoveSystemAbility(systemAbilityId, deviceId);
 }
 
-void SystemAbilityWrapper::OnDeviceLevelChanged(int32_t type, int32_t level, std::string &action)
+inline void SystemAbilityWrapper::OnDeviceLevelChanged(int32_t type, int32_t level, std::string &action)
 {
     ability_->OnDeviceLevelChanged(type, level, action);
+}
+
+inline int32_t SystemAbilityWrapper::OnExtension(
+    const std::string &extension, MessageParcel &data, MessageParcel &reply)
+{
+    return ability_->OnExtension(rust::string(extension), data, reply);
 }
 
 bool RegisterAbility(SystemAbilityWrapper *system_ability)
