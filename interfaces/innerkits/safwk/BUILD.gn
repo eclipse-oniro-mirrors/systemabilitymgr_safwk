@@ -81,11 +81,6 @@ ohos_shared_library("system_ability_fwk") {
     ]
 
     if (safwk_enable_run_on_demand_qos) {
-      external_deps += [
-        "qos_manager:concurrent_task_client",
-        "qos_manager:qos",
-      ]
-
       defines += [ "SAFWK_ENABLE_RUN_ON_DEMAND_QOS" ]
     }
   }
