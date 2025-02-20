@@ -38,8 +38,8 @@
 #include "system_ability_definition.h"
 #include "samgr_xcollie.h"
 #ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
-#include "qos.h"
-#include "concurrent_task_client.h"
+#include <sys/syscall.h>
+#include <sys/resource.h>
 #endif
 
 namespace OHOS {
@@ -66,6 +66,11 @@ constexpr int32_t SUFFIX_LENGTH = 5; // .json length
 constexpr uint32_t FFRT_DUMP_INFO_ALL = 0;
 constexpr int FFRT_BUFFER_SIZE = 512 * 1024;
 
+#ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
+constexpr int OPEN_SO_PRIO = -20;
+constexpr int NORMAL_PRIO = 0;
+#endif
+
 constexpr const char* PROFILES_DIR = "/system/profile/";
 constexpr const char* DEFAULT_DIR = "/system/usr/";
 constexpr const char* PREFIX = PROFILES_DIR;
@@ -87,6 +92,17 @@ enum {
 }
 
 IMPLEMENT_SINGLE_INSTANCE(LocalAbilityManager);
+
+#ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
+static void SetThreadPrio(int priority)
+{
+    int tid = syscall(SYS_gettid);
+    LOGI("set tid:%{public}d priority:%{public}d.", tid, priority);
+    if (setpriority(PRIO_PROCESS, tid, priority) != 0) {
+        LOGE("set tid:%{public}d priority:%{public}d failed.", tid, priority);
+    }
+}
+#endif
 
 LocalAbilityManager::LocalAbilityManager()
 {
@@ -607,14 +623,11 @@ bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
     int64_t begin = GetTickCount();
     LOGD("InitOnDemandSa LoadSaLib SA:%{public}d", saId);
 #ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
-    std::unordered_map<std::string, std::string> payload;
-    payload["pid"] = std::to_string(getpid());
-    ConcurrentTask::ConcurrentTaskClient::GetInstance().RequestAuth(payload);
-    QOS::SetThreadQos(QOS::QosLevel::QOS_USER_INTERACTIVE);
+    SetThreadPrio(OPEN_SO_PRIO);
 #endif
     bool result = profileParser_->LoadSaLib(saId);
 #ifdef SAFWK_ENABLE_RUN_ON_DEMAND_QOS
-    QOS::ResetThreadQos();
+    SetThreadPrio(NORMAL_PRIO);
 #endif
     LOGI("InitOnDemandSa LoadSaLib SA:%{public}d finished,spend:%{public}"
         PRId64 "ms", saId, (GetTickCount() - begin));

@@ -31,8 +31,7 @@
                 "init",
                 "samgr",
                 "c_utils",
-                "access_token",
-                "qos_manager"
+                "access_token"
             ]
         },
         "build": {
