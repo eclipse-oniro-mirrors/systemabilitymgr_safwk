@@ -875,6 +875,60 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProcInner003, TestSize.Level2)
 }
 
 /**
+ * @tc.name: FfrtStatCmdProcInner001
+ * @tc.desc: test FfrtStatCmdProcInner.
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner001, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProcInner001 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+    DTEST_LOG << "FfrtStatCmdProcInner001 end" << std::endl;
+}
+
+/**
+ * @tc.name: FfrtStatCmdProcInner002
+ * @tc.desc: test FfrtStatCmdProcInner.
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner002, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProcInner002 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t fd = 1;
+    data.WriteFileDescriptor(fd);
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+    DTEST_LOG << "FfrtStatCmdProcInner002 end" << std::endl;
+}
+
+/**
+ * @tc.name: FfrtStatCmdProcInner003
+ * @tc.desc: test FfrtStatCmdProcInner.
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner003, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProcInner003 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t fd = 1;
+    int cmd = -1;
+    data.WriteInt32(cmd);
+    data.WriteFileDescriptor(fd);
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+    DTEST_LOG << "FfrtStatCmdProcInner003 end" << std::endl;
+}
+
+/**
  * @tc.name: FfrtDumperProcInner001
  * @tc.desc: test IpcStatCmdProcInner.
  * @tc.type: FUNC

@@ -59,6 +59,10 @@ private:
     {
         return stub->IpcStatCmdProcInner(data, reply);
     }
+    static int32_t LocalFfrtStatCmdProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->FfrtStatCmdProcInner(data, reply);
+    }
     static int32_t LocalFfrtDumperProc(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
     {
         return stub->FfrtDumperProcInner(data, reply);
@@ -73,6 +77,7 @@ private:
     int32_t IdleAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t SendStrategyToSAInner(MessageParcel& data, MessageParcel& reply);
     int32_t IpcStatCmdProcInner(MessageParcel& data, MessageParcel& reply);
+    int32_t FfrtStatCmdProcInner(MessageParcel& data, MessageParcel& reply);
     int32_t FfrtDumperProcInner(MessageParcel& data, MessageParcel& reply);
     int32_t SystemAbilityExtProcInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();

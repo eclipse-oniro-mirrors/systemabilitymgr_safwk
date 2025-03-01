@@ -24,6 +24,7 @@
 #define private public
 #include "string_ex.h"
 #include "local_ability_manager.h"
+#include "local_ability_manager_dumper.h"
 #include "sa_mock_permission.h"
 #include "mock_sa_realize.h"
 #include "securec.h"
@@ -252,6 +253,30 @@ void FuzzSystemAbilityFwk(const uint8_t* rawData, size_t size)
     LocalAbilityManager::GetInstance().OnRemoteRequest(code % MAX_CALL_TRANSACTION, data, reply, option);
     usleep(USLEEP_NUM);
 }
+
+void FuzzFfrtStatCmdProc(const uint8_t* rawData, size_t size)
+{
+    SaMockPermission::MockPermission();
+    g_baseFuzzData = rawData;
+    g_baseFuzzSize = size;
+    g_baseFuzzPos = 0;
+    MessageParcel data;
+    data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
+    int32_t fd = 0;
+    data.WriteFileDescriptor(fd);
+    int32_t cmd = GetData<int32_t>();
+    data.WriteInt32(cmd);
+    MessageParcel reply;
+    MessageOption option;
+    LocalAbilityManager::GetInstance().OnRemoteRequest(static_cast<uint32_t>(
+        SafwkInterfaceCode::FFRT_STAT_CMD_TRANSACTION), data, reply, option);
+
+    LocalAbilityManager::GetInstance().FfrtStatCmdProc(fd, FFRT_STAT_CMD_START);
+    LocalAbilityManagerDumper::ClearFfrtStatistics();
+    LocalAbilityManager::GetInstance().FfrtStatCmdProc(fd, FFRT_STAT_CMD_START);
+    LocalAbilityManager::GetInstance().FfrtStatCmdProc(fd, FFRT_STAT_CMD_STOP);
+    LocalAbilityManager::GetInstance().FfrtStatCmdProc(fd, FFRT_STAT_CMD_GET);
+}
 }
 }
 
@@ -270,6 +295,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::Samgr::FuzzSystemAbilityFwk(data, size);
     OHOS::Samgr::FuzzIpcStatCmdProc(data, size);
     OHOS::Samgr::FuzzLocalAbilityManager(data, size);
+    OHOS::Samgr::FuzzFfrtStatCmdProc(data, size);
     return 0;
 }
 

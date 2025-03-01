@@ -39,6 +39,7 @@ ohos_static_library("system_ability_fwk_tdd") {
   }
   sources = [
     "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp",
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/ffrt_handler.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_dumper.cpp",
     "//foundation/systemabilitymgr/safwk/services/safwk/src/local_ability_manager_stub.cpp",
@@ -57,6 +58,7 @@ ohos_static_library("system_ability_fwk_tdd") {
     external_deps = [
       "access_token:libaccesstoken_sdk",
       "c_utils:utils",
+      "ffrt:libffrt",
       "hilog:libhilog",
       "hitrace:hitrace_meter",
       "ipc:ipc_single",
@@ -111,6 +113,7 @@ ohos_unittest("LocalAbilityManagerTest") {
   external_deps = [
     "access_token:libaccesstoken_sdk",
     "c_utils:utils",
+    "ffrt:libffrt",
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
