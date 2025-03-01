@@ -71,6 +71,10 @@ private:
     {
         return stub->SystemAbilityExtProcInner(data, reply);
     }
+    static int32_t LocalServiceControlCmd(LocalAbilityManagerStub* stub, MessageParcel& data, MessageParcel& reply)
+    {
+        return stub->ServiceControlCmdInner(data, reply);
+    }
     int32_t StartAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t StopAbilityInner(MessageParcel& data, MessageParcel& reply);
     int32_t ActiveAbilityInner(MessageParcel& data, MessageParcel& reply);
@@ -80,6 +84,7 @@ private:
     int32_t FfrtStatCmdProcInner(MessageParcel& data, MessageParcel& reply);
     int32_t FfrtDumperProcInner(MessageParcel& data, MessageParcel& reply);
     int32_t SystemAbilityExtProcInner(MessageParcel& data, MessageParcel& reply);
+    int32_t ServiceControlCmdInner(MessageParcel& data, MessageParcel& reply);
     static bool CanRequest();
     static bool EnforceInterceToken(MessageParcel& data);
     static bool CheckPermission(uint32_t code);

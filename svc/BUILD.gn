@@ -1,0 +1,64 @@
+# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("//build/ohos.gni")
+
+config("config_svc") {
+  include_dirs = [
+    "include",
+    "../services/safwk/include",
+  ]
+}
+
+ohos_executable("svc") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../cfi_blocklist.txt"
+  }
+  branch_protector_ret = "pac_ret"
+
+  install_enable = true
+  sources = [
+    "src/main.cpp",
+    "src/svc_control.cpp",
+  ]
+
+  configs = [
+    ":config_svc",
+    "../test/resource:coverage_flags",
+  ]
+  configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
+
+  ldflags = [
+    "-rdynamic",
+    "-Wl,-z,max-page-size=4096",
+    "-Wl,-z,separate-code",
+    "-fstack-protector-strong",
+  ]
+
+  if (is_standard_system) {
+    external_deps = [
+      "c_utils:utils",
+      "hilog:libhilog",
+      "ipc:ipc_single",
+      "samgr:samgr_common",
+      "samgr:samgr_proxy",
+    ]
+  }
+
+  part_name = "safwk"
+  subsystem_name = "systemabilitymgr"
+}
