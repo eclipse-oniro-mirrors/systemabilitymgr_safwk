@@ -60,6 +60,7 @@ constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 constexpr int32_t TIME_S_TO_MS = 1000;
 constexpr int32_t MAX_DEPEND_TIMEOUT = 65;
+constexpr int32_t MAX_CHECK_TIMEOUT = 10;
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 5; // .json length
@@ -136,7 +137,10 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
             HILOGE(TAG, "InitSystemAbilityProfiles no right profile, will exit");
             return;
         }
-        ret = CheckSystemAbilityManagerReady();
+        {
+            SamgrXCollie samgrXCollie("safwk--CheckSamgrReady", MAX_CHECK_TIMEOUT);
+            ret = CheckSystemAbilityManagerReady();
+        }
         if (!ret) {
             ReportSaMainExit("CheckSamgrReady failed");
             HILOGE(TAG, "CheckSystemAbilityManagerReady failed! will exit");
