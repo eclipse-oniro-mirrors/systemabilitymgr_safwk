@@ -25,6 +25,7 @@
         "ram": "7130KB",
         "deps": {
             "components": [
+                "ffrt",
                 "hilog",
                 "hitrace",
                 "ipc",
