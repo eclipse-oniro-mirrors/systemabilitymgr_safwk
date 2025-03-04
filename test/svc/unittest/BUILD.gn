@@ -50,8 +50,8 @@ ohos_unittest("SvcTest") {
   }
 }
 
-ohos_unittest("svc_test") {
-  module_out_path = module_output_path
+ohos_executable("svc_test") {
+  testonly = true
 
   sources = [
     "../../../svc/src/svc_control.cpp",
@@ -75,6 +75,9 @@ ohos_unittest("svc_test") {
   if (target_cpu == "arm") {
     cflags = [ "-DBINDER_IPC_32BIT" ]
   }
+
+  part_name = "safwk"
+  subsystem_name = "systemabilitymgr"
 }
 
 group("unittest") {

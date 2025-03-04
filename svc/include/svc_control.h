@@ -30,7 +30,6 @@ enum class SvcCmd : int32_t {
     WIFI_CMD = 1120,
     BLUETOOTH_CMD = 1130,
     NEARLINK_CMD = 1190,
-    TEST_CMD = 1494,
 };
 
 class SvcControl : public Singleton<SvcControl> {
