@@ -51,6 +51,6 @@ SvcCmd SvcControlTest::ParseCmd(char *argv[], int32_t cnt, bool &isEnd)
 
 int main(int argc, char *argv[])
 {
-    auto &svc = OHOS::SvcControlTest::GetInstance();
+    OHOS::SvcControlTest svc;
     return svc.Main(argc, argv, STDOUT_FILENO);
 }

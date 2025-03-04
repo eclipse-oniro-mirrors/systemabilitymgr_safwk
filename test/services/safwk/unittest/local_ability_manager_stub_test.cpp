@@ -1117,7 +1117,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner006, TestSize.Level2
     std::vector<std::u16string> u16args (1, Str8ToStr16(args));
     EXPECT_EQ(data.WriteString16Vector(u16args), true);
     int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
-    EXPECT_NE(ret, ERR_NONE);
+    EXPECT_EQ(ret, INVALID_DATA);
     DTEST_LOG << "ServiceControlCmdInner006 end" << std::endl;
 }
 
