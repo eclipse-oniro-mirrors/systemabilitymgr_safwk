@@ -16,6 +16,7 @@
 #include "gtest/gtest.h"
 #include "test_log.h"
 
+#define private public
 #include "local_ability_manager_dumper.h"
 
 using namespace std;
@@ -94,5 +95,35 @@ HWTEST_F(LocalAbilityManagerDumperTest, GetIpcStatistics001, TestSize.Level2)
     bool ret = LocalAbilityManagerDumper::GetIpcStatistics(result);
     EXPECT_EQ(ret, true);
     DTEST_LOG << "GetIpcStatistics001 end" << std::endl;
+}
+
+/**
+ * @tc.name: CollectFfrtStatistics001
+ * @tc.desc: CollectFfrtStatistics
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerDumperTest, CollectFfrtStatistics001, TestSize.Level3)
+{
+    DTEST_LOG << "CollectFfrtStatistics001 begin" << std::endl;
+    std::string result;
+    auto ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_START, result);
+    LocalAbilityManagerDumper::ClearFfrtStatistics();
+    EXPECT_TRUE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
+    EXPECT_FALSE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_STOP, result);
+    EXPECT_FALSE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_START, result);
+    EXPECT_TRUE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_START, result);
+    EXPECT_FALSE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
+    EXPECT_FALSE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_STOP, result);
+    EXPECT_TRUE(ret);
+    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
+    EXPECT_TRUE(ret);
+    DTEST_LOG << "CollectFfrtStatistics001 end" << std::endl;
 }
 }

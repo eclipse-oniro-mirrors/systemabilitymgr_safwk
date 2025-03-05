@@ -875,6 +875,60 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProcInner003, TestSize.Level2)
 }
 
 /**
+ * @tc.name: FfrtStatCmdProcInner001
+ * @tc.desc: test FfrtStatCmdProcInner.
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner001, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProcInner001 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+    DTEST_LOG << "FfrtStatCmdProcInner001 end" << std::endl;
+}
+
+/**
+ * @tc.name: FfrtStatCmdProcInner002
+ * @tc.desc: test FfrtStatCmdProcInner.
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner002, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProcInner002 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t fd = 1;
+    data.WriteFileDescriptor(fd);
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+    DTEST_LOG << "FfrtStatCmdProcInner002 end" << std::endl;
+}
+
+/**
+ * @tc.name: FfrtStatCmdProcInner003
+ * @tc.desc: test FfrtStatCmdProcInner.
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner003, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProcInner003 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t fd = 1;
+    int cmd = -1;
+    data.WriteInt32(cmd);
+    data.WriteFileDescriptor(fd);
+    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
+    EXPECT_EQ(ret, ERR_NULL_OBJECT);
+    DTEST_LOG << "FfrtStatCmdProcInner003 end" << std::endl;
+}
+
+/**
  * @tc.name: FfrtDumperProcInner001
  * @tc.desc: test IpcStatCmdProcInner.
  * @tc.type: FUNC
@@ -956,6 +1010,174 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProcInner004, TestSize.Lev
     int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProcInner(data, reply);
     EXPECT_EQ(ret, INVALID_DATA);
     DTEST_LOG << "SystemAbilityExtProcInner004 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner001
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner001, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner001 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmdInner001 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner002
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner002, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner002 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t systemAbilityId = -1;
+    EXPECT_EQ(data.WriteInt32(systemAbilityId), true);
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmdInner002 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner003
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner003, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner003 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t systemAbilityId = 1;
+    EXPECT_EQ(data.WriteInt32(systemAbilityId), true);
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmdInner003 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner004
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner004, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner004 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t systemAbilityId = 1;
+    EXPECT_EQ(data.WriteInt32(systemAbilityId), true);
+    int32_t fd = -1;
+    EXPECT_EQ(data.WriteInt32(fd), true);
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmdInner004 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner005
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner005, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner005 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t systemAbilityId = 1;
+    EXPECT_EQ(data.WriteInt32(systemAbilityId), true);
+    int32_t fd = 1;
+    EXPECT_EQ(data.WriteFileDescriptor(fd), true);
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmdInner005 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner006
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner006, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner006 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    int32_t systemAbilityId = 1;
+    EXPECT_EQ(data.WriteInt32(systemAbilityId), true);
+    int32_t fd = 1;
+    EXPECT_EQ(data.WriteFileDescriptor(fd), true);
+    std::string args = "help";
+    std::vector<std::u16string> u16args (1, Str8ToStr16(args));
+    EXPECT_EQ(data.WriteString16Vector(u16args), true);
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmdInner006 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmdInner007
+ * @tc.desc: test IpcStatCmdProcInner.
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner007, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmdInner007 start" << std::endl;
+    MessageParcel data;
+    MessageParcel reply;
+    EXPECT_EQ(data.WriteInt32(SAID), true);
+    int32_t fd = 1;
+    EXPECT_EQ(data.WriteFileDescriptor(fd), true);
+    std::string args = "help";
+    std::vector<std::u16string> u16args (1, Str8ToStr16(args));
+    EXPECT_EQ(data.WriteString16Vector(u16args), true);
+    MockSaRealize *sysAby = new MockSaRealize(SAID, false);
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
+    EXPECT_EQ(ret, ERR_NONE);
+    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    delete sysAby;
+    DTEST_LOG << "ServiceControlCmdInner007 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmd001
+ * @tc.desc: test ServiceControlCmd001
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmd001, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmd001 start" << std::endl;
+    MockSaRealize *sysAby = new MockSaRealize(SAID, false);
+    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    int32_t fd = 1;
+    std::vector<std::u16string> args (1, Str8ToStr16(std::string("help")));
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmd(fd, SAID, args);
+    EXPECT_EQ(ret, ERR_NONE);
+    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    delete sysAby;
+    DTEST_LOG << "ServiceControlCmd001 end" << std::endl;
+}
+
+/**
+ * @tc.name: ServiceControlCmd002
+ * @tc.desc: test ServiceControlCmd002
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmd002, TestSize.Level2)
+{
+    DTEST_LOG << "ServiceControlCmd002 start" << std::endl;
+    int32_t fd = 1;
+    std::vector<std::u16string> args (1, Str8ToStr16(std::string("help")));
+    int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmd(fd, SAID, args);
+    EXPECT_EQ(ret, INVALID_DATA);
+    DTEST_LOG << "ServiceControlCmd002 end" << std::endl;
 }
 } // namespace SAFWK
 } // namespace OHOS

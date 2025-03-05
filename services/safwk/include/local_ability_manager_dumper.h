@@ -18,6 +18,7 @@
 
 #include <string>
 #include "if_local_ability_manager.h"
+#include "ffrt_handler.h"
 
 namespace OHOS {
 class LocalAbilityManagerDumper {
@@ -28,6 +29,15 @@ public:
     static bool StartIpcStatistics(std::string& result);
     static bool StopIpcStatistics(std::string& result);
     static bool GetIpcStatistics(std::string& result);
+    static bool CollectFfrtStatistics(int32_t cmd, std::string& result);
+private:
+    static bool StartFfrtStatistics(std::string& result);
+    static bool StopFfrtStatistics(std::string& result);
+    static bool GetFfrtStatistics(std::string& result);
+    static void FfrtStatisticsParser(std::string& result);
+    static void ClearFfrtStatisticsBufferLocked();
+    static void ClearFfrtStatistics();
+    static std::shared_ptr<FFRTHandler> handler_;
 };
 }
 

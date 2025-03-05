@@ -1155,5 +1155,37 @@ HWTEST_F(LocalAbilityManagerTest, InitUnusedCfg001, TestSize.Level1)
     EXPECT_EQ(LocalAbilityManager::GetInstance().IsConfigUnused(), true);
     DTEST_LOG << "InitUnusedCfg001 end" << std::endl;
 }
+
+/**
+ * @tc.name: FfrtStatCmdProc001
+ * @tc.desc: test FfrtStatCmdProc
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerTest, FfrtStatCmdProc001, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProc001 start" << std::endl;
+    int32_t fd = -1;
+    int32_t cmd = -1;
+    bool ret = LocalAbilityManager::GetInstance().FfrtStatCmdProc(fd, cmd);
+    EXPECT_FALSE(ret);
+    DTEST_LOG << "FfrtStatCmdProc001 end" << std::endl;
+}
+
+/**
+ * @tc.name: FfrtStatCmdProc002
+ * @tc.desc: test FfrtStatCmdProc
+ * @tc.type: FUNC
+ * @tc.require: IBMM2R
+ */
+HWTEST_F(LocalAbilityManagerTest, FfrtStatCmdProc002, TestSize.Level2)
+{
+    DTEST_LOG << "FfrtStatCmdProc002 start" << std::endl;
+    int32_t fd = -1;
+    int32_t cmd = 2;
+    bool ret = LocalAbilityManager::GetInstance().FfrtStatCmdProc(fd, cmd);
+    EXPECT_FALSE(ret);
+    DTEST_LOG << "FfrtStatCmdProc002 end" << std::endl;
+}
 } // namespace SAFWK
 } // namespace OHOS

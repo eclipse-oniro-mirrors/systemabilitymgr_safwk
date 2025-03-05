@@ -60,6 +60,7 @@ constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 constexpr int32_t TIME_S_TO_MS = 1000;
 constexpr int32_t MAX_DEPEND_TIMEOUT = 65;
+constexpr int32_t MAX_CHECK_TIMEOUT = 10;
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
 constexpr int32_t SUFFIX_LENGTH = 5; // .json length
@@ -136,7 +137,10 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
             HILOGE(TAG, "InitSystemAbilityProfiles no right profile, will exit");
             return;
         }
-        ret = CheckSystemAbilityManagerReady();
+        {
+            SamgrXCollie samgrXCollie("safwk--CheckSamgrReady", MAX_CHECK_TIMEOUT);
+            ret = CheckSystemAbilityManagerReady();
+        }
         if (!ret) {
             ReportSaMainExit("CheckSamgrReady failed");
             HILOGE(TAG, "CheckSystemAbilityManagerReady failed! will exit");
@@ -1001,6 +1005,22 @@ bool LocalAbilityManager::IpcStatCmdProc(int32_t fd, int32_t cmd)
     return ret;
 }
 
+bool LocalAbilityManager::FfrtStatCmdProc(int32_t fd, int32_t cmd)
+{
+    HILOGI(TAG, "FfrtStatCmdProc:fd=%{public}d cmd=%{public}d request", fd, cmd);
+    if (cmd < FFRT_STAT_CMD_START || cmd >= FFRT_STAT_CMD_MAX) {
+        HILOGW(TAG, "para invalid, fd=%{public}d cmd=%{public}d", fd, cmd);
+        return false;
+    }
+    std::string result;
+    auto ret = LocalAbilityManagerDumper::CollectFfrtStatistics(cmd, result);
+    if (!SaveStringToFd(fd, result)) {
+        HILOGW(TAG, "save to fd failed");
+        return false;
+    }
+    return ret;
+}
+
 typedef void (*PGetSdkName)(uint32_t cmd, char *buf, uint32_t len);
 
 bool LocalAbilityManager::FfrtDumperProc(std::string& ffrtDumperInfo)
@@ -1205,5 +1225,16 @@ void LocalAbilityManager::StartTimedQuery()
         auto timerId = idleTimer_->Register(timerCallback, timerInterval);
         HILOGI(TAG, "StartIdleTimer timerId:%{public}u, interval:%{public}d", timerId, timerInterval);
     }
+}
+
+int32_t LocalAbilityManager::ServiceControlCmd(int32_t fd, int32_t systemAbilityId,
+    const std::vector<std::u16string>& args)
+{
+    auto ability = GetAbility(systemAbilityId);
+    if (ability == nullptr) {
+        HILOGE(TAG, "failed to get ability");
+        return INVALID_DATA;
+    }
+    return ability->OnSvcCmd(fd, args);
 }
 }
