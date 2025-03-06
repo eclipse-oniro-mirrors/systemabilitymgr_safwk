@@ -525,13 +525,13 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
         int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
         constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
         {
-            std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+            std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
             auto it = abilityMap_.find(systemAbilityId);
             while (it == abilityMap_.end()) {
                 HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
                 if (timeout > 0) {
                     usleep(duration);
-                    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+                    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
                     it = abilityMap_.find(systemAbilityId);
                 } else {
                     HILOGE(TAG, "waiting for SA:%{public}d time out (1s)", systemAbilityId);
