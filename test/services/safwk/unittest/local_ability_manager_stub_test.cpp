@@ -413,7 +413,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility001, TestSize.Level2)
 
 /**
  * @tc.name: OnStopAbility002
- * @tc.desc: test OnStopAbility with said is in abilityMap_
+ * @tc.desc: test OnStopAbility with said is in localAbilityMap_
  * @tc.type: FUNC
  * @tc.require: I7G7DL
  */
@@ -422,7 +422,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility002, TestSize.Level2)
     DTEST_LOG << "OnStopAbility002 start" << std::endl;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     bool ret = LocalAbilityManager::GetInstance().OnStopAbility(SAID);
     delete mockSa;
     EXPECT_TRUE(ret);
@@ -459,7 +459,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ActiveAbility002, TestSize.Level2)
     DTEST_LOG << "ActiveAbility002 start" << std::endl;
     nlohmann::json activeReason;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     mockSa->abilityState_ = SystemAbilityState::ACTIVE;
     bool ret = LocalAbilityManager::GetInstance().ActiveAbility(SAID, activeReason);
     delete mockSa;
@@ -499,7 +499,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IdleAbility002, TestSize.Level2)
     DTEST_LOG << "IdleAbility002 start" << std::endl;
     nlohmann::json idleReason;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     mockSa->abilityState_ = SystemAbilityState::IDLE;
     int delayTime = 0;
     bool ret = LocalAbilityManager::GetInstance().IdleAbility(SAID, idleReason, delayTime);
@@ -564,7 +564,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSA001, TestSize.Level2)
 
 /**
  * @tc.name: SendStrategyToSA002
- * @tc.desc: test SendStrategyToSA with said is in abilityMap_
+ * @tc.desc: test SendStrategyToSA with said is in localAbilityMap_
  * @tc.type: FUNC
  */
 HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSA002, TestSize.Level2)
@@ -572,7 +572,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSA002, TestSize.Level2)
     DTEST_LOG << "SendStrategyToSA002 start" << std::endl;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     std::string action = "";
     bool ret = LocalAbilityManager::GetInstance().SendStrategyToSA(1, SAID, 1, action);
     delete mockSa;
@@ -698,13 +698,13 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProc002, TestSize.Level2)
 
     std::string deviceId = "";
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[MUT_SAID] = sysAby;
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = sysAby;
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     int32_t ret = LocalAbilityManager::GetInstance().SystemAbilityExtProc(extension, SAID, &callback, isAsync);
     EXPECT_TRUE(ret == ERR_NONE);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete sysAby;
     DTEST_LOG << "SystemAbilityExtProc002 end" << std::endl;
 }

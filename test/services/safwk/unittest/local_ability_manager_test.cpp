@@ -355,9 +355,9 @@ HWTEST_F(LocalAbilityManagerTest, AddAbility002, TestSize.Level3)
     bool ret = LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles
         (TEST_RESOURCE_PATH + "multi_sa_profile.json");
     EXPECT_TRUE(ret);
-    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[MUT_SAID] = sysAby;
     bool res = LocalAbilityManager::GetInstance().AddAbility(sysAby);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete sysAby;
     EXPECT_FALSE(res);
     DTEST_LOG << "AddAbility002 end" << std::endl;
@@ -423,7 +423,7 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener002, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener003, TestSize.Level1)
 {
     DTEST_LOG << "AddSystemAbilityListener003 start" << std::endl;
-    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back({MUT_SAID, ListenerState::INIT});
+    LocalAbilityManager::GetInstance().localListenerMap_[SAID].push_back({MUT_SAID, ListenerState::INIT});
     bool res = LocalAbilityManager::GetInstance().AddSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
     DTEST_LOG << "AddSystemAbilityListener003 end" << std::endl;
@@ -437,8 +437,8 @@ HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener003, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, AddSystemAbilityListener004, TestSize.Level1)
 {
     DTEST_LOG << "AddSystemAbilityListener004 start" << std::endl;
-    LocalAbilityManager::GetInstance().listenerMap_[VAILD_SAID].push_back({VAILD_SAID, ListenerState::INIT});
-    LocalAbilityManager::GetInstance().listenerMap_[VAILD_SAID].push_back({SAID, ListenerState::INIT});
+    LocalAbilityManager::GetInstance().localListenerMap_[VAILD_SAID].push_back({VAILD_SAID, ListenerState::INIT});
+    LocalAbilityManager::GetInstance().localListenerMap_[VAILD_SAID].push_back({SAID, ListenerState::INIT});
     sptr<ISystemAbilityManager> sm = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     bool res = LocalAbilityManager::GetInstance().AddSystemAbilityListener(VAILD_SAID, VAILD_SAID);
     EXPECT_TRUE(res);
@@ -479,7 +479,7 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener002, TestSize.Level
 HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener003, TestSize.Level1)
 {
     DTEST_LOG << "RemoveSystemAbilityListener003 start" << std::endl;
-    LocalAbilityManager::GetInstance().listenerMap_.clear();
+    LocalAbilityManager::GetInstance().localListenerMap_.clear();
     bool res = LocalAbilityManager::GetInstance().RemoveSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
     DTEST_LOG << "RemoveSystemAbilityListener003 end" << std::endl;
@@ -493,7 +493,7 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener003, TestSize.Level
 HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener004, TestSize.Level3)
 {
     DTEST_LOG << "RemoveSystemAbilityListener004 start" << std::endl;
-    LocalAbilityManager::GetInstance().listenerMap_[SAID].push_back({MUT_SAID, ListenerState::INIT});
+    LocalAbilityManager::GetInstance().localListenerMap_[SAID].push_back({MUT_SAID, ListenerState::INIT});
     bool res = LocalAbilityManager::GetInstance().RemoveSystemAbilityListener(SAID, SAID);
     EXPECT_TRUE(res);
     DTEST_LOG << "RemoveSystemAbilityListener004 end" << std::endl;
@@ -501,7 +501,7 @@ HWTEST_F(LocalAbilityManagerTest, RemoveSystemAbilityListener004, TestSize.Level
 
 /**
  * @tc.name: FindAndNotifyAbilityListeners001
- * @tc.desc: test FindAndNotifyAbilityListeners with listenerMap_ is empty
+ * @tc.desc: test FindAndNotifyAbilityListeners with localListenerMap_ is empty
  * @tc.type: FUNC
  * @tc.require: I7G7DL
  */
@@ -509,9 +509,9 @@ HWTEST_F(LocalAbilityManagerTest, FindAndNotifyAbilityListeners001, TestSize.Lev
 {
     int32_t code = 1;
     std::string deviceId = "";
-    LocalAbilityManager::GetInstance().listenerMap_.clear();
+    LocalAbilityManager::GetInstance().localListenerMap_.clear();
     LocalAbilityManager::GetInstance().FindAndNotifyAbilityListeners(SAID, deviceId, code);
-    EXPECT_TRUE(LocalAbilityManager::GetInstance().listenerMap_.empty());
+    EXPECT_TRUE(LocalAbilityManager::GetInstance().localListenerMap_.empty());
 }
 
 /**
@@ -524,12 +524,12 @@ HWTEST_F(LocalAbilityManagerTest, OnStartAbility001, TestSize.Level1)
     DTEST_LOG << "OnStartAbility001 start" << std::endl;
     std::string deviceId = "";
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[MUT_SAID] = sysAby;
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = sysAby;
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, STARTCODE);
     bool res = LocalAbilityManager::GetInstance().OnStartAbility(SAID);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete sysAby;
     EXPECT_TRUE(res);
     DTEST_LOG << "OnStartAbility001 end" << std::endl;
@@ -547,11 +547,11 @@ HWTEST_F(LocalAbilityManagerTest, OnStartAbility002, TestSize.Level1)
     int32_t removeAbility = 2;
     int32_t otherAbility = 3;
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[MUT_SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = sysAby;
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, removeAbility);
     LocalAbilityManager::GetInstance().NotifyAbilityListener(SAID, MUT_SAID, deviceId, otherAbility);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     bool res = LocalAbilityManager::GetInstance().OnStartAbility(SAID);
     EXPECT_FALSE(res);
     DTEST_LOG << "OnStartAbility002 end" << std::endl;
@@ -566,7 +566,7 @@ HWTEST_F(LocalAbilityManagerTest, GetAbility001, TestSize.Level1)
 {
     DTEST_LOG << "GetAbility001 start" << std::endl;
     std::string deviceId = "";
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     SystemAbility* res = LocalAbilityManager::GetInstance().GetAbility(SAID);
     EXPECT_EQ(res, nullptr);
     DTEST_LOG << "GetAbility001 end" << std::endl;
@@ -582,9 +582,9 @@ HWTEST_F(LocalAbilityManagerTest, GetAbility002, TestSize.Level1)
     DTEST_LOG << "GetAbility002 start" << std::endl;
     std::string deviceId = "";
     MockSaRealize *sysAby = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = sysAby;
     SystemAbility* res = LocalAbilityManager::GetInstance().GetAbility(SAID);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete sysAby;
     EXPECT_NE(res, nullptr);
     DTEST_LOG << "GetAbility002 end" << std::endl;
@@ -600,7 +600,7 @@ HWTEST_F(LocalAbilityManagerTest, GetRunningStatus001, TestSize.Level1)
     DTEST_LOG << "GetRunningStatus001 start" << std::endl;
     std::string deviceId = "";
     bool res = LocalAbilityManager::GetInstance().GetRunningStatus(SAID);
-    LocalAbilityManager::GetInstance().listenerMap_.clear();
+    LocalAbilityManager::GetInstance().localListenerMap_.clear();
     EXPECT_FALSE(res);
     DTEST_LOG << "GetRunningStatus001 end" << std::endl;
 }
@@ -614,9 +614,9 @@ HWTEST_F(LocalAbilityManagerTest, GetRunningStatus002, TestSize.Level1)
 {
     DTEST_LOG << "GetRunningStatus002 start" << std::endl;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().GetRunningStatus(SAID);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete mockSa;
     EXPECT_FALSE(res);
     DTEST_LOG << "GetRunningStatus002 end" << std::endl;
@@ -647,11 +647,11 @@ HWTEST_F(LocalAbilityManagerTest, StartOndemandSystemAbility002, TestSize.Level1
 {
     DTEST_LOG << "StartOndemandSystemAbility002 start" << std::endl;
     std::string profilePath = "/system/usr/profile_audio.json";
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     LocalAbilityManager::GetInstance().StartOndemandSystemAbility(SAID);
     delete mockSa;
     EXPECT_EQ(LocalAbilityManager::GetInstance().profileParser_->saProfiles_.size(), 3);
@@ -680,7 +680,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfiles001, TestSize.Level1)
 HWTEST_F(LocalAbilityManagerTest, InitializeSaProfiles002, TestSize.Level1)
 {
     DTEST_LOG << "InitializeSaProfiles002 start" << std::endl;
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfiles(SAID);
     EXPECT_FALSE(res);
     DTEST_LOG << "InitializeSaProfiles002 end" << std::endl;
@@ -725,7 +725,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeRunOnCreateSaProfiles003, TestSize.L
     DTEST_LOG << "InitializeRunOnCreateSaProfiles003 start" << std::endl;
     std::string profilePath = "/system/usr/profile_audio.json";
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     bool res = LocalAbilityManager::GetInstance().InitializeRunOnCreateSaProfiles(OTHERPHASE);
     delete mockSa;
@@ -742,7 +742,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeOnDemandSaProfile001, TestSize.Level
 {
     DTEST_LOG << "InitializeOnDemandSaProfile001 start" << std::endl;
     std::string profilePath = "/system/usr/profile_audio.json";
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     LocalAbilityManager::GetInstance().profileParser_->ParseSaProfiles(profilePath);
     bool res = LocalAbilityManager::GetInstance().InitializeOnDemandSaProfile(SAID);
     EXPECT_FALSE(res);
@@ -773,7 +773,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked001, TestSize.L
     DTEST_LOG << "InitializeSaProfilesInnerLocked001 start" << std::endl;
     SaProfile saProfile;
     saProfile.saId = SAID;
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
     EXPECT_FALSE(res);
     DTEST_LOG << "InitializeSaProfilesInnerLocked001 end" << std::endl;
@@ -789,7 +789,7 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked002, TestSize.L
     DTEST_LOG << "InitializeSaProfilesInnerLocked002 start" << std::endl;
     SaProfile saProfile;
     saProfile.saId = SAID;
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = nullptr;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = nullptr;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
     EXPECT_FALSE(res);
     DTEST_LOG << "InitializeSaProfilesInnerLocked002 end" << std::endl;
@@ -806,9 +806,9 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked003, TestSize.L
     SaProfile saProfile;
     saProfile.saId = SAID;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete mockSa;
     EXPECT_TRUE(res);
     DTEST_LOG << "InitializeSaProfilesInnerLocked003 end" << std::endl;
@@ -826,9 +826,9 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked004, TestSize.L
     saProfile.saId = SAID;
     saProfile.bootPhase = BOOTPHASE;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete mockSa;
     EXPECT_TRUE(res);
     DTEST_LOG << "InitializeSaProfilesInnerLocked004 end" << std::endl;
@@ -846,9 +846,9 @@ HWTEST_F(LocalAbilityManagerTest, InitializeSaProfilesInnerLocked005, TestSize.L
     saProfile.saId = SAID;
     saProfile.bootPhase = BOOTPHASE;
     MockSaRealize *mockSa = new MockSaRealize(SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
     bool res = LocalAbilityManager::GetInstance().InitializeSaProfilesInnerLocked(saProfile);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete mockSa;
     EXPECT_TRUE(res);
     DTEST_LOG << "InitializeSaProfilesInnerLocked005 end" << std::endl;
@@ -1069,11 +1069,11 @@ HWTEST_F(LocalAbilityManagerTest, IsResident001, TestSize.Level1)
 {
     DTEST_LOG << "IsResident001 start" << std::endl;
     MockSaRealize *mockSa = new MockSaRealize(VAILD_SAID, true);
-    LocalAbilityManager::GetInstance().abilityMap_[VAILD_SAID] = mockSa;
+    LocalAbilityManager::GetInstance().localAbilityMap_[VAILD_SAID] = mockSa;
     auto ret = LocalAbilityManager::GetInstance().IsResident();
     delete mockSa;
     EXPECT_EQ(ret, true);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     DTEST_LOG << "IsResident001 end" << std::endl;
 }
 
@@ -1086,11 +1086,11 @@ HWTEST_F(LocalAbilityManagerTest, IsResident002, TestSize.Level1)
 {
     DTEST_LOG << "IsResident002 start" << std::endl;
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    LocalAbilityManager::GetInstance().abilityMap_[MUT_SAID] = sysAby;
+    LocalAbilityManager::GetInstance().localAbilityMap_[MUT_SAID] = sysAby;
     auto ret = LocalAbilityManager::GetInstance().IsResident();
     delete sysAby;
     EXPECT_EQ(ret, false);
-    LocalAbilityManager::GetInstance().abilityMap_.clear();
+    LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     DTEST_LOG << "IsResident002 end" << std::endl;
 }
 
