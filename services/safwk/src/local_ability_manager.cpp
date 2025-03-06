@@ -538,6 +538,7 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
                     return;
                 }
                 timeout--;
+            }
         }
 
         if (!OnStartAbility(systemAbilityId)) {
