@@ -526,13 +526,13 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
         constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
         {
             std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-            auto it = abilityMap_.find(systemAbilityId);
-            while (it == abilityMap_.end()) {
+            auto it = localAbilityMap_.find(systemAbilityId);
+            while (it == localAbilityMap_.end()) {
                 HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
                 if (timeout > 0) {
                     usleep(duration);
                     std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-                    it = abilityMap_.find(systemAbilityId);
+                    it = localAbilityMap_.find(systemAbilityId);
                 } else {
                     HILOGE(TAG, "waiting for SA:%{public}d time out (1s)", systemAbilityId);
                     return;
