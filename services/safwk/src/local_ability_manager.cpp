@@ -48,6 +48,7 @@ using std::string;
 using std::vector;
 
 namespace {
+constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
 constexpr int32_t DEFAULT_SAID = -1;
 constexpr int32_t UNUSED_RESIDENT_TIMER_INTERVAL = 1000 * 60 * 10;
@@ -56,6 +57,7 @@ constexpr int32_t ONDEMAND_SA_UNUSED_TIMEOUT_LOWLIMIT = UNUSED_ONDEMAND_TIMER_IN
 constexpr int32_t ONDEMAND_SA_UNUSED_TIMEOUT_UPLIMIT = 1000 * 60 * 120;
 constexpr int32_t RESIDENT_SA_UNUSED_TIMEOUT = 1000 * 60 * 10;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
+constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 constexpr int32_t TIME_S_TO_MS = 1000;
 constexpr int32_t MAX_DEPEND_TIMEOUT = 65;
 constexpr int32_t MAX_CHECK_TIMEOUT = 10;
@@ -520,13 +522,22 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
     LOGI("StartOndemandSa LoadSaLib SA:%{public}d,spend:%{public}" PRId64 "ms",
         systemAbilityId, (GetTickCount() - begin));
     if (isExist) {
+        int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
+        constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
         {
-            std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-            auto it = localAbilityMap_.find(systemAbilityId);
-            if (it == localAbilityMap_.end()) {
+            std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+            auto it = abilityMap_.find(systemAbilityId);
+            while (it == abilityMap_.end()) {
                 HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
-                return;
-            }
+                if (timeout > 0) {
+                    usleep(duration);
+                    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
+                    it = abilityMap_.find(systemAbilityId);
+                } else {
+                    HILOGE(TAG, "waiting for SA:%{public}d time out (1s)", systemAbilityId);
+                    return;
+                }
+                timeout--;
         }
 
         if (!OnStartAbility(systemAbilityId)) {
