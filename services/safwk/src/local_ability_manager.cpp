@@ -525,8 +525,11 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
         int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
         constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
         {
-            std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-            auto it = localAbilityMap_.find(systemAbilityId);
+            auto it = localAbilityMap_.begin();
+            {
+                std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+                it = localAbilityMap_.find(systemAbilityId);
+            }
             while (it == localAbilityMap_.end()) {
                 HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
                 if (timeout > 0) {
