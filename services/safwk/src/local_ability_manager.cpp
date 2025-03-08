@@ -281,9 +281,9 @@ bool LocalAbilityManager::AddAbility(SystemAbility* ability)
     if (!ret) {
         return false;
     }
-    std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
-    auto iter = abilityMap_.find(saId);
-    if (iter != abilityMap_.end()) {
+    std::unique_lock<std::shared_mutex> writeLock(localAbilityMapLock_);
+    auto iter = localAbilityMap_.find(saId);
+    if (iter != localAbilityMap_.end()) {
         HILOGW(TAG, "try to add existed SA:%{public}d!", saId);
         return false;
     }
@@ -296,7 +296,7 @@ bool LocalAbilityManager::AddAbility(SystemAbility* ability)
     ability->SetDumpLevel(saProfile.dumpLevel);
     ability->SetCapability(saProfile.capability);
     ability->SetPermission(saProfile.permission);
-    abilityMap_.emplace(saId, ability);
+    localAbilityMap_.emplace(saId, ability);
     return true;
 }
 
@@ -306,8 +306,8 @@ bool LocalAbilityManager::RemoveAbility(int32_t systemAbilityId)
         HILOGW(TAG, "invalid systemAbilityId");
         return false;
     }
-    std::unique_lock<std::shared_mutex> writeLock(abilityMapLock_);
-    (void)abilityMap_.erase(systemAbilityId);
+    std::unique_lock<std::shared_mutex> writeLock(localAbilityMapLock_);
+    (void)localAbilityMap_.erase(systemAbilityId);
     return true;
 }
 
@@ -327,7 +327,7 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
     {
         HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
         std::lock_guard<std::mutex> autoLock(listenerLock_);
-        auto& listenerList = listenerMap_[systemAbilityId];
+        auto& listenerList = localListenerMap_[systemAbilityId];
         auto iter = std::find_if(listenerList.begin(), listenerList.end(),
             [listenerSaId](const std::pair<int32_t, ListenerState>& listener) {
             return listener.first == listenerSaId;
@@ -372,10 +372,10 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
     {
         HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
         std::lock_guard<std::mutex> autoLock(listenerLock_);
-        if (listenerMap_.count(systemAbilityId) == 0) {
+        if (localListenerMap_.count(systemAbilityId) == 0) {
             return true;
         }
-        auto& listenerList = listenerMap_[systemAbilityId];
+        auto& listenerList = localListenerMap_[systemAbilityId];
         auto iter = std::find_if(listenerList.begin(), listenerList.end(),
             [listenerSaId](const std::pair<int32_t, ListenerState>& listener) {
             return listener.first == listenerSaId;
@@ -388,7 +388,7 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
         if (!listenerList.empty()) {
             return true;
         }
-        listenerMap_.erase(systemAbilityId);
+        localListenerMap_.erase(systemAbilityId);
     }
 
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -436,18 +436,18 @@ void LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
 {
     HILOGD(TAG, "SA:%{public}d, code:%{public}d", systemAbilityId, code);
     int64_t begin = GetTickCount();
-    std::list<int32_t> listenerSaIdList;
+    std::vector<int32_t> listenerSaIdVec;
     {
         std::lock_guard<std::mutex> autoLock(listenerLock_);
-        auto iter = listenerMap_.find(systemAbilityId);
-        if (iter == listenerMap_.end()) {
+        auto iter = localListenerMap_.find(systemAbilityId);
+        if (iter == localListenerMap_.end()) {
             HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
             return;
         }
         if (code == ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY) {
             for (auto& listener : iter->second) {
                 if (listener.second == ListenerState::INIT) {
-                    listenerSaIdList.push_back(listener.first);
+                    listenerSaIdVec.push_back(listener.first);
                     listener.second = ListenerState::NOTIFIED;
                 } else {
                     HILOGW(TAG, "listener SA:%{public}d has been notified add", listener.first);
@@ -455,18 +455,18 @@ void LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
             }
         } else if (code == ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY) {
             for (auto& listener : iter->second) {
-                listenerSaIdList.push_back(listener.first);
+                listenerSaIdVec.push_back(listener.first);
                 if (listener.second == ListenerState::NOTIFIED) {
                     listener.second = ListenerState::INIT;
                 }
             }
         }
     }
-    for (auto listenerSaId : listenerSaIdList) {
+    for (auto listenerSaId : listenerSaIdVec) {
         NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, code);
     }
     LOGI("FindNotifyListeners SA:%{public}d,size:%{public}zu,code:%{public}d,spend:%{public}" PRId64 "ms",
-        systemAbilityId, listenerSaIdList.size(), code, GetTickCount() - begin);
+        systemAbilityId, listenerSaIdVec.size(), code, GetTickCount() - begin);
 }
 
 bool LocalAbilityManager::OnStartAbility(int32_t systemAbilityId)
@@ -493,9 +493,9 @@ bool LocalAbilityManager::OnStopAbility(int32_t systemAbilityId)
 
 SystemAbility* LocalAbilityManager::GetAbility(int32_t systemAbilityId)
 {
-    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-    auto it = abilityMap_.find(systemAbilityId);
-    if (it == abilityMap_.end()) {
+    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+    auto it = localAbilityMap_.find(systemAbilityId);
+    if (it == localAbilityMap_.end()) {
         HILOGW(TAG, "SA:%{public}d not register", systemAbilityId);
         return nullptr;
     }
@@ -525,13 +525,17 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
         int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
         constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
         {
-            std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-            auto it = abilityMap_.find(systemAbilityId);
-            while (it == abilityMap_.end()) {
+            auto it = localAbilityMap_.begin();
+            {
+                std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+                it = localAbilityMap_.find(systemAbilityId);
+            }
+            while (it == localAbilityMap_.end()) {
                 HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
                 if (timeout > 0) {
                     usleep(duration);
-                    it = abilityMap_.find(systemAbilityId);
+                    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+                    it = localAbilityMap_.find(systemAbilityId);
                 } else {
                     HILOGE(TAG, "waiting for SA:%{public}d time out (1s)", systemAbilityId);
                     return;
@@ -649,9 +653,9 @@ bool LocalAbilityManager::InitializeOnDemandSaProfile(int32_t saId)
 
 bool LocalAbilityManager::InitializeSaProfilesInnerLocked(const SaProfile& saProfile)
 {
-    std::unique_lock<std::shared_mutex> readLock(abilityMapLock_);
-    auto iterProfile = abilityMap_.find(saProfile.saId);
-    if (iterProfile == abilityMap_.end()) {
+    std::unique_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+    auto iterProfile = localAbilityMap_.find(saProfile.saId);
+    if (iterProfile == localAbilityMap_.end()) {
         HILOGW(TAG, "SA:%{public}d not found", saProfile.saId);
         return false;
     }
@@ -1067,8 +1071,8 @@ int32_t LocalAbilityManager::SystemAbilityExtProc(const std::string& extension, 
 
 bool LocalAbilityManager::IsResident()
 {
-    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-    for (const auto& it : abilityMap_) {
+    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+    for (const auto& it : localAbilityMap_) {
         if ((it.second != nullptr) && (it.second->IsRunOnCreate())) {
             return true;
         }
@@ -1143,8 +1147,8 @@ void LocalAbilityManager::IdentifyUnusedResident()
         return;
     }
 
-    std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-    for (const auto& it : abilityMap_) {
+    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+    for (const auto& it : localAbilityMap_) {
         int32_t saId = it.first;
         uint64_t lastRequestTime = 0;
         bool ret = GetSaLastRequestTime(samgr, saId, lastRequestTime);
@@ -1199,8 +1203,8 @@ void LocalAbilityManager::StartTimedQuery()
     std::function<void()> timerCallback;
 
     {
-        std::shared_lock<std::shared_mutex> readLock(abilityMapLock_);
-        for (const auto& it : abilityMap_) {
+        std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+        for (const auto& it : localAbilityMap_) {
             if (NoNeedCheckUnused(it.first)) {
                 HILOGI(TAG, "SA:%{public}d no need check unused", it.first);
                 return;

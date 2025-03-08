@@ -121,9 +121,9 @@ private:
     void LimitUnusedTimeout(int32_t saId, int32_t timeout);
     bool GetSaLastRequestTime(const sptr<ISystemAbilityManager>& samgr, int32_t saId, uint64_t& lastRequestTime);
 
-    std::map<int32_t, SystemAbility*> abilityMap_;
+    std::map<int32_t, SystemAbility*> localAbilityMap_;
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
-    std::shared_mutex abilityMapLock_;
+    std::shared_mutex localAbilityMapLock_;
     sptr<LocalAbilityManager> localAbilityManager_;
     std::map<int32_t, nlohmann::json> saIdToStartReason_;
     std::map<int32_t, nlohmann::json> saIdToStopReason_;
@@ -134,7 +134,7 @@ private:
 
     std::mutex listenerLock_;
     sptr<ISystemAbilityStatusChange> statusChangeListener_;
-    std::map<int32_t, std::list<std::pair<int32_t, ListenerState>>> listenerMap_;
+    std::map<int32_t, std::list<std::pair<int32_t, ListenerState>>> localListenerMap_;
     std::mutex ReasonLock_;
     std::shared_ptr<ParseUtil> profileParser_;
 
