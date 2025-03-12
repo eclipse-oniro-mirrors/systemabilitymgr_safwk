@@ -131,6 +131,48 @@ ohos_unittest("LocalAbilityManagerTest") {
   }
 }
 
+ohos_unittest("MockLocalAbilityManagerTest") {
+  module_out_path = module_output_path
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
+
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+  ]
+
+  sources = [ "./mock_local_ability_manager_test.cpp" ]
+
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+
+  deps = [ ":system_ability_fwk_tdd" ]
+
+  if (target_cpu == "arm") {
+    cflags = [ "-DBINDER_IPC_32BIT" ]
+  }
+
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "c_utils:utils",
+    "ffrt:libffrt",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+    "hisysevent:libhisysevent",
+    "ipc:ipc_core",
+    "samgr:samgr_common",
+    "samgr:samgr_proxy",
+  ]
+  defines = []
+  if (safwk_support_access_token) {
+    external_deps += [
+      "access_token:libnativetoken",
+      "access_token:libtoken_setproc",
+    ]
+    defines += [ "SUPPORT_ACCESS_TOKEN" ]
+  }
+}
+
 ohos_unittest("SystemAbilityTest") {
   sanitize = {
     cfi = true
@@ -306,6 +348,7 @@ group("unittest") {
     ":CacheManagerTest",
     ":ExpireLruCacheTest",
     ":LocalAbilityManagerTest",
+    ":MockLocalAbilityManagerTest",
     ":SystemAbilityTest",
   ]
 }
