@@ -38,6 +38,9 @@ private:
     static void ClearFfrtStatisticsBufferLocked();
     static void ClearFfrtStatistics();
     static std::shared_ptr<FFRTHandler> handler_;
+    static char* ffrtMetricBuffer;
+    static bool collectEnable;
+    static std::mutex ffrtMetricLock_;
 };
 }
 

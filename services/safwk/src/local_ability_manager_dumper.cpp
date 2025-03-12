@@ -28,13 +28,13 @@ constexpr const char* DUMP_FAIL = " fail\n";
 constexpr int32_t COLLECT_FFRT_METRIC_MAX_SIZE = 5000;
 constexpr int32_t FFRT_STAT_SIZE = sizeof(ffrt_stat);
 constexpr int32_t BUFFER_SIZE = FFRT_STAT_SIZE * COLLECT_FFRT_METRIC_MAX_SIZE;
-char* g_ffrtMetricBuffer = nullptr;
-bool g_collectEnable = false;
-std::mutex ffrtMetricLock_;
 constexpr int32_t DELAY_TIME = 60 * 1000;
 }
 
 std::shared_ptr<FFRTHandler> LocalAbilityManagerDumper::handler_ = nullptr;
+char* LocalAbilityManagerDumper::ffrtMetricBuffer = nullptr;
+bool LocalAbilityManagerDumper::collectEnable = false;
+std::mutex LocalAbilityManagerDumper::ffrtMetricLock_;
 
 bool LocalAbilityManagerDumper::StartIpcStatistics(std::string& result)
 {
@@ -103,19 +103,19 @@ bool LocalAbilityManagerDumper::GetIpcStatistics(std::string& result)
 
 bool LocalAbilityManagerDumper::StartFfrtStatistics(std::string& result)
 {
-    if (g_collectEnable) {
+    if (collectEnable) {
         result.append("collect has been started\n");
         return false;
     }
     ClearFfrtStatisticsBufferLocked();
-    g_ffrtMetricBuffer = new char[BUFFER_SIZE]();
-    auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_START_STAT, g_ffrtMetricBuffer, BUFFER_SIZE);
+    ffrtMetricBuffer = new char[BUFFER_SIZE]();
+    auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_START_STAT, ffrtMetricBuffer, BUFFER_SIZE);
     if (ret != ERR_OK) {
         ClearFfrtStatisticsBufferLocked();
         result.append("collect start failed\n");
         return false;
     }
-    g_collectEnable = true;
+    collectEnable = true;
     result.append("collect start success\n");
     if (handler_ == nullptr) {
         handler_ = std::make_shared<FFRTHandler>("safwk_ffrtDumpHandler");
@@ -127,12 +127,12 @@ bool LocalAbilityManagerDumper::StartFfrtStatistics(std::string& result)
 
 bool LocalAbilityManagerDumper::StopFfrtStatistics(std::string& result)
 {
-    if (!g_collectEnable) {
+    if (!collectEnable) {
         result.append("collect has not been started\n");
         return false;
     }
-    g_collectEnable = false;
-    auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_STOP_STAT, g_ffrtMetricBuffer, BUFFER_SIZE);
+    collectEnable = false;
+    auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_STOP_STAT, ffrtMetricBuffer, BUFFER_SIZE);
     if (ret != ERR_OK) {
         ClearFfrtStatisticsBufferLocked();
         result.append("collect stop failed\n");
@@ -144,11 +144,11 @@ bool LocalAbilityManagerDumper::StopFfrtStatistics(std::string& result)
 
 bool LocalAbilityManagerDumper::GetFfrtStatistics(std::string& result)
 {
-    if (g_collectEnable) {
+    if (collectEnable) {
         result.append("collect has not been stopped\n");
         return false;
     }
-    if (g_ffrtMetricBuffer == nullptr) {
+    if (ffrtMetricBuffer == nullptr) {
         result.append("info not collected\n");
         return false;
     }
@@ -160,8 +160,8 @@ bool LocalAbilityManagerDumper::GetFfrtStatistics(std::string& result)
 
 void LocalAbilityManagerDumper::FfrtStatisticsParser(std::string& result)
 {
-    ffrt_stat* currentStat = (ffrt_stat*)g_ffrtMetricBuffer;
-    char* lastStat = g_ffrtMetricBuffer + BUFFER_SIZE;
+    ffrt_stat* currentStat = (ffrt_stat*)ffrtMetricBuffer;
+    char* lastStat = ffrtMetricBuffer + BUFFER_SIZE;
     std::string taskInfo;
     uint64_t maxTime = 0;
     uint64_t minTime = std::numeric_limits<uint64_t>::max();
@@ -200,9 +200,9 @@ void LocalAbilityManagerDumper::FfrtStatisticsParser(std::string& result)
 
 void LocalAbilityManagerDumper::ClearFfrtStatisticsBufferLocked()
 {
-    if (g_ffrtMetricBuffer != nullptr) {
-        delete[] g_ffrtMetricBuffer;
-        g_ffrtMetricBuffer = nullptr;
+    if (ffrtMetricBuffer != nullptr) {
+        delete[] ffrtMetricBuffer;
+        ffrtMetricBuffer = nullptr;
         LOGI("ClearFfrtStatisticsBuffer success");
     }
     if (handler_ != nullptr) {
@@ -214,12 +214,12 @@ void LocalAbilityManagerDumper::ClearFfrtStatistics()
 {
     LOGW("ClearFfrtStatistics start");
     std::lock_guard<std::mutex> autoLock(ffrtMetricLock_);
-    if (g_collectEnable) {
-        auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_STOP_STAT, g_ffrtMetricBuffer, BUFFER_SIZE);
+    if (collectEnable) {
+        auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_STOP_STAT, ffrtMetricBuffer, BUFFER_SIZE);
         if (ret != ERR_OK) {
             LOGE("ClearFfrtStatistics stop ffrt_dump err:%{public}d", ret);
         }
-        g_collectEnable = false;
+        collectEnable = false;
     }
     ClearFfrtStatisticsBufferLocked();
 }

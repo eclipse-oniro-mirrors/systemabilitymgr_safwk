@@ -15,6 +15,7 @@
 
 #include "gtest/gtest.h"
 #include "test_log.h"
+#include "ffrt_inner.h"
 
 #define private public
 #include "local_ability_manager_dumper.h"
@@ -120,8 +121,20 @@ HWTEST_F(LocalAbilityManagerDumperTest, CollectFfrtStatistics001, TestSize.Level
     EXPECT_FALSE(ret);
     ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
     EXPECT_FALSE(ret);
+    auto testTask1 = [] () {
+        DTEST_LOG << "testTask1 end" << std::endl;
+    }
+    auto testTask2 = [] () {
+        DTEST_LOG << "testTask2 end" << std::endl;
+    }
+    LocalAbilityManagerDumper::handler_->PostTask(testTask1, "testTask1", 0);
+    LocalAbilityManagerDumper::handler_->PostTask(testTask2, "testTask2", 0);
+    usleep(10*1000);
     ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_STOP, result);
     EXPECT_TRUE(ret);
+    ffrt_stat* currentStat = (ffrt_stat*)ffrtMetricBuffer;
+    ASSERT_FALSE(currentStat == nullptr);
+    currentStat->endTime = 0;
     ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
     EXPECT_TRUE(ret);
     DTEST_LOG << "CollectFfrtStatistics001 end" << std::endl;
