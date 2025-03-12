@@ -40,7 +40,7 @@ private:
     static std::shared_ptr<FFRTHandler> handler_;
     static char* ffrtMetricBuffer;
     static bool collectEnable;
-    static std::mutex ffrtMetricLock_;
+    static std::mutex ffrtMetricLock;
 };
 }
 

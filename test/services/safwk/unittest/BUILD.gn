@@ -138,30 +138,15 @@ ohos_unittest("MockLocalAbilityManagerTest") {
 
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
-    "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
   ]
 
-  sources = [
-    "./mock_local_ability_manager_dumper_test.cpp",
-    "./mock_accesstoken_kit.cpp",
-    "./mock_sa_realize.cpp",
-    "//foundation/systemabilitymgr/samgr/services/dfx/source/hisysevent_adapter.cpp",
-  ]
+  sources = [ "./mock_local_ability_manager_test.cpp" ]
 
   configs =
       [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
 
-  deps = [
-    ":system_ability_fwk_tdd",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability:test_audio_ability",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/connect_ability:test_connect_ability",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/incomplete_ability:test_incomplete_ability",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/ondemand_ability:test_ondemand_ability",
-    "//foundation/systemabilitymgr/safwk/test/mock/common/tt_ability:test_tt_ability",
-    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability:listen_test",
-    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/test_svc_ability:svc_test",
-  ]
+  deps = [ ":system_ability_fwk_tdd" ]
 
   if (target_cpu == "arm") {
     cflags = [ "-DBINDER_IPC_32BIT" ]

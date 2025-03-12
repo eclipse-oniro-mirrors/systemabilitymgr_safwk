@@ -34,7 +34,7 @@ constexpr int32_t DELAY_TIME = 60 * 1000;
 std::shared_ptr<FFRTHandler> LocalAbilityManagerDumper::handler_ = nullptr;
 char* LocalAbilityManagerDumper::ffrtMetricBuffer = nullptr;
 bool LocalAbilityManagerDumper::collectEnable = false;
-std::mutex LocalAbilityManagerDumper::ffrtMetricLock_;
+std::mutex LocalAbilityManagerDumper::ffrtMetricLock;
 
 bool LocalAbilityManagerDumper::StartIpcStatistics(std::string& result)
 {
@@ -213,7 +213,7 @@ void LocalAbilityManagerDumper::ClearFfrtStatisticsBufferLocked()
 void LocalAbilityManagerDumper::ClearFfrtStatistics()
 {
     LOGW("ClearFfrtStatistics start");
-    std::lock_guard<std::mutex> autoLock(ffrtMetricLock_);
+    std::lock_guard<std::mutex> autoLock(ffrtMetricLock);
     if (collectEnable) {
         auto ret = ffrt_dump(ffrt_dump_cmd_t::DUMP_STOP_STAT, ffrtMetricBuffer, BUFFER_SIZE);
         if (ret != ERR_OK) {
@@ -226,7 +226,7 @@ void LocalAbilityManagerDumper::ClearFfrtStatistics()
 
 bool LocalAbilityManagerDumper::CollectFfrtStatistics(int32_t cmd, std::string& result)
 {
-    std::lock_guard<std::mutex> autoLock(ffrtMetricLock_);
+    std::lock_guard<std::mutex> autoLock(ffrtMetricLock);
     result.append("pid:" + ToString(getpid()) + " ");
     auto ret = false;
     switch (cmd) {

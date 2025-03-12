@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,7 @@
 
 #include "gtest/gtest.h"
 #include "test_log.h"
+#include "ffrt_inner.h"
 
 #define private public
 #include "local_ability_manager_dumper.h"
@@ -24,6 +25,18 @@ using namespace testing;
 using namespace testing::ext;
 
 namespace OHOS {
+namespace ffrt {
+#ifdef __cplusplus
+extern "C" {
+#endif //__cplusplus
+int ffrt_dump(ffrt_dump_cmd_t cmd, char *buf, uint32_t len)
+{
+    return -1;
+}
+#ifdef __cplusplus
+}
+#endif
+}
 class MockLocalAbilityManagerTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -94,7 +107,7 @@ HWTEST_F(MockLocalAbilityManagerTest, ClearFfrtStatistics001, TestSize.Level3)
 {
     DTEST_LOG << "ClearFfrtStatistics001 begin" << std::endl;
     LocalAbilityManagerDumper::collectEnable = true;
-    auto ret = LocalAbilityManagerDumper::ClearFfrtStatistics();
+    LocalAbilityManagerDumper::ClearFfrtStatistics();
     EXPECT_FALSE(LocalAbilityManagerDumper::collectEnable);
     DTEST_LOG << "ClearFfrtStatistics001 end" << std::endl;
 }
