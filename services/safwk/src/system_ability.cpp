@@ -414,7 +414,8 @@ void SystemAbility::OnRemoveSystemAbility(int32_t systemAbilityId, const std::st
 // The details should be implemented by subclass
 int32_t SystemAbility::OnSvcCmd(int32_t fd, const std::vector<std::u16string>& args)
 {
-    return 0;
+    HILOGI(TAG, "SystemAbility OnSvcCmd start.");
+    return -1;
 }
 
 sptr<IRemoteObject> SystemAbility::GetSystemAbility(int32_t systemAbilityId)
