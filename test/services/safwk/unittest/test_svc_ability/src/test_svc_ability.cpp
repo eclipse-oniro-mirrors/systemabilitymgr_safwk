@@ -28,7 +28,7 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, 0xD001800, "TestSvcAbility"};
 }
 
-REGISTER_SYSTEM_ABILITY_BY_ID(TestSvcAbility, DISTRIBUTED_SCHED_TEST_TT_ID, true);
+REGISTER_SYSTEM_ABILITY_BY_ID(TestSvcAbility, DISTRIBUTED_SCHED_TEST_SO_ID, true);
 
 TestSvcAbility::TestSvcAbility(int32_t saId, bool runOnCreate) : SystemAbility(saId, runOnCreate)
 {
@@ -52,6 +52,7 @@ void TestSvcAbility::OnStart()
 
 int32_t TestSvcAbility::OnSvcCmd(int32_t fd, const std::vector<std::u16string>& args)
 {
+    HiLog::Info(LABEL, "OnSvcCmd begin, fd:%{public}d, args:%{public}zu", fd, args.size());
     int32_t svcResult = -1;
     std::string info = "";
     if (args.size() != 1) {
@@ -81,6 +82,8 @@ int32_t TestSvcAbility::OnSvcCmd(int32_t fd, const std::vector<std::u16string>& 
     if (!SaveStringToFd(fd, info)) {
         HiLog::Info(LABEL, "TestSvcAbility save string to fd failed.");
     }
+
+    HiLog::Info(LABEL, "OnSvcCmd end, svcResult:%{public}d", svcResult);
     return svcResult;
 }
 }
