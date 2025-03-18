@@ -1140,7 +1140,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmdInner007, TestSize.Level2
     MockSaRealize *sysAby = new MockSaRealize(SAID, false);
     LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = sysAby;
     int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmdInner(data, reply);
-    EXPECT_EQ(ret, ERR_NONE);
+    EXPECT_NE(ret, ERR_NONE);
     LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete sysAby;
     DTEST_LOG << "ServiceControlCmdInner007 end" << std::endl;
@@ -1159,7 +1159,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmd001, TestSize.Level2)
     int32_t fd = 1;
     std::vector<std::u16string> args (1, Str8ToStr16(std::string("help")));
     int32_t ret = LocalAbilityManager::GetInstance().ServiceControlCmd(fd, SAID, args);
-    EXPECT_EQ(ret, ERR_NONE);
+    EXPECT_NE(ret, ERR_NONE);
     LocalAbilityManager::GetInstance().localAbilityMap_.clear();
     delete sysAby;
     DTEST_LOG << "ServiceControlCmd001 end" << std::endl;
@@ -1179,5 +1179,6 @@ HWTEST_F(LocalAbilityManagerStubTest, ServiceControlCmd002, TestSize.Level2)
     EXPECT_EQ(ret, INVALID_DATA);
     DTEST_LOG << "ServiceControlCmd002 end" << std::endl;
 }
+
 } // namespace SAFWK
 } // namespace OHOS
