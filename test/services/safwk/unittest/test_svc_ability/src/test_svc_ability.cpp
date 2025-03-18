@@ -28,7 +28,7 @@ namespace {
 constexpr OHOS::HiviewDFX::HiLogLabel LABEL = {LOG_CORE, 0xD001800, "TestSvcAbility"};
 }
 
-REGISTER_SYSTEM_ABILITY_BY_ID(TestSvcAbility, DISTRIBUTED_SCHED_TEST_SO_ID, true);
+REGISTER_SYSTEM_ABILITY_BY_ID(TestSvcAbility, DISTRIBUTED_SCHED_TEST_MEDIA_ID, true);
 
 TestSvcAbility::TestSvcAbility(int32_t saId, bool runOnCreate) : SystemAbility(saId, runOnCreate)
 {

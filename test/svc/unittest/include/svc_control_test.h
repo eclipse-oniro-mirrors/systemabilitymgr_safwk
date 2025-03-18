@@ -25,7 +25,7 @@ public:
     SvcControlTest();
     ~SvcControlTest();
 
-    static constexpr int32_t TEST_CMD = 1490;
+    static constexpr int32_t TEST_CMD = 1499;
 
     SvcCmd ParseCmd(char *argv[], int32_t cnt, bool &isEnd) override;
 };
