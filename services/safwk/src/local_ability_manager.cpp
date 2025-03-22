@@ -888,6 +888,7 @@ sptr<ISystemAbilityStatusChange> LocalAbilityManager::GetSystemAbilityStatusChan
     }
     return statusChangeListener_;
 }
+
 void LocalAbilityManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbilityId,
     const std::string& deviceId)
 {
