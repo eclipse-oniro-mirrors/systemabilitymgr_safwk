@@ -81,8 +81,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest001, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener =
-        new LocalAbilityManager::SystemAbilityListener(SAID);
+    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnAddSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(0, data, reply, option);
     delete sysListener;
@@ -101,8 +100,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest002, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener =
-        new LocalAbilityManager::SystemAbilityListener(INVALID_SAID);
+    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnAddSystemAbility(INVALID_SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(0, data, reply, option);
     delete sysListener;
@@ -121,8 +119,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest003, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener =
-        new LocalAbilityManager::SystemAbilityListener(INVALID_SAID);
+    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnRemoveSystemAbility(INVALID_SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
@@ -142,8 +139,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest004, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener =
-        new LocalAbilityManager::SystemAbilityListener(SAID);
+    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
@@ -165,8 +161,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest005, TestSize.Level2)
     MessageParcel reply;
     MessageOption option;
     std::string deviceId = "";
-    LocalAbilityManager::SystemAbilityListener *sysListener =
-        new LocalAbilityManager::SystemAbilityListener(SAID);
+    LocalAbilityManager::SystemAbilityListener *sysListener = new LocalAbilityManager::SystemAbilityListener();
     sysListener->OnRemoveSystemAbility(SAID, deviceId);
     int32_t result = LocalAbilityManager::GetInstance().OnRemoteRequest(STARTCODE, data, reply, option);
     delete sysListener;
