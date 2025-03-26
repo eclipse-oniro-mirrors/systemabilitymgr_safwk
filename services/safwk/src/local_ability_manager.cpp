@@ -277,8 +277,7 @@ bool LocalAbilityManager::RemoveAbility(int32_t systemAbilityId)
 bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int32_t listenerSaId)
 {
     if (!CheckInputSysAbilityId(systemAbilityId) || !CheckInputSysAbilityId(listenerSaId)) {
-        HILOGW(TAG, "SA:%{public}d or listenerSA:%{public}d invalid!",
-            systemAbilityId, listenerSaId);
+        HILOGW(TAG, "SA:%{public}d or listenerSA:%{public}d invalid!", systemAbilityId, listenerSaId);
         return false;
     }
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -286,22 +285,38 @@ bool LocalAbilityManager::AddSystemAbilityListener(int32_t systemAbilityId, int3
         HILOGE(TAG, "failed to get samgrProxy");
         return false;
     }
-
-    std::pair<int32_t, int32_t> key = std::make_pair(systemAbilityId, listenerSaId);
+    bool isNeedNotify = false;
+    size_t listenerListSize = 0;
     {
+        HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
         std::lock_guard<std::mutex> autoLock(listenerLock_);
-        auto iter = listenerMap_.find(key);
-        if (iter != listenerMap_.end()) {
-            HILOGW(TAG, "SA:%{public}d, listenerSA:%{public}d already add", systemAbilityId, listenerSaId);
-            return true;
+        auto& listenerList = listenerMap_[systemAbilityId];
+        auto iter = std::find_if(listenerList.begin(), listenerList.end(),
+            [listenerSaId](const std::pair<int32_t, ListenerState>& listener) {
+            return listener.first == listenerSaId;
+        });
+        if (listenerList.size() > 0) {
+            sptr<IRemoteObject> object = samgrProxy->CheckSystemAbility(systemAbilityId);
+            if (object != nullptr) {
+                isNeedNotify = true;
+            }
         }
-
-        sptr<ISystemAbilityStatusChange> listener = new SystemAbilityListener(listenerSaId);
-        listenerMap_[key] = listener;
-        LOGI("AddSaListener SA:%{public}d,listenerSA:%{public}d", systemAbilityId, listenerSaId);
+        if (iter == listenerList.end()) {
+            listenerList.push_back({listenerSaId,
+                (isNeedNotify) ? ListenerState::NOTIFIED : ListenerState::INIT});
+        }
+        listenerListSize = listenerList.size();
+        LOGI("AddSaListener SA:%{public}d,listenerSA:%{public}d,size:%{public}zu", systemAbilityId, listenerSaId,
+            listenerList.size());
     }
-
-    int32_t ret = samgrProxy->SubscribeSystemAbility(systemAbilityId, listenerMap_[key]);
+    if (listenerListSize > 1) {
+        if (isNeedNotify) {
+            NotifyAbilityListener(systemAbilityId, listenerSaId, "",
+                ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
+        }
+        return true;
+    }
+    int32_t ret = samgrProxy->SubscribeSystemAbility(systemAbilityId, GetSystemAbilityStatusChange());
     if (ret) {
         HILOGE(TAG, "failed to subscribe SA:%{public}d, process name:%{public}s", systemAbilityId,
             Str16ToStr8(procName_).c_str());
@@ -317,22 +332,26 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
             systemAbilityId, listenerSaId);
         return false;
     }
-
-    std::pair<int32_t, int32_t> key = std::make_pair(systemAbilityId, listenerSaId);
-    sptr<ISystemAbilityStatusChange> listener = nullptr;
     {
+        HILOGD(TAG, "SA:%{public}d, listenerSA:%{public}d", systemAbilityId, listenerSaId);
         std::lock_guard<std::mutex> autoLock(listenerLock_);
-        auto iter = listenerMap_.find(key);
-        if (iter != listenerMap_.end()) {
-            listener = listenerMap_[key];
-            listenerMap_.erase(iter);
-            LOGI("RmSaListener SA:%{public}d,listenerSA:%{public}d", systemAbilityId, listenerSaId);
+        if (listenerMap_.count(systemAbilityId) == 0) {
+            return true;
         }
-    }
-
-    if (listener == nullptr) {
-        HILOGW(TAG, "SA:%{public}d,listenerSA:%{public}d,listener is null!", systemAbilityId, listenerSaId);
-        return true;
+        auto& listenerList = listenerMap_[systemAbilityId];
+        auto iter = std::find_if(listenerList.begin(), listenerList.end(),
+            [listenerSaId](const std::pair<int32_t, ListenerState>& listener) {
+            return listener.first == listenerSaId;
+        });
+        if (iter != listenerList.end()) {
+            listenerList.erase(iter);
+        }
+        HILOGI(TAG, "SA:%{public}d, size:%{public}zu", systemAbilityId,
+            listenerList.size());
+        if (!listenerList.empty()) {
+            return true;
+        }
+        listenerMap_.erase(systemAbilityId);
     }
 
     auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
@@ -340,7 +359,7 @@ bool LocalAbilityManager::RemoveSystemAbilityListener(int32_t systemAbilityId, i
         HILOGE(TAG, "failed to get samgrProxy");
         return false;
     }
-    int32_t ret = samgrProxy->UnSubscribeSystemAbility(systemAbilityId, listener);
+    int32_t ret = samgrProxy->UnSubscribeSystemAbility(systemAbilityId, GetSystemAbilityStatusChange());
     if (ret) {
         HILOGE(TAG, "failed to unsubscribe SA:%{public}d, process name:%{public}s",
             systemAbilityId, Str16ToStr8(procName_).c_str());
@@ -373,6 +392,44 @@ void LocalAbilityManager::NotifyAbilityListener(int32_t systemAbilityId, int32_t
         default:
             break;
     }
+}
+
+void LocalAbilityManager::FindAndNotifyAbilityListeners(int32_t systemAbilityId,
+    const std::string& deviceId, int32_t code)
+{
+    HILOGD(TAG, "SA:%{public}d, code:%{public}d", systemAbilityId, code);
+    int64_t begin = GetTickCount();
+    std::list<int32_t> listenerSaIdList;
+    {
+        std::lock_guard<std::mutex> autoLock(listenerLock_);
+        auto iter = listenerMap_.find(systemAbilityId);
+        if (iter == listenerMap_.end()) {
+            HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
+            return;
+        }
+        if (code == ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY) {
+            for (auto& listener : iter->second) {
+                if (listener.second == ListenerState::INIT) {
+                    listenerSaIdList.push_back(listener.first);
+                    listener.second = ListenerState::NOTIFIED;
+                } else {
+                    HILOGW(TAG, "listener SA:%{public}d has been notified add", listener.first);
+                }
+            }
+        } else if (code == ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY) {
+            for (auto& listener : iter->second) {
+                listenerSaIdList.push_back(listener.first);
+                if (listener.second == ListenerState::NOTIFIED) {
+                    listener.second = ListenerState::INIT;
+                }
+            }
+        }
+    }
+    for (auto listenerSaId : listenerSaIdList) {
+        NotifyAbilityListener(systemAbilityId, listenerSaId, deviceId, code);
+    }
+    LOGI("FindNotifyListeners SA:%{public}d,size:%{public}zu,code:%{public}d,spend:%{public}" PRId64 "ms",
+        systemAbilityId, listenerSaIdList.size(), code, GetTickCount() - begin);
 }
 
 bool LocalAbilityManager::OnStartAbility(int32_t systemAbilityId)
@@ -823,6 +880,14 @@ nlohmann::json LocalAbilityManager::GetStopReason(int32_t saId)
     return saIdToStopReason_[saId];
 }
 
+sptr<ISystemAbilityStatusChange> LocalAbilityManager::GetSystemAbilityStatusChange()
+{
+    std::lock_guard<std::mutex> autoLock(listenerLock_);
+    if (statusChangeListener_ == nullptr) {
+        statusChangeListener_ = new SystemAbilityListener();
+    }
+    return statusChangeListener_;
+}
 void LocalAbilityManager::SystemAbilityListener::OnAddSystemAbility(int32_t systemAbilityId,
     const std::string& deviceId)
 {
@@ -832,7 +897,7 @@ void LocalAbilityManager::SystemAbilityListener::OnAddSystemAbility(int32_t syst
         return;
     }
 
-    GetInstance().NotifyAbilityListener(systemAbilityId, GetListenerSaId(), deviceId,
+    GetInstance().FindAndNotifyAbilityListeners(systemAbilityId, deviceId,
         ISystemAbilityStatusChange::ON_ADD_SYSTEM_ABILITY);
 }
 
@@ -845,7 +910,7 @@ void LocalAbilityManager::SystemAbilityListener::OnRemoveSystemAbility(int32_t s
         return;
     }
 
-    GetInstance().NotifyAbilityListener(systemAbilityId, GetListenerSaId(), deviceId,
+    GetInstance().FindAndNotifyAbilityListeners(systemAbilityId, deviceId,
         ISystemAbilityStatusChange::ON_REMOVE_SYSTEM_ABILITY);
 }
 
