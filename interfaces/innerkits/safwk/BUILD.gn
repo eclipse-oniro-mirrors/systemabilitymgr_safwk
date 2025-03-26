@@ -78,6 +78,7 @@ ohos_shared_library("system_ability_fwk") {
       "hilog:libhilog",
       "hitrace:hitrace_meter",
       "ipc:ipc_core",
+      "json:nlohmann_json_static",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
     ]
@@ -113,6 +114,7 @@ ohos_static_library("system_ability_ondemand_reason") {
 
   external_deps = [
     "c_utils:utils",
+    "json:nlohmann_json_static",
     "samgr:samgr_common",
   ]
 

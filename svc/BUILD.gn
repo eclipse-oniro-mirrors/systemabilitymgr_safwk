@@ -54,6 +54,7 @@ ohos_executable("svc") {
       "c_utils:utils",
       "hilog:libhilog",
       "ipc:ipc_single",
+      "json:nlohmann_json_static",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
     ]
