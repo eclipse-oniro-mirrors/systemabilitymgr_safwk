@@ -41,7 +41,6 @@
                     "//foundation/systemabilitymgr/safwk/etc/profile:foundation_cfg",
                     "//foundation/systemabilitymgr/safwk/etc/profile:foundation_trust",
                     "//foundation/systemabilitymgr/safwk/services/safwk:sa_main",
-                    "//foundation/systemabilitymgr/safwk/svc:svc",
                     "//foundation/systemabilitymgr/safwk/interfaces/innerkits/safwk:system_ability_fwk"
                 ],
                 "fwk_group": [],

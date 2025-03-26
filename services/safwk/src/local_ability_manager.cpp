@@ -1230,15 +1230,4 @@ void LocalAbilityManager::StartTimedQuery()
         HILOGI(TAG, "StartIdleTimer timerId:%{public}u, interval:%{public}d", timerId, timerInterval);
     }
 }
-
-int32_t LocalAbilityManager::ServiceControlCmd(int32_t fd, int32_t systemAbilityId,
-    const std::vector<std::u16string>& args)
-{
-    auto ability = GetAbility(systemAbilityId);
-    if (ability == nullptr) {
-        HILOGE(TAG, "failed to get ability");
-        return INVALID_DATA;
-    }
-    return ability->OnSvcCmd(fd, args);
-}
 }
