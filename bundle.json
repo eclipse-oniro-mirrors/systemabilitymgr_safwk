@@ -30,6 +30,7 @@
                 "hitrace",
                 "ipc",
                 "init",
+                "json",
                 "samgr",
                 "c_utils",
                 "access_token"
