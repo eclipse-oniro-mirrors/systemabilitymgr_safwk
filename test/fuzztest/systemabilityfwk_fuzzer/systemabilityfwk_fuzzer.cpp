@@ -83,12 +83,16 @@ uint32_t ConvertToUint32(const uint8_t* ptr)
         (ptr[SECOND_NUM] << SHIFT_THIRD) | (ptr[THIRD_NUM]);
 }
 
-void FuzzListener(const uint8_t* rawData, size_t size)
+void InitData(const uint8_t* rawData, size_t size)
 {
-    SaMockPermission::MockPermission();
     g_baseFuzzData = rawData;
     g_baseFuzzSize = size;
     g_baseFuzzPos = 0;
+}
+
+void FuzzListener()
+{
+    SaMockPermission::MockPermission();
     int32_t systemAbilityId = GetData<int32_t>();
     int32_t listenerSaId = GetData<int32_t>();
     LocalAbilityManager::GetInstance().NotifyAbilityListener(systemAbilityId, listenerSaId, "test", 1);
@@ -98,12 +102,9 @@ void FuzzListener(const uint8_t* rawData, size_t size)
     sysListener->OnRemoveSystemAbility(systemAbilityId, "deviceId");
 }
 
-void FuzzStartTimedQuery(const uint8_t* rawData, size_t size)
+void FuzzStartTimedQuery()
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     int32_t systemAbilityId = GetData<int32_t>();
     LocalAbilityManager::GetInstance().StartTimedQuery();
     LocalAbilityManager::GetInstance().IdentifyUnusedOndemand();
@@ -114,12 +115,9 @@ void FuzzStartTimedQuery(const uint8_t* rawData, size_t size)
     LocalAbilityManager::GetInstance().unusedCfgMap_.erase(systemAbilityId);
 }
 
-void FuzzPhaseTasks(const uint8_t* rawData, size_t size)
+void FuzzPhaseTasks()
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     int32_t systemAbilityId = GetData<int32_t>();
     LocalAbilityManager::GetInstance().FindAndStartPhaseTasks(systemAbilityId);
     std::list<SystemAbility*> systemAbilityList;
@@ -132,9 +130,6 @@ void FuzzPhaseTasks(const uint8_t* rawData, size_t size)
 void FuzzSendStrategyToSA(const uint8_t* rawData, size_t size)
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     int32_t type = GetData<int32_t>();
     int32_t systemAbilityId = GetData<int32_t>();
     int32_t level = GetData<int32_t>();
@@ -145,21 +140,15 @@ void FuzzSendStrategyToSA(const uint8_t* rawData, size_t size)
 void FuzzSystemAbilityExtProc(const uint8_t* rawData, size_t size)
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     int32_t systemAbilityId = GetData<int32_t>();
     SystemAbilityExtensionPara callback;
     std::string extension = BuildStringFromData(rawData, size);
     LocalAbilityManager::GetInstance().SystemAbilityExtProc(extension, systemAbilityId, &callback);
 }
 
-void FuzzGetSaLastRequestTime(const uint8_t* rawData, size_t size)
+void FuzzGetSaLastRequestTime()
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     int32_t systemAbilityId = GetData<int32_t>();
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     uint64_t lastRequestTime = 0;
@@ -169,9 +158,6 @@ void FuzzGetSaLastRequestTime(const uint8_t* rawData, size_t size)
 void FuzzLocalAbilityManager(const uint8_t* rawData, size_t size)
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     int32_t systemAbilityId = GetData<int32_t>();
     int32_t listenSaId = GetData<int32_t>();
     int32_t dependSaId = GetData<int32_t>();
@@ -220,12 +206,9 @@ void FuzzLocalAbilityManager(const uint8_t* rawData, size_t size)
     LocalAbilityManager::GetInstance().AddLocalAbilityManager();
 }
 
-void FuzzIpcStatCmdProc(const uint8_t* rawData, size_t size)
+void FuzzIpcStatCmdProc()
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     MessageParcel data;
     data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
     int32_t fd = GetData<int32_t>();
@@ -257,9 +240,6 @@ void FuzzSystemAbilityFwk(const uint8_t* rawData, size_t size)
 void FuzzFfrtStatCmdProc(const uint8_t* rawData, size_t size)
 {
     SaMockPermission::MockPermission();
-    g_baseFuzzData = rawData;
-    g_baseFuzzSize = size;
-    g_baseFuzzPos = 0;
     MessageParcel data;
     data.WriteInterfaceToken(LOCAL_ABILITY_MANAGER_INTERFACE_TOKEN);
     int32_t fd = 0;
@@ -286,16 +266,17 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     if (size < OHOS::Samgr::THRESHOLD) {
         return 0;
     }
-    OHOS::Samgr::FuzzListener(data, size);
-    OHOS::Samgr::FuzzStartTimedQuery(data, size);
-    OHOS::Samgr::FuzzPhaseTasks(data, size);
+    OHOS::Samgr::InitData(data, size);
+    OHOS::Samgr::FuzzListener();
+    OHOS::Samgr::FuzzStartTimedQuery();
+    OHOS::Samgr::FuzzPhaseTasks();
+    OHOS::Samgr::FuzzGetSaLastRequestTime();
+    OHOS::Samgr::FuzzIpcStatCmdProc();
+    OHOS::Samgr::FuzzFfrtStatCmdProc();
+    OHOS::Samgr::FuzzSystemAbilityFwk(data, size);
     OHOS::Samgr::FuzzSendStrategyToSA(data, size);
     OHOS::Samgr::FuzzSystemAbilityExtProc(data, size);
-    OHOS::Samgr::FuzzGetSaLastRequestTime(data, size);
-    OHOS::Samgr::FuzzSystemAbilityFwk(data, size);
-    OHOS::Samgr::FuzzIpcStatCmdProc(data, size);
     OHOS::Samgr::FuzzLocalAbilityManager(data, size);
-    OHOS::Samgr::FuzzFfrtStatCmdProc(data, size);
     return 0;
 }
 
