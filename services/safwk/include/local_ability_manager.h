@@ -78,7 +78,6 @@ public:
     bool FfrtDumperProc(std::string& result) override;
     int32_t SystemAbilityExtProc(const std::string& extension, int32_t said,
         SystemAbilityExtensionPara* callback, bool isAsync = false) override;
-    int32_t ServiceControlCmd(int32_t fd, int32_t systemAbilityId, const std::vector<std::u16string>& args) override;
 
 private:
     LocalAbilityManager();

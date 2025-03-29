@@ -15,8 +15,5 @@ import("//build/test.gni")
 
 group("unittest") {
   testonly = true
-  deps = [
-    "services/safwk/unittest:unittest",
-    "svc/unittest:unittest",
-  ]
+  deps = [ "services/safwk/unittest:unittest" ]
 }
