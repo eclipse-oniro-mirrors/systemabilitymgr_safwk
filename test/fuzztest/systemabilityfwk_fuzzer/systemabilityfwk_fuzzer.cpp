@@ -237,7 +237,7 @@ void FuzzSystemAbilityFwk(const uint8_t* rawData, size_t size)
     usleep(USLEEP_NUM);
 }
 
-void FuzzFfrtStatCmdProc(const uint8_t* rawData, size_t size)
+void FuzzFfrtStatCmdProc()
 {
     SaMockPermission::MockPermission();
     MessageParcel data;
