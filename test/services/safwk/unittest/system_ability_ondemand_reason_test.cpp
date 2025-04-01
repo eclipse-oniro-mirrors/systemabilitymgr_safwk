@@ -66,7 +66,7 @@ void SystemAbilityOndemandReasonTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: I6Y5L8
  */
-HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetData001, TestSize.Level2)
+HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetData001, TestSize.Level0)
 {
     DTEST_LOG << "OnDemandReasonExtraDataGetData001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;
@@ -82,7 +82,7 @@ HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetData001, Tes
  * @tc.type: FUNC
  * @tc.require: I6Y5L8
  */
-HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetCode001, TestSize.Level2)
+HWTEST_F(SystemAbilityOndemandReasonTest, OnDemandReasonExtraDataGetCode001, TestSize.Level0)
 {
     DTEST_LOG << "OnDemandReasonExtraDataGetCode001 start" << std::endl;
     OnDemandReasonExtraData onDemandReasonExtraData;

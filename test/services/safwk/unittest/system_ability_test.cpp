@@ -160,7 +160,7 @@ int32_t MockLocalAbilityManager::ServiceControlCmd(int32_t fd, int32_t systemAbi
  * @tc.type: FUNC
  * @tc.require: I5KMF7
  */
-HWTEST_F(SystemAbilityTest, RemoveSystemAbilityListener001, TestSize.Level2)
+HWTEST_F(SystemAbilityTest, RemoveSystemAbilityListener001, TestSize.Level0)
 {
     DTEST_LOG << "RemoveSystemAbilityListener001 start" << std::endl;
     std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
@@ -176,7 +176,7 @@ HWTEST_F(SystemAbilityTest, RemoveSystemAbilityListener001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: I5KMF7
  */
-HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility001, TestSize.Level2)
+HWTEST_F(SystemAbilityTest, MakeAndRegisterAbility001, TestSize.Level0)
 {
     DTEST_LOG << "MakeAndRegisterAbility001 start" << std::endl;
     bool res = SystemAbility::MakeAndRegisterAbility(new MockSaRealize(SAID, false));

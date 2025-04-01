@@ -82,7 +82,7 @@ void CacheManagerTest::TearDown()
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level2)
+HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level0)
 {
     DTEST_LOG << "AddAndDeleteCacheAPI001 start" << std::endl;
     ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_100S);

@@ -75,7 +75,7 @@ void LocalAbilityManagerStubTest::TearDown()
  * @tc.desc: OnRemoteRequest001
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest001, TestSize.Level2)
+HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest001, TestSize.Level0)
 {
     DTEST_LOG << "OnRemoteRequest001 start" << std::endl;
     MessageParcel data;
@@ -95,7 +95,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest001, TestSize.Level2)
  * @tc.desc: OnRemoteRequest002
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest002, TestSize.Level2)
+HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest002, TestSize.Level0)
 {
     DTEST_LOG << "OnRemoteRequest002 start" << std::endl;
     MessageParcel data;
@@ -116,7 +116,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest002, TestSize.Level2)
  * @tc.desc: OnRemoteRequest003
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest003, TestSize.Level2)
+HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest003, TestSize.Level0)
 {
     DTEST_LOG << "OnRemoteRequest003 start" << std::endl;
     MessageParcel data;
@@ -137,7 +137,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest003, TestSize.Level2)
  * @tc.desc: OnRemoteRequest004
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest004, TestSize.Level2)
+HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest004, TestSize.Level1)
 {
     DTEST_LOG << "OnRemoteRequest004 start" << std::endl;
     MessageParcel data;
@@ -159,7 +159,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest004, TestSize.Level2)
  * @tc.desc: OnRemoteRequest005
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest005, TestSize.Level2)
+HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest005, TestSize.Level1)
 {
     DTEST_LOG << "OnRemoteRequest005 start" << std::endl;
     MessageParcel data;
