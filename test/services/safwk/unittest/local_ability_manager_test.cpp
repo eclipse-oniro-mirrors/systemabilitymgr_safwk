@@ -74,7 +74,7 @@ void LocalAbilityManagerTest::TearDown()
  * @tc.desc:  CheckTrustSa with not all allow
  * @tc.type: FUNC
  */
-HWTEST_F(LocalAbilityManagerTest, CheckTrustSa001, TestSize.Level1)
+HWTEST_F(LocalAbilityManagerTest, CheckTrustSa001, TestSize.Level0)
 {
     DTEST_LOG << "CheckTrustSa001 start" << std::endl;
     /**

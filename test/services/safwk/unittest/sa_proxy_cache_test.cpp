@@ -76,7 +76,7 @@ bool CheckCallGetDoubleFuncIpcTimes(sptr<ITestSaProxyCache>& proxy, int32_t inpu
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SaProxyCacheTest, SaProxyCacheTest001, TestSize.Level2)
+HWTEST_F(SaProxyCacheTest, SaProxyCacheTest001, TestSize.Level0)
 {
     DTEST_LOG << "SaProxyCacheTest001 start" << std::endl;
     sptr<ISystemAbilityManager> systemAbilityManager =
@@ -210,7 +210,7 @@ public:
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level2)
+HWTEST_F(SaProxyCacheTest, SaProxyCacheTest002, TestSize.Level0)
 {
     DTEST_LOG << "SaProxyCacheTest002 start" << std::endl;
     {

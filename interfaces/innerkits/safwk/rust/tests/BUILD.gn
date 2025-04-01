@@ -14,7 +14,7 @@
 import("//build/test.gni")
 
 ohos_rust_unittest("rust_safwk_ut_test") {
-  module_out_path = "safwk/sawfw_rust"
+  module_out_path = "safwk/safwk"
 
   sources = [ "../src/lib.rs" ]
   deps = [
