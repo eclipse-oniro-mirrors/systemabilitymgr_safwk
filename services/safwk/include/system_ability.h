@@ -272,6 +272,7 @@ private:
     sptr<IRemoteObject> publishObj_;
     std::u16string permission_;
     std::recursive_mutex abilityLock;
+    std::atomic<bool> isOnStart_ {false};
 };
 }
 
