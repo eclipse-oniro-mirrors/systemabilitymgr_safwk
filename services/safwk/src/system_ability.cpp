@@ -164,10 +164,6 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
 void SystemAbility::Start()
 {
     // Ensure that the lifecycle is sequentially called by SAMGR
-    if (isOnStart_.exchange(true)) {
-        LOGE("%{public}d isOnStart true", saId_);
-        return;
-    }
     HILOGD(TAG, "starting system ability...");
     {
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
