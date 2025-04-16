@@ -11,19 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! This module implements the SystemAbility framework.
-
+#![allow(missing_docs)]
 #[macro_use]
 mod hilog;
-
 pub mod ability;
-
-pub mod cxx_share;
+mod wrapper;
 
 pub mod exts;
 
-mod wrapper;
-
+pub mod cxx_share;
 const LOG_LABEL: hilog_rust::HiLogLabel = hilog_rust::HiLogLabel {
     log_type: hilog_rust::LogType::LogCore,
     domain: 0xD001810,

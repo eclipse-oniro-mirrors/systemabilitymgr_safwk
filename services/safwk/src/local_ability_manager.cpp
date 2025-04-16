@@ -1009,22 +1009,6 @@ bool LocalAbilityManager::IpcStatCmdProc(int32_t fd, int32_t cmd)
     return ret;
 }
 
-bool LocalAbilityManager::FfrtStatCmdProc(int32_t fd, int32_t cmd)
-{
-    HILOGI(TAG, "FfrtStatCmdProc:fd=%{public}d cmd=%{public}d request", fd, cmd);
-    if (cmd < FFRT_STAT_CMD_START || cmd >= FFRT_STAT_CMD_MAX) {
-        HILOGW(TAG, "para invalid, fd=%{public}d cmd=%{public}d", fd, cmd);
-        return false;
-    }
-    std::string result;
-    auto ret = LocalAbilityManagerDumper::CollectFfrtStatistics(cmd, result);
-    if (!SaveStringToFd(fd, result)) {
-        HILOGW(TAG, "save to fd failed");
-        return false;
-    }
-    return ret;
-}
-
 typedef void (*PGetSdkName)(uint32_t cmd, char *buf, uint32_t len);
 
 bool LocalAbilityManager::FfrtDumperProc(std::string& ffrtDumperInfo)

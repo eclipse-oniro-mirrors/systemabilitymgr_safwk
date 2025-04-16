@@ -231,9 +231,9 @@
             "description" : "Permission required for telephony to access hsdr service."
         },
         {
-            "name" : "ohos.permission.ACCESS_CAR_DISTRIBUTED_ENGINE",
-            "said" : "4005",
-            "description" : "Permission required for telephony to access car distributed engine."
+            "name" : "ohos.permission.CAPTURE_SCREEN",
+            "said" : "4607",
+            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
         },
         {
             "name" : "ohos.permission.START_RESTORE_NOTIFICATION",
@@ -241,9 +241,9 @@
             "description" : "Permission required for ans to access backup service."
         },
         {
-            "name" : "ohos.permission.CAPTURE_SCREEN",
-            "said" : "4607",
-            "description" : "Permission required for DMS to access render service TakeSurfaceCapture."
+            "name" : "ohos.permission.ACCESS_USER_AUTH_INTERNAL",
+            "said" : "3704",
+            "description" : "Permission required for ScreenLock to observer user auth state."
         },
         {
             "name" : "ohos.permission.MANAGE_MISSIONS",
@@ -259,11 +259,6 @@
             "name" : "ohos.permission.CONNECT_STATIC_SUBSCRIBER_EXTENSION",
             "said" : "180",
             "description" : "Permission required for CES to connect static subscriber extension."
-        },
-        {
-            "name" : "ohos.permission.ACCESS_USER_AUTH_INTERNAL",
-            "said" : "3704",
-            "description" : "Permission required for ScreenLock to observer user auth state."
         }
     ],
     "restart" : [

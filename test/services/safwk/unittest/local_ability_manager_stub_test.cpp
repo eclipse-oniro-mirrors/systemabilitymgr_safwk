@@ -12,21 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 #include <fstream>
 #include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "string_ex.h"
 #include "test_log.h"
 #include "hisysevent_adapter.h"
-
+ 
 #define private public
 #include "local_ability_manager.h"
 #include "mock_sa_realize.h"
 #undef private
 using namespace testing;
 using namespace testing::ext;
-
+ 
 namespace OHOS {
 namespace SAFWK {
 namespace {
@@ -41,7 +41,7 @@ namespace {
     constexpr const char* VALUE = "value";
     constexpr const char* EXTRA_DATA_ID = "extraDataId";
 }
-
+ 
 class LocalAbilityManagerStubTest : public testing::Test {
 public:
     static void SetUpTestCase();
@@ -49,27 +49,27 @@ public:
     void SetUp();
     void TearDown();
 };
-
+ 
 void LocalAbilityManagerStubTest::SetUpTestCase()
 {
     DTEST_LOG << "SetUpTestCase" << std::endl;
 }
-
+ 
 void LocalAbilityManagerStubTest::TearDownTestCase()
 {
     DTEST_LOG << "TearDownTestCase" << std::endl;
 }
-
+ 
 void LocalAbilityManagerStubTest::SetUp()
 {
     DTEST_LOG << "SetUp" << std::endl;
 }
-
+ 
 void LocalAbilityManagerStubTest::TearDown()
 {
     DTEST_LOG << "TearDown" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest001
  * @tc.desc: OnRemoteRequest001
@@ -89,7 +89,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest001, TestSize.Level2)
     EXPECT_NE(result, ERR_NONE);
     DTEST_LOG << "OnRemoteRequest001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest002
  * @tc.desc: OnRemoteRequest002
@@ -110,7 +110,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest002, TestSize.Level2)
     EXPECT_NE(result, ERR_NONE);
     DTEST_LOG << "OnRemoteRequest002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest003
  * @tc.desc: OnRemoteRequest003
@@ -131,7 +131,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest003, TestSize.Level2)
     EXPECT_NE(result, ERR_NONE);
     DTEST_LOG << "OnRemoteRequest003 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest004
  * @tc.desc: OnRemoteRequest004
@@ -153,7 +153,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest004, TestSize.Level2)
     EXPECT_EQ(result, ERR_NULL_OBJECT);
     DTEST_LOG << "OnRemoteRequest004 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest005
  * @tc.desc: OnRemoteRequest005
@@ -177,7 +177,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest005, TestSize.Level2)
     EXPECT_EQ(result, ERR_NONE);
     DTEST_LOG << "OnRemoteRequest005 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest006
  * @tc.desc: OnRemoteRequest006
@@ -199,7 +199,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest006, TestSize.Level2)
     EXPECT_NE(iter, LocalAbilityManager::GetInstance().memberFuncMap_.end());
     DTEST_LOG << "OnRemoteRequest006 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnRemoteRequest007
  * @tc.desc: OnRemoteRequest007
@@ -221,7 +221,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnRemoteRequest007, TestSize.Level2)
     EXPECT_EQ(iter, LocalAbilityManager::GetInstance().memberFuncMap_.end());
     DTEST_LOG << "OnRemoteRequest007 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: StartAbilityInner001
  * @tc.desc: test StartAbilityInner with invalid SaID
@@ -238,7 +238,7 @@ HWTEST_F(LocalAbilityManagerStubTest, StartAbilityInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "StartAbilityInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: StartAbilityInner002
  * @tc.desc: test StartAbilityInner with data.ReadString() is empty
@@ -255,7 +255,7 @@ HWTEST_F(LocalAbilityManagerStubTest, StartAbilityInner002, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "StartAbilityInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: StartAbilityInner003
  * @tc.desc: test StartAbilityInner with data.ReadString() is not  empty
@@ -274,7 +274,7 @@ HWTEST_F(LocalAbilityManagerStubTest, StartAbilityInner003, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NONE);
     DTEST_LOG << "StartAbilityInner003 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: StopAbilityInner001
  * @tc.desc: test StopAbilityInner with invalid SaID
@@ -291,7 +291,7 @@ HWTEST_F(LocalAbilityManagerStubTest, StopAbilityInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "StopAbilityInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: StopAbilityInner002
  * @tc.desc: test StopAbilityInner with data.ReadString() is empty
@@ -308,7 +308,7 @@ HWTEST_F(LocalAbilityManagerStubTest, StopAbilityInner002, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "StopAbilityInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: StopAbilityInner003
  * @tc.desc: test StopAbilityInner with data.ReadString() is empty
@@ -327,7 +327,7 @@ HWTEST_F(LocalAbilityManagerStubTest, StopAbilityInner003, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NONE);
     DTEST_LOG << "StopAbilityInner003 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: ActiveAbilityInner001
  * @tc.desc: test ActiveAbilityInner with invalid SaID
@@ -344,7 +344,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ActiveAbilityInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "ActiveAbilityInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: ActiveAbilityInner002
  * @tc.desc: test ActiveAbilityInner with valid SaID
@@ -361,7 +361,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ActiveAbilityInner002, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NONE);
     DTEST_LOG << "ActiveAbilityInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IdleAbilityInner001
  * @tc.desc: test IdleAbilityInner with invalid SaID
@@ -378,7 +378,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IdleAbilityInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "IdleAbilityInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IdleAbilityInner002
  * @tc.desc: test IdleAbilityInner with valid SaID
@@ -395,7 +395,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IdleAbilityInner002, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NONE);
     DTEST_LOG << "IdleAbilityInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnStopAbility001
  * @tc.desc: test OnStopAbility, cover function with valid SaID
@@ -410,7 +410,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility001, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "OnStopAbility001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: OnStopAbility002
  * @tc.desc: test OnStopAbility with said is in localAbilityMap_
@@ -428,7 +428,7 @@ HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility002, TestSize.Level2)
     EXPECT_TRUE(ret);
     DTEST_LOG << "OnStopAbility002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: ActiveAbility001
  * @tc.desc: test ActiveAbility, cover function with valid SaID
@@ -447,7 +447,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ActiveAbility001, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "ActiveAbility001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: ActiveAbility002
  * @tc.desc: test ActiveAbility with sa is existed
@@ -466,7 +466,7 @@ HWTEST_F(LocalAbilityManagerStubTest, ActiveAbility002, TestSize.Level2)
     EXPECT_TRUE(ret);
     DTEST_LOG << "ActiveAbility002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IdleAbility001
  * @tc.desc: test IdleAbility, cover function
@@ -487,7 +487,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IdleAbility001, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "IdleAbility001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IdleAbility002
  * @tc.desc: test IdleAbility with sa is existed
@@ -507,7 +507,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IdleAbility002, TestSize.Level2)
     EXPECT_TRUE(ret);
     DTEST_LOG << "IdleAbility002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: JsonToOnDemandReason001
  * @tc.desc: test JsonToOnDemandReason, with assignments
@@ -531,7 +531,7 @@ HWTEST_F(LocalAbilityManagerStubTest, JsonToOnDemandReason001, TestSize.Level2)
     EXPECT_EQ(ret.extraDataId_, onDemandStartReason.extraDataId_);
     DTEST_LOG << "JsonToOnDemandReason001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: FfrtDumperProc001
  * @tc.desc: test FfrtDumperProc
@@ -546,7 +546,7 @@ HWTEST_F(LocalAbilityManagerStubTest, FfrtDumperProc001, TestSize.Level2)
     EXPECT_TRUE(result);
     DTEST_LOG << "FfrtDumperProc001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSA001
  * @tc.desc: test SendStrategyToSA001, cover function with valid SaID
@@ -561,7 +561,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSA001, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "SendStrategyToSA001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSA002
  * @tc.desc: test SendStrategyToSA with said is in localAbilityMap_
@@ -579,7 +579,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSA002, TestSize.Level2)
     EXPECT_TRUE(ret);
     DTEST_LOG << "SendStrategyToSA002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProc001
  * @tc.desc: test IpcStatCmdProc001, cover function with valid fd and valid cmd
@@ -594,7 +594,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProc001, TestSize.Level2)
     EXPECT_TRUE(ret);
     DTEST_LOG << "IpcStatCmdProc001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProc002
  * @tc.desc: test IpcStatCmdProc002, cover function with valid fd and invalid cmd
@@ -609,7 +609,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProc002, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "IpcStatCmdProc002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProc003
  * @tc.desc: test IpcStatCmdProc003, cover function with invalid fd and valid cmd
@@ -624,7 +624,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProc003, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "IpcStatCmdProc003 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProc004
  * @tc.desc: test IpcStatCmdProc004, cover function with invalid fd and invalid cmd
@@ -639,7 +639,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProc004, TestSize.Level2)
     EXPECT_FALSE(ret);
     DTEST_LOG << "IpcStatCmdProc004 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: CheckPermission001
  * @tc.desc: test CheckPermission001
@@ -653,7 +653,7 @@ HWTEST_F(LocalAbilityManagerStubTest, CheckPermission001, TestSize.Level2)
     EXPECT_TRUE(result);
     DTEST_LOG << "CheckPermission001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: CheckPermission002
  * @tc.desc: test CheckPermission002
@@ -667,7 +667,7 @@ HWTEST_F(LocalAbilityManagerStubTest, CheckPermission002, TestSize.Level2)
     EXPECT_TRUE(result);
     DTEST_LOG << "CheckPermission002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SystemAbilityExtProc001
  * @tc.desc: test SystemAbilityExtProc001
@@ -683,7 +683,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProc001, TestSize.Level2)
     EXPECT_FALSE(ret == ERR_NONE);
     DTEST_LOG << "SystemAbilityExtProc001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SystemAbilityExtProc002
  * @tc.desc: test SystemAbilityExtProc002
@@ -695,7 +695,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProc002, TestSize.Level2)
     std::string extension = "ext1";
     SystemAbilityExtensionPara callback;
     bool isAsync = false;
-
+ 
     std::string deviceId = "";
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
     LocalAbilityManager::GetInstance().localAbilityMap_[MUT_SAID] = sysAby;
@@ -708,7 +708,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProc002, TestSize.Level2)
     delete sysAby;
     DTEST_LOG << "SystemAbilityExtProc002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSAInner001
  * @tc.desc: test SendStrategyToSAInner.
@@ -723,7 +723,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSAInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "SendStrategyToSAInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSAInner002
  * @tc.desc: test SendStrategyToSAInner.
@@ -740,7 +740,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSAInner002, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "SendStrategyToSAInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSAInner003
  * @tc.desc: test SendStrategyToSAInner.
@@ -759,7 +759,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSAInner003, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "SendStrategyToSAInner003 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSAInner004
  * @tc.desc: test SendStrategyToSAInner.
@@ -778,7 +778,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSAInner004, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "SendStrategyToSAInner004 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSAInner005
  * @tc.desc: test SendStrategyToSAInner.
@@ -799,7 +799,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSAInner005, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "SendStrategyToSAInner005 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SendStrategyToSAInner006
  * @tc.desc: test SendStrategyToSAInner.
@@ -822,7 +822,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SendStrategyToSAInner006, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "SendStrategyToSAInner006 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProcInner001
  * @tc.desc: test IpcStatCmdProcInner.
@@ -837,7 +837,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProcInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "IpcStatCmdProcInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProcInner002
  * @tc.desc: test IpcStatCmdProcInner.
@@ -854,7 +854,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProcInner002, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "IpcStatCmdProcInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: IpcStatCmdProcInner003
  * @tc.desc: test IpcStatCmdProcInner.
@@ -873,61 +873,7 @@ HWTEST_F(LocalAbilityManagerStubTest, IpcStatCmdProcInner003, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NULL_OBJECT);
     DTEST_LOG << "IpcStatCmdProcInner003 end" << std::endl;
 }
-
-/**
- * @tc.name: FfrtStatCmdProcInner001
- * @tc.desc: test FfrtStatCmdProcInner.
- * @tc.type: FUNC
- * @tc.require: IBMM2R
- */
-HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner001, TestSize.Level2)
-{
-    DTEST_LOG << "FfrtStatCmdProcInner001 start" << std::endl;
-    MessageParcel data;
-    MessageParcel reply;
-    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
-    EXPECT_EQ(ret, ERR_NULL_OBJECT);
-    DTEST_LOG << "FfrtStatCmdProcInner001 end" << std::endl;
-}
-
-/**
- * @tc.name: FfrtStatCmdProcInner002
- * @tc.desc: test FfrtStatCmdProcInner.
- * @tc.type: FUNC
- * @tc.require: IBMM2R
- */
-HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner002, TestSize.Level2)
-{
-    DTEST_LOG << "FfrtStatCmdProcInner002 start" << std::endl;
-    MessageParcel data;
-    MessageParcel reply;
-    int32_t fd = 1;
-    data.WriteFileDescriptor(fd);
-    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
-    EXPECT_EQ(ret, ERR_NULL_OBJECT);
-    DTEST_LOG << "FfrtStatCmdProcInner002 end" << std::endl;
-}
-
-/**
- * @tc.name: FfrtStatCmdProcInner003
- * @tc.desc: test FfrtStatCmdProcInner.
- * @tc.type: FUNC
- * @tc.require: IBMM2R
- */
-HWTEST_F(LocalAbilityManagerStubTest, FfrtStatCmdProcInner003, TestSize.Level2)
-{
-    DTEST_LOG << "FfrtStatCmdProcInner003 start" << std::endl;
-    MessageParcel data;
-    MessageParcel reply;
-    int32_t fd = 1;
-    int cmd = -1;
-    data.WriteInt32(cmd);
-    data.WriteFileDescriptor(fd);
-    int32_t ret = LocalAbilityManager::GetInstance().FfrtStatCmdProcInner(data, reply);
-    EXPECT_EQ(ret, ERR_NULL_OBJECT);
-    DTEST_LOG << "FfrtStatCmdProcInner003 end" << std::endl;
-}
-
+ 
 /**
  * @tc.name: FfrtDumperProcInner001
  * @tc.desc: test IpcStatCmdProcInner.
@@ -943,7 +889,7 @@ HWTEST_F(LocalAbilityManagerStubTest, FfrtDumperProcInner001, TestSize.Level2)
     EXPECT_EQ(ret, ERR_NONE);
     DTEST_LOG << "FfrtDumperProcInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SystemAbilityExtProcInner001
  * @tc.desc: test IpcStatCmdProcInner.
@@ -958,7 +904,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProcInner001, TestSize.Lev
     EXPECT_EQ(ret, INVALID_DATA);
     DTEST_LOG << "SystemAbilityExtProcInner001 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SystemAbilityExtProcInner002
  * @tc.desc: test IpcStatCmdProcInner.
@@ -975,7 +921,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProcInner002, TestSize.Lev
     EXPECT_EQ(ret, INVALID_DATA);
     DTEST_LOG << "SystemAbilityExtProcInner002 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SystemAbilityExtProcInner003
  * @tc.desc: test IpcStatCmdProcInner.
@@ -992,7 +938,7 @@ HWTEST_F(LocalAbilityManagerStubTest, SystemAbilityExtProcInner003, TestSize.Lev
     EXPECT_EQ(ret, INVALID_DATA);
     DTEST_LOG << "SystemAbilityExtProcInner003 end" << std::endl;
 }
-
+ 
 /**
  * @tc.name: SystemAbilityExtProcInner004
  * @tc.desc: test IpcStatCmdProcInner.

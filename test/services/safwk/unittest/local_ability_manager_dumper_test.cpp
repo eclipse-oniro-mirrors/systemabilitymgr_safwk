@@ -15,9 +15,7 @@
 
 #include "gtest/gtest.h"
 #include "test_log.h"
-#include "ffrt_inner.h"
 
-#define private public
 #include "local_ability_manager_dumper.h"
 
 using namespace std;
@@ -96,47 +94,5 @@ HWTEST_F(LocalAbilityManagerDumperTest, GetIpcStatistics001, TestSize.Level2)
     bool ret = LocalAbilityManagerDumper::GetIpcStatistics(result);
     EXPECT_EQ(ret, true);
     DTEST_LOG << "GetIpcStatistics001 end" << std::endl;
-}
-
-/**
- * @tc.name: CollectFfrtStatistics001
- * @tc.desc: CollectFfrtStatistics
- * @tc.type: FUNC
- * @tc.require: IBMM2R
- */
-HWTEST_F(LocalAbilityManagerDumperTest, CollectFfrtStatistics001, TestSize.Level3)
-{
-    DTEST_LOG << "CollectFfrtStatistics001 begin" << std::endl;
-    std::string result;
-    auto ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_START, result);
-    LocalAbilityManagerDumper::ClearFfrtStatistics();
-    EXPECT_TRUE(ret);
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
-    EXPECT_FALSE(ret);
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_STOP, result);
-    EXPECT_FALSE(ret);
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_START, result);
-    EXPECT_TRUE(ret);
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_START, result);
-    EXPECT_FALSE(ret);
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
-    EXPECT_FALSE(ret);
-    auto testTask1 = [] () {
-        DTEST_LOG << "testTask1 end" << std::endl;
-    };
-    auto testTask2 = [] () {
-        DTEST_LOG << "testTask2 end" << std::endl;
-    };
-    LocalAbilityManagerDumper::handler_->PostTask(testTask1, "testTask1", 0);
-    LocalAbilityManagerDumper::handler_->PostTask(testTask2, "testTask2", 0);
-    usleep(10 * 1000);
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_STOP, result);
-    EXPECT_TRUE(ret);
-    ffrt_stat* currentStat = (ffrt_stat*)LocalAbilityManagerDumper::ffrtMetricBuffer;
-    ASSERT_FALSE(currentStat == nullptr);
-    currentStat->endTime = 0;
-    ret = LocalAbilityManagerDumper::CollectFfrtStatistics(FFRT_STAT_CMD_GET, result);
-    EXPECT_TRUE(ret);
-    DTEST_LOG << "CollectFfrtStatistics001 end" << std::endl;
 }
 }

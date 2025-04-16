@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(unreachable_pub, missing_docs, unused)]
+#![allow(unreachable_pub)]
 use std::collections::HashMap;
 use std::fs::File;
 use std::os::fd::FromRawFd;
@@ -24,6 +24,120 @@ use ipc::remote::RemoteStub;
 use ipc::IpcStatusCode;
 
 use crate::ability::{Ability, Handler};
+/// AbilityWrapper used for cxx
+
+#[cxx::bridge(namespace = "OHOS::SafwkRust")]
+mod ffi {
+
+    #[repr(i32)]
+    #[derive(Debug)]
+    pub enum OnDemandReasonId {
+        INTERFACE_CALL = 0,
+        DEVICE_ONLINE = 1,
+        SETTING_SWITCH = 2,
+        PARAM = 3,
+        COMMON_EVENT = 4,
+        TIMED_EVENT = 5,
+    }
+
+    #[derive(Debug)]
+    pub struct SystemAbilityOnDemandReason {
+        pub name: String,
+        pub value: String,
+        pub reason_id: OnDemandReasonId,
+        pub extra_data: OnDemandReasonExtraData,
+        pub extra_data_id: i64,
+    }
+
+    #[derive(Debug)]
+    pub struct OnDemandReasonExtraData {
+        pub data: String,
+        pub code: i32,
+        pub want: Vec<String>,
+    }
+
+    extern "Rust" {
+        type AbilityWrapper;
+        type AbilityStub;
+        fn on_remote_request(
+            self: &mut AbilityStub,
+            code: u32,
+            data: Pin<&mut MessageParcel>,
+            reply: Pin<&mut MessageParcel>,
+        ) -> i32;
+
+        fn dump(self: &mut AbilityStub, fd: i32, args: Vec<String>) -> i32;
+
+        fn OnDump(self: &AbilityWrapper);
+
+        unsafe fn OnStart(self: &AbilityWrapper, system_ability: *mut SystemAbilityWrapper);
+        unsafe fn OnStartWithReason(
+            self: &AbilityWrapper,
+            reason: SystemAbilityOnDemandReason,
+            system_ability: *mut SystemAbilityWrapper,
+        );
+        unsafe fn OnIdle(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason) -> i32;
+        fn OnActive(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason);
+        fn OnStop(self: &AbilityWrapper);
+        fn OnStopWithReason(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason);
+
+        fn OnAddSystemAbility(self: &AbilityWrapper, said: i32, device_id: String);
+        fn OnRemoveSystemAbility(self: &AbilityWrapper, said: i32, device_id: String);
+        fn OnDeviceLevelChanged(
+            self: &AbilityWrapper,
+            change_type: i32,
+            level: i32,
+            action: String,
+        );
+    }
+
+    // C++ types and signatures exposed to Rust.
+    unsafe extern "C++" {
+        include!("system_ability_wrapper.h");
+        include!("system_ability.h");
+        include!("system_ability_ondemand_reason.h");
+        #[namespace = "OHOS"]
+        type OnDemandReasonId;
+
+        #[namespace = "OHOS"]
+        type MessageParcel = ipc::cxx_share::MessageParcel;
+
+        type SystemAbilityWrapper;
+
+        fn BuildSystemAbility(
+            ability: Box<AbilityWrapper>,
+            system_ability_id: i32,
+            run_on_create: bool,
+        ) -> UniquePtr<SystemAbilityWrapper>;
+
+        unsafe fn RegisterAbility(system_ability: *mut SystemAbilityWrapper) -> bool;
+
+        fn AddSystemAbilityListener(
+            self: Pin<&mut SystemAbilityWrapper>,
+            mut system_ability_id: i32,
+        ) -> bool;
+
+        fn RemoveSystemAbilityListener(
+            self: Pin<&mut SystemAbilityWrapper>,
+            mut system_ability_id: i32,
+        ) -> bool;
+
+        fn StopAbilityWrapper(self: Pin<&mut SystemAbilityWrapper>, system_ability: i32);
+
+        fn CancelIdleWrapper(self: Pin<&mut SystemAbilityWrapper>) -> bool;
+
+        fn PublishWrapper(self: Pin<&mut SystemAbilityWrapper>, ability: Box<AbilityStub>) -> bool;
+
+        fn DeserializeOnDemandReasonExtraData(
+            data: Pin<&mut MessageParcel>,
+        ) -> OnDemandReasonExtraData;
+
+        fn SerializeOnDemandReasonExtraData(
+            extraData: &OnDemandReasonExtraData,
+            data: Pin<&mut MessageParcel>,
+        ) -> bool;
+    }
+}
 
 // `SystemAbility` trait is not used is because their methods are not recognized
 // by cxx.
@@ -51,7 +165,7 @@ impl AbilityWrapper {
         self.inner.on_start_with_reason(reason, handle);
     }
 
-    fn OnIdle(&self, reason: ffi::SystemAbilityOnDemandReason) -> i32 {
+    unsafe fn OnIdle(&self, reason: ffi::SystemAbilityOnDemandReason) -> i32 {
         self.inner.on_idle(reason)
     }
 
@@ -78,19 +192,6 @@ impl AbilityWrapper {
     fn OnDeviceLevelChanged(&self, change_type: i32, level: i32, action: String) {
         self.inner
             .on_device_level_changed(change_type, level, action)
-    }
-
-    fn OnExtension(
-        &self,
-        extension: String,
-        data: Pin<&mut MessageParcel>,
-        reply: Pin<&mut MessageParcel>,
-    ) -> i32 {
-        unsafe {
-            let mut data = MsgParcel::from_ptr(data.get_unchecked_mut() as *mut MessageParcel);
-            let mut reply = MsgParcel::from_ptr(reply.get_unchecked_mut() as *mut MessageParcel);
-            self.inner.on_extension(extension, &mut data, &mut reply)
-        }
     }
 }
 
@@ -204,181 +305,5 @@ impl OnDemandReasonExtraData {
             }
         }
         res
-    }
-}
-
-/// AbilityWrapper used for cxx
-#[cxx::bridge(namespace = "OHOS::SafwkRust")]
-mod ffi {
-    #[repr(i32)]
-    #[derive(Debug)]
-    pub enum OnDemandReasonId {
-        INTERFACE_CALL = 0,
-        DEVICE_ONLINE = 1,
-        SETTING_SWITCH = 2,
-        PARAM = 3,
-        COMMON_EVENT = 4,
-        TIMED_EVENT = 5,
-    }
-
-    #[derive(Debug)]
-    pub struct SystemAbilityOnDemandReason {
-        pub name: String,
-        pub value: String,
-        pub reason_id: OnDemandReasonId,
-        pub extra_data: OnDemandReasonExtraData,
-        pub extra_data_id: i64,
-    }
-
-    #[derive(Debug)]
-    pub struct OnDemandReasonExtraData {
-        pub data: String,
-        pub code: i32,
-        pub want: Vec<String>,
-    }
-
-    extern "Rust" {
-        type AbilityWrapper;
-        type AbilityStub;
-        fn on_remote_request(
-            self: &mut AbilityStub,
-            code: u32,
-            data: Pin<&mut MessageParcel>,
-            reply: Pin<&mut MessageParcel>,
-        ) -> i32;
-
-        fn dump(self: &mut AbilityStub, fd: i32, args: Vec<String>) -> i32;
-
-        fn OnDump(self: &AbilityWrapper);
-
-        unsafe fn OnStart(self: &AbilityWrapper, system_ability: *mut SystemAbilityWrapper);
-        unsafe fn OnStartWithReason(
-            self: &AbilityWrapper,
-            reason: SystemAbilityOnDemandReason,
-            system_ability: *mut SystemAbilityWrapper,
-        );
-        fn OnIdle(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason) -> i32;
-        fn OnActive(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason);
-        fn OnStop(self: &AbilityWrapper);
-        fn OnStopWithReason(self: &AbilityWrapper, reason: SystemAbilityOnDemandReason);
-
-        fn OnAddSystemAbility(self: &AbilityWrapper, said: i32, device_id: String);
-        fn OnRemoveSystemAbility(self: &AbilityWrapper, said: i32, device_id: String);
-        fn OnDeviceLevelChanged(
-            self: &AbilityWrapper,
-            change_type: i32,
-            level: i32,
-            action: String,
-        );
-        fn OnExtension(
-            self: &AbilityWrapper,
-            extension: String,
-            data: Pin<&mut MessageParcel>,
-            reply: Pin<&mut MessageParcel>,
-        ) -> i32;
-    }
-
-    // C++ types and signatures exposed to Rust.
-    unsafe extern "C++" {
-        include!("system_ability_wrapper.h");
-        include!("system_ability.h");
-        include!("system_ability_ondemand_reason.h");
-        #[namespace = "OHOS"]
-        type OnDemandReasonId;
-
-        #[namespace = "OHOS"]
-        type MessageParcel = ipc::cxx_share::MessageParcel;
-
-        type SystemAbilityWrapper;
-
-        fn BuildSystemAbility(
-            ability: Box<AbilityWrapper>,
-            system_ability_id: i32,
-            run_on_create: bool,
-        ) -> UniquePtr<SystemAbilityWrapper>;
-
-        unsafe fn RegisterAbility(system_ability: *mut SystemAbilityWrapper) -> bool;
-
-        fn AddSystemAbilityListener(
-            self: Pin<&mut SystemAbilityWrapper>,
-            mut system_ability_id: i32,
-        ) -> bool;
-
-        fn RemoveSystemAbilityListener(
-            self: Pin<&mut SystemAbilityWrapper>,
-            mut system_ability_id: i32,
-        ) -> bool;
-
-        fn CancelIdleWrapper(self: Pin<&mut SystemAbilityWrapper>) -> bool;
-
-        fn PublishWrapper(self: Pin<&mut SystemAbilityWrapper>, ability: Box<AbilityStub>) -> bool;
-
-        fn DeserializeOnDemandReasonExtraData(
-            data: Pin<&mut MessageParcel>,
-        ) -> OnDemandReasonExtraData;
-
-        fn SerializeOnDemandReasonExtraData(
-            extraData: &OnDemandReasonExtraData,
-            data: Pin<&mut MessageParcel>,
-        ) -> bool;
-
-        fn OnExtension(
-            self: Pin<&mut SystemAbilityWrapper>,
-            extension: &CxxString,
-            data: Pin<&mut MessageParcel>,
-            reply: Pin<&mut MessageParcel>,
-        ) -> i32;
-    }
-}
-
-#[cfg(test)]
-mod test {
-    use std::cell::RefCell;
-    use std::rc::Rc;
-
-    use cxx::let_cxx_string;
-
-    use super::*;
-    #[test]
-    fn on_extension_ut() {
-        const TEST_EXTENSION: &str = "test";
-        const TEST_RETURN: i32 = 0;
-
-        struct TestAbility {
-            inner: Rc<RefCell<String>>,
-        }
-        impl Ability for TestAbility {
-            fn on_extension(
-                &self,
-                extension: String,
-                data: &mut MsgParcel,
-                reply: &mut MsgParcel,
-            ) -> i32 {
-                self.inner.borrow_mut().push_str(&extension);
-                data.write(TEST_EXTENSION).unwrap();
-                reply.write(TEST_EXTENSION).unwrap();
-                TEST_RETURN
-            }
-        }
-
-        let extension = Rc::new(RefCell::new(String::new()));
-        let ability = TestAbility {
-            inner: extension.clone(),
-        };
-        let ability = Box::new(AbilityWrapper {
-            inner: Box::new(ability),
-        });
-        let mut sys = BuildSystemAbility(ability, 3706, true);
-        let mut data = MsgParcel::new();
-        let mut reply = MsgParcel::new();
-        let_cxx_string!(cxx_s = TEST_EXTENSION);
-        assert_eq!(
-            sys.pin_mut()
-                .OnExtension(&cxx_s, data.pin_mut().unwrap(), reply.pin_mut().unwrap(),),
-            TEST_RETURN
-        );
-        assert_eq!(*extension.borrow_mut(), TEST_EXTENSION);
-        assert_eq!(data.read::<String>().unwrap(), TEST_EXTENSION);
-        assert_eq!(reply.read::<String>().unwrap(), TEST_EXTENSION);
     }
 }

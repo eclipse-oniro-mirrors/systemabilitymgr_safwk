@@ -58,8 +58,6 @@ LocalAbilityManagerStub::LocalAbilityManagerStub()
         LocalAbilityManagerStub::LocalFfrtDumperProc;
     memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::SYSTEM_ABILITY_EXT_TRANSACTION)] =
         LocalAbilityManagerStub::LocalSystemAbilityExtProc;
-    memberFuncMap_[static_cast<uint32_t>(SafwkInterfaceCode::FFRT_STAT_CMD_TRANSACTION)] =
-        LocalAbilityManagerStub::LocalFfrtStatCmdProc;
 }
 
 bool LocalAbilityManagerStub::CheckPermission(uint32_t code)
@@ -253,29 +251,6 @@ int32_t LocalAbilityManagerStub::IpcStatCmdProcInner(MessageParcel& data, Messag
     }
     ::close(fd);
     HILOGD(TAG, "IpcStatCmdProc called %{public}s  ", result ? "success" : "failed");
-    return ERR_NONE;
-}
-
-int32_t LocalAbilityManagerStub::FfrtStatCmdProcInner(MessageParcel& data, MessageParcel& reply)
-{
-    int32_t fd = data.ReadFileDescriptor();
-    if (fd < 0) {
-        return ERR_NULL_OBJECT;
-    }
-    int cmd = -1;
-    bool ret = data.ReadInt32(cmd);
-    if (!ret) {
-        ::close(fd);
-        return ERR_NULL_OBJECT;
-    }
-    bool result = FfrtStatCmdProc(fd, cmd);
-    if (!reply.WriteBool(result)) {
-        HILOGW(TAG, "FfrtStatCmdProc Write result failed!");
-        ::close(fd);
-        return ERR_NULL_OBJECT;
-    }
-    ::close(fd);
-    HILOGD(TAG, "FfrtStatCmdProc called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
 

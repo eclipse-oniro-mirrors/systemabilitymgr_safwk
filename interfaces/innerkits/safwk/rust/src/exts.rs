@@ -11,43 +11,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! SystemAbility methods.
-
 use cxx::UniquePtr;
 
-use crate::wrapper::{RegisterAbility, SystemAbilityWrapper};
+use crate::ability::Ability;
+use crate::wrapper::{AbilityWrapper, BuildSystemAbility, RegisterAbility, SystemAbilityWrapper};
 
-/// SystemAbility to register.
 pub struct SystemAbility {
     inner: UniquePtr<SystemAbilityWrapper>,
 }
 
 impl SystemAbility {
-    pub(crate) fn new(c_wrapper: UniquePtr<SystemAbilityWrapper>) -> Self {
+    pub fn new(c_wrapper: UniquePtr<SystemAbilityWrapper>) -> Self {
         Self { inner: c_wrapper }
     }
 
-    /// register a system ability
-    ///
-    /// # Example
-    /// ```
-    /// #[used]
-    /// #[link_section = ".init_array"]
-    /// static A: extern "C" fn() = {
-    ///     #[link_section = ".text.startup"]
-    ///     extern "C" fn init() {
-    ///         let system_ability = RequestAbility::new()
-    ///             .build_system_ability(samgr::definition::DOWNLOAD_SERVICE_ID, false)
-    ///             .unwrap();
-    ///         system_ability.register();
-    ///     }
-    ///     init
-    /// };
-    /// ```
     pub fn register(self) {
         info!("SA registry");
         unsafe {
             RegisterAbility(self.inner.into_raw());
         }
+    }
+
+
+}
+
+pub fn build_system_ability<A: Ability + 'static>(
+    ability: A,
+    said: i32,
+    run_on_create: bool,
+) -> SystemAbility {
+    info!("build system ability");
+    let ability = Box::new(AbilityWrapper {
+        inner: Box::new(ability),
+    });
+
+    SystemAbility {
+        inner: BuildSystemAbility(ability, said, run_on_create),
     }
 }
