@@ -167,7 +167,7 @@ void LocalAbilityManagerDumper::FfrtStatisticsParser(std::string& result)
     uint64_t minTime = std::numeric_limits<uint64_t>::max();
     uint64_t sumTime = 0;
     uint64_t avgTime = 0;
-    int count = 0;
+    uint64_t count = 0;
     while ((char*)currentStat < lastStat && std::strcmp(currentStat->taskName, "") != 0) {
         if (currentStat->startTime > currentStat->endTime) {
             currentStat = (ffrt_stat*)((char*)currentStat + FFRT_STAT_SIZE);
