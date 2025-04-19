@@ -117,9 +117,7 @@ LocalAbilityManager::LocalAbilityManager()
 
 LocalAbilityManager::~LocalAbilityManager()
 {
-    if (idleTimer_ != nullptr) {
-        idleTimer_->Shutdown();
-    }
+    StopTimedQuery();
 }
 
 void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32_t saId)
@@ -160,7 +158,6 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
 
     StartTimedQuery();
     IPCSkeleton::JoinWorkThread();
-    StopTimedQuery();
     HILOGE(TAG, "JoinWorkThread stop, will exit");
 }
 
@@ -1156,7 +1153,7 @@ void LocalAbilityManager::IdentifyUnusedResident()
         uint64_t idleTime = currTime - lastRequestTime;
         uint64_t threshold = static_cast<uint64_t>(RESIDENT_SA_UNUSED_TIMEOUT);
         if (idleTime > threshold) {
-            static char reason[128] = {0};
+            char reason[128] = {0};
             errno_t res = snprintf_s(reason, sizeof(reason), sizeof(reason) - 1,
                 "saId:%d REASON:long time unused: %" PRIu64, saId, idleTime);
             if (res < 0) {
