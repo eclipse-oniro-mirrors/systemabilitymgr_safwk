@@ -130,7 +130,7 @@ void LocalAbilityManager::DoStartSAProcess(const std::string& profilePath, int32
     }
     {
         std::string traceTag = GetTraceTag(realProfilePath);
-        HITRACE_METER_NAME(HITRACE_TAG_SAMGR, traceTag);
+        HitraceScopedEx samgrHitrace(HITRACE_LEVEL_INFO, HITRACE_TAG_SAMGR, traceTag.c_str());
         bool ret = InitSystemAbilityProfiles(realProfilePath, saId);
         if (!ret) {
             ReportSaMainExit("InitSaProfiles no right profile");
