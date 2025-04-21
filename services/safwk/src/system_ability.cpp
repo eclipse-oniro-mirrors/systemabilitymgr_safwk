@@ -178,11 +178,12 @@ void SystemAbility::Start()
         LocalAbilityManager::GetInstance().JsonToOnDemandReason(startReason);
     GetOnDemandReasonExtraData(onDemandStartReason);
     LOGI("Start-SA:%{public}d", saId_);
-    HITRACE_METER_NAME(HITRACE_TAG_SAMGR, ToString(saId_) + "_OnStart");
     int64_t begin = GetTickCount();
-
-    OnStart(onDemandStartReason);
-
+    {
+        std::string onStartTag = ToString(saId_) + "_OnStart";
+        HitraceScopedEx samgrHitrace(HITRACE_LEVEL_INFO, HITRACE_TAG_SAMGR, onStartTag.c_str());
+        OnStart(onDemandStartReason);
+    }
     int64_t duration = GetTickCount() - begin;
     KHILOGI(TAG, "OnStart-SA:%{public}d finished, spend:%{public}" PRId64 " ms",
         saId_, duration);
