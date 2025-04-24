@@ -74,7 +74,6 @@ public:
     SystemAbilityOnDemandReason JsonToOnDemandReason(const nlohmann::json& reasonJson);
     bool SendStrategyToSA(int32_t type, int32_t systemAbilityId, int32_t level, std::string& action) override;
     bool IpcStatCmdProc(int32_t fd, int32_t cmd) override;
-    bool FfrtStatCmdProc(int32_t fd, int32_t cmd) override;
     bool FfrtDumperProc(std::string& result) override;
     int32_t SystemAbilityExtProc(const std::string& extension, int32_t said,
         SystemAbilityExtensionPara* callback, bool isAsync = false) override;

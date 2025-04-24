@@ -11,6 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/// hilog label.
+
 #[allow(unused)]
 macro_rules! debug {
     ($($args:tt)*) => {{

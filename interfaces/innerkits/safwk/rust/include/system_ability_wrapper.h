@@ -41,6 +41,7 @@ public:
     bool CancelIdleWrapper();
     bool PublishWrapper(rust::Box<AbilityStub> ability);
 
+protected:
     std::string GetClassName() override;
 
     void OnDump() override;
@@ -63,16 +64,16 @@ public:
 
     void OnDeviceLevelChanged(int32_t type, int32_t level, std::string &action) override;
 
-    int32_t OnExtension(const std::string &extension, MessageParcel &data, MessageParcel &reply) override;
-
 private:
     AbilityWrapper *ability_;
 };
 
 OnDemandReasonExtraData DeserializeOnDemandReasonExtraData(MessageParcel &data);
-
 bool SerializeOnDemandReasonExtraData(const OnDemandReasonExtraData &extraData, MessageParcel &data);
 
+void StopAbility(int32_t systemAbilityId);
+bool CancelIdle(SystemAbilityWrapper *systemAbilityWrapper);
+bool StubPublish(SystemAbilityWrapper *systemAbilityWrapper, rust::Box<AbilityStub> ability);
 bool RegisterAbility(SystemAbilityWrapper *system_ability);
 
 SystemAbilityOnDemandReason BuildReasonWrapper(const OHOS::SystemAbilityOnDemandReason &reason);
