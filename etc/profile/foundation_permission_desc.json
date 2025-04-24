@@ -348,6 +348,11 @@
             "name" : "mkdir keep_alive_service",
             "said" : "180",
             "description" : "Create auto_start_up_service directory for keep_alive_service to save data file at /data/service/el1/public/database/keep_alive_service"
+        },
+        {
+            "name" : "mkdir insight_intent",
+            "said" : "180",
+            "description" : "Create insight_intent directory for insight_intent to save data file at /data/service/el1/public/database/insight_intent"
         }
     ],
     "bootevents" : [
