@@ -254,6 +254,7 @@ private:
     const std::u16string& GetCapability() const;
     void SetPermission(const std::u16string& defPerm);
     void GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason);
+    sptr<IRemoteObject> GetAbilityRemoteObject();
 
     friend class LocalAbilityManager;
     friend class ::CSystemAbilityInnerService;

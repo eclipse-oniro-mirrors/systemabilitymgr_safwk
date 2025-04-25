@@ -150,9 +150,8 @@ void FuzzGetSaLastRequestTime()
 {
     SaMockPermission::MockPermission();
     int32_t systemAbilityId = GetData<int32_t>();
-    sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     uint64_t lastRequestTime = 0;
-    LocalAbilityManager::GetInstance().GetSaLastRequestTime(samgrProxy, systemAbilityId, lastRequestTime);
+    LocalAbilityManager::GetInstance().GetSaLastRequestTime(systemAbilityId, lastRequestTime);
 }
 
 void FuzzLocalAbilityManager(const uint8_t* rawData, size_t size)
