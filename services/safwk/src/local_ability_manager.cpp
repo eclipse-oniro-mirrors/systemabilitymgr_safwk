@@ -63,7 +63,7 @@ constexpr int32_t RESIDENT_SA_UNUSED_TIMEOUT = 1000 * 60 * 60;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 constexpr int32_t TIME_S_TO_MS = 1000;
-constexpr int32_t MAX_DEPEND_TIMEOUT = 65;
+constexpr int32_t MAX_STARTSA_TIMEOUT = 65;
 constexpr int32_t MAX_CHECK_TIMEOUT = 10;
 
 constexpr int32_t MAX_SA_STARTUP_TIME = 100;
@@ -708,23 +708,20 @@ void LocalAbilityManager::StartDependSaTask(SystemAbility* ability)
     size_t lastSize = CheckDependencyStatus(ability->GetDependSa()).size();
     HILOGI(TAG, "SA:%{public}d's depend timeout:%{public}" PRId64 " ms,depend size:%{public}zu",
         ability->GetSystemAbilitId(), dependTimeout, lastSize);
-    {
-        SamgrXCollie samgrXCollie("DependSaTimeout_" + ToString(ability->GetSystemAbilitId()), MAX_DEPEND_TIMEOUT);
-        while (lastSize > 0) {
-            int64_t end = GetTickCount();
-            int64_t duration = ((end >= start) ? (end - start) : (INT64_MAX - end + start));
-            if (duration < dependTimeout) {
-                usleep(CHECK_DEPENDENT_SA_PERIOD);
-            } else {
-                break;
-            }
-            vector<int32_t> temp = CheckDependencyStatus(ability->GetDependSa());
-            size_t curSize = temp.size();
-            if (curSize != lastSize) {
-                HILOGI(TAG, "SA:%{public}d's depend left:%{public}zu", ability->GetSystemAbilitId(), curSize);
-            }
-            lastSize = curSize;
+    while (lastSize > 0) {
+        int64_t end = GetTickCount();
+        int64_t duration = ((end >= start) ? (end - start) : (INT64_MAX - end + start));
+        if (duration < dependTimeout) {
+            usleep(CHECK_DEPENDENT_SA_PERIOD);
+        } else {
+            break;
         }
+        vector<int32_t> temp = CheckDependencyStatus(ability->GetDependSa());
+        size_t curSize = temp.size();
+        if (curSize != lastSize) {
+            HILOGI(TAG, "SA:%{public}d's depend left:%{public}zu", ability->GetSystemAbilitId(), curSize);
+        }
+        lastSize = curSize;
     }
     vector<int32_t> unpreparedDeps = CheckDependencyStatus(ability->GetDependSa());
     if (unpreparedDeps.empty()) {
@@ -741,6 +738,7 @@ void LocalAbilityManager::StartDependSaTask(SystemAbility* ability)
 void LocalAbilityManager::StartSystemAbilityTask(SystemAbility* ability)
 {
     if (ability != nullptr) {
+        SamgrXCollie samgrXCollie("StartSaTimeout_" + ToString(ability->GetSystemAbilitId()), MAX_STARTSA_TIMEOUT);
         HILOGD(TAG, "StartSystemAbility is called for SA:%{public}d", ability->GetSystemAbilitId());
         if (ability->GetDependSa().empty()) {
             ability->Start();
