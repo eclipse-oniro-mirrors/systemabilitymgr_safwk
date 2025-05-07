@@ -19,9 +19,12 @@
             <option name="push" value="profile/test_trust_not_all_allow.json -> /data/test/resource/safwk/profile/" src="res"/>
             <option name="push" value="profile/test_trust_all_allow.json -> /data/test/resource/safwk/profile/" src="res"/>
             <option name="push" value="profile/profile_audio.json -> /system/usr/" src="res"/>
-            <option name="push" value="systemabilitymgr/safwk/libtest_audio_ability.z.so -> /data/test/" src="out"/>
+            <option name="push" value="systemabilitymgr/safwk/libtest_audio_ability.z.so -> /system/lib/" src="out"/>
             <option name="push" value="systemabilitymgr/safwk/libtest_ondemand_ability.z.so -> /data/test/" src="out"/>
         </preparer>
+        <cleaner>
+            <option name="shell" value="rm -rf /system/lib/libtest_audio_ability.z.so"/>
+        </cleaner>
     </target>
     <target name="SystemAbilityTest">
         <preparer>
