@@ -86,6 +86,7 @@ HWTEST_F(LocalAbilityManagerTest, StartTimedQuery001, TestSize.Level1)
     EXPECT_TRUE(ret);
     LocalAbilityManager::GetInstance().StopTimedQuery();
     saMap.clear();
+    delete sysAby;
     DTEST_LOG << "StartTimedQuery001 end" << std::endl;
 }
 
@@ -109,6 +110,7 @@ HWTEST_F(LocalAbilityManagerTest, StartTimedQuery002, TestSize.Level1)
     LocalAbilityManager::GetInstance().StopTimedQuery();
     unusedCfgMap.clear();
     saMap.clear();
+    delete sysAby;
     DTEST_LOG << "StartTimedQuery002 end" << std::endl;
 }
 
@@ -128,6 +130,7 @@ HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedResident001, TestSize.Level1)
     LocalAbilityManager::GetInstance().IdentifyUnusedResident();
     EXPECT_FALSE(ret);
     saMap.clear();
+    delete sysAby;
     DTEST_LOG << "IdentifyUnusedResident001 end" << std::endl;
 }
 
@@ -149,6 +152,7 @@ HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedResident002, TestSize.Level1)
     LocalAbilityManager::GetInstance().IdentifyUnusedResident();
     EXPECT_TRUE(ret);
     saMap.clear();
+    delete sysAby;
     DTEST_LOG << "IdentifyUnusedResident002 end" << std::endl;
 }
 
@@ -172,6 +176,7 @@ HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedOndemand001, TestSize.Level1)
     EXPECT_FALSE(ret);
     unusedCfgMap.clear();
     saMap.clear();
+    delete sysAby;
     DTEST_LOG << "IdentifyUnusedOndemand001 end" << std::endl;
 }
 
@@ -197,6 +202,7 @@ HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedOndemand002, TestSize.Level1)
     EXPECT_TRUE(ret);
     unusedCfgMap.clear();
     saMap.clear();
+    delete sysAby;
     DTEST_LOG << "IdentifyUnusedOndemand002 end" << std::endl;
 }
 
