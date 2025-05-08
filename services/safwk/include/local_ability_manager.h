@@ -79,6 +79,7 @@ public:
     int32_t SystemAbilityExtProc(const std::string& extension, int32_t said,
         SystemAbilityExtensionPara* callback, bool isAsync = false) override;
     int32_t ServiceControlCmd(int32_t fd, int32_t systemAbilityId, const std::vector<std::u16string>& args) override;
+    void IdentifyUnusedResident();
 
 private:
     LocalAbilityManager();
@@ -115,11 +116,13 @@ private:
     bool IsConfigUnused();
     void InitUnusedCfg();
     void StartTimedQuery();
-    void IdentifyUnusedResident();
+    void StopTimedQuery();
     void IdentifyUnusedOndemand();
     bool NoNeedCheckUnused(int32_t saId);
     void LimitUnusedTimeout(int32_t saId, int32_t timeout);
-    bool GetSaLastRequestTime(const sptr<ISystemAbilityManager>& samgr, int32_t saId, uint64_t& lastRequestTime);
+    bool GetSaLastRequestTime(int32_t saId, uint64_t& lastRequestTime);
+    void StartResidentTimer();
+    void StartOnDemandTimer();
 
     std::map<int32_t, SystemAbility*> localAbilityMap_;
     std::map<uint32_t, std::list<SystemAbility*>> abilityPhaseMap_;
@@ -150,6 +153,8 @@ private:
     // longtime-unusedtimeout map
     std::shared_mutex unusedCfgMapLock_;
     std::map<int32_t, int32_t> unusedCfgMap_;
+    uint32_t ondemandTimer_;
+    timer_t residentTimer_;
 };
 }
 #endif
