@@ -80,6 +80,7 @@ ohos_unittest("LocalAbilityManagerTest") {
   include_dirs = [
     "//foundation/systemabilitymgr/safwk/services/safwk/include",
     "//foundation/systemabilitymgr/samgr/services/lsamgr/include",
+    "//foundation/systemabilitymgr/safwk/test/mock/common/audio_ability/include",
     "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
   ]
 

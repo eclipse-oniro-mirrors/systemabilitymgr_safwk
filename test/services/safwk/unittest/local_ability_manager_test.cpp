@@ -23,6 +23,7 @@
 #define private public
 #include "local_ability_manager.h"
 #include "mock_sa_realize.h"
+#include "test_audio_ability.h"
 #undef private
 using namespace testing;
 using namespace testing::ext;
@@ -67,6 +68,158 @@ void LocalAbilityManagerTest::SetUp()
 void LocalAbilityManagerTest::TearDown()
 {
     DTEST_LOG << "TearDown" << std::endl;
+}
+
+/**
+ * @tc.name: StartTimedQuery001
+ * @tc.desc: StartTimedQuery RunOnCreate is true
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, StartTimedQuery001, TestSize.Level1)
+{
+    DTEST_LOG << "StartTimedQuery001 start" << std::endl;
+    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, true);
+    saMap.emplace(MUT_SAID, sysAby);
+    auto ret = LocalAbilityManager::GetInstance().IsResident();
+    LocalAbilityManager::GetInstance().StartTimedQuery();
+    EXPECT_TRUE(ret);
+    LocalAbilityManager::GetInstance().StopTimedQuery();
+    saMap.clear();
+    delete sysAby;
+    DTEST_LOG << "StartTimedQuery001 end" << std::endl;
+}
+
+/**
+ * @tc.name: StartTimedQuery002
+ * @tc.desc: StartTimedQuery RunOnCreate is false
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, StartTimedQuery002, TestSize.Level1)
+{
+    DTEST_LOG << "StartTimedQuery002 start" << std::endl;
+    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    saMap.emplace(MUT_SAID, sysAby);
+    auto& unusedCfgMap = LocalAbilityManager::GetInstance().unusedCfgMap_;
+    int32_t timeout = 1;
+    unusedCfgMap.emplace(MUT_SAID, timeout);
+    auto ret = LocalAbilityManager::GetInstance().IsResident();
+    LocalAbilityManager::GetInstance().StartTimedQuery();
+    EXPECT_FALSE(ret);
+    LocalAbilityManager::GetInstance().StopTimedQuery();
+    unusedCfgMap.clear();
+    saMap.clear();
+    delete sysAby;
+    DTEST_LOG << "StartTimedQuery002 end" << std::endl;
+}
+
+/**
+ * @tc.name: IdentifyUnusedResident001
+ * @tc.desc: IdentifyUnusedResident GetSaLastRequestTime return false
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedResident001, TestSize.Level1)
+{
+    DTEST_LOG << "IdentifyUnusedResident001 start" << std::endl;
+    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    saMap.emplace(MUT_SAID, sysAby);
+    uint64_t lastRequestTime = 0;
+    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
+    LocalAbilityManager::GetInstance().IdentifyUnusedResident();
+    EXPECT_FALSE(ret);
+    saMap.clear();
+    delete sysAby;
+    DTEST_LOG << "IdentifyUnusedResident001 end" << std::endl;
+}
+
+/**
+ * @tc.name: IdentifyUnusedResident002
+ * @tc.desc: IdentifyUnusedResident GetSaLastRequestTime return true
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedResident002, TestSize.Level1)
+{
+    DTEST_LOG << "IdentifyUnusedResident002 start" << std::endl;
+    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    saMap.emplace(MUT_SAID, sysAby);
+    sysAby->publishObj_ = sptr<IRemoteObject>(new TestAudioAbility(MUT_SAID, false));
+    uint64_t lastRequestTime = 0;
+    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
+    usleep(1500000);
+    LocalAbilityManager::GetInstance().IdentifyUnusedResident();
+    EXPECT_TRUE(ret);
+    saMap.clear();
+    delete sysAby;
+    DTEST_LOG << "IdentifyUnusedResident002 end" << std::endl;
+}
+
+/**
+ * @tc.name: IdentifyUnusedOndemand001
+ * @tc.desc: IdentifyUnusedOndemand GetSaLastRequestTime return false
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedOndemand001, TestSize.Level1)
+{
+    DTEST_LOG << "IdentifyUnusedOndemand001 start" << std::endl;
+    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    saMap.emplace(MUT_SAID, sysAby);
+    auto& unusedCfgMap = LocalAbilityManager::GetInstance().unusedCfgMap_;
+    int32_t timeout = 1;
+    unusedCfgMap.emplace(MUT_SAID, timeout);
+    uint64_t lastRequestTime = 0;
+    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
+    LocalAbilityManager::GetInstance().IdentifyUnusedOndemand();
+    EXPECT_FALSE(ret);
+    unusedCfgMap.clear();
+    saMap.clear();
+    delete sysAby;
+    DTEST_LOG << "IdentifyUnusedOndemand001 end" << std::endl;
+}
+
+/**
+ * @tc.name: IdentifyUnusedOndemand002
+ * @tc.desc: IdentifyUnusedOndemand GetSaLastRequestTime return true
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedOndemand002, TestSize.Level1)
+{
+    DTEST_LOG << "IdentifyUnusedOndemand002 start" << std::endl;
+    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
+    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
+    saMap.emplace(MUT_SAID, sysAby);
+    sysAby->publishObj_ = sptr<IRemoteObject>(new TestAudioAbility(MUT_SAID, false));
+    auto& unusedCfgMap = LocalAbilityManager::GetInstance().unusedCfgMap_;
+    int32_t timeout = 1;
+    unusedCfgMap.emplace(MUT_SAID, timeout);
+    uint64_t lastRequestTime = 0;
+    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
+    usleep(1500000);
+    LocalAbilityManager::GetInstance().IdentifyUnusedOndemand();
+    EXPECT_TRUE(ret);
+    unusedCfgMap.clear();
+    saMap.clear();
+    delete sysAby;
+    DTEST_LOG << "IdentifyUnusedOndemand002 end" << std::endl;
+}
+
+/**
+ * @tc.name: GetSaLastRequestTime001
+ * @tc.desc: GetSaLastRequestTime RunOnCreate is false
+ * @tc.type: FUNC
+ */
+HWTEST_F(LocalAbilityManagerTest, GetSaLastRequestTime001, TestSize.Level1)
+{
+    DTEST_LOG << "GetSaLastRequestTime001 start" << std::endl;
+    uint64_t lastRequestTime = 0;
+    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
+    auto ability = LocalAbilityManager::GetInstance().GetAbility(MUT_SAID);
+    EXPECT_FALSE(ret);
+    EXPECT_EQ(ability, nullptr);
+    DTEST_LOG << "GetSaLastRequestTime001 end" << std::endl;
 }
 
 /**
