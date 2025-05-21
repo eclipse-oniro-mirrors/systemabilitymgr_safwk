@@ -111,6 +111,12 @@ void SystemAbilityWrapper::OnDeviceLevelChanged(int32_t type, int32_t level, std
     ability_->OnDeviceLevelChanged(type, level, action);
 }
 
+inline int32_t SystemAbilityWrapper::OnExtension(
+    const std::string &extension, MessageParcel &data, MessageParcel &reply)
+{
+    return ability_->OnExtension(rust::string(extension), data, reply);
+}
+
 bool RegisterAbility(SystemAbilityWrapper *system_ability)
 {
     return SystemAbility::MakeAndRegisterAbility(static_cast<SystemAbility *>(system_ability));

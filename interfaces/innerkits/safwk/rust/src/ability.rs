@@ -15,6 +15,7 @@
 
 use std::pin::Pin;
 
+use ipc::parcel::MsgParcel;
 use ipc::remote::RemoteStub;
 
 use crate::exts::SystemAbility;
@@ -51,6 +52,10 @@ pub trait Ability {
 
     fn on_device_level_changed(&self, change_type: i32, level: i32, action: String) {}
 
+    fn on_extension(&self, extension: String, data: &mut MsgParcel, reply: &mut MsgParcel) -> i32 {
+        0
+    }
+    
     fn build_system_ability(self, said: i32, run_on_create: bool) -> Option<SystemAbility>
     where
         Self: Sized + 'static,
