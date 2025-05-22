@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(unreachable_pub)]
+#![allow(unreachable_pub, missing_docs, unused)]
 use std::collections::HashMap;
 use std::fs::File;
 use std::os::fd::FromRawFd;
@@ -89,6 +89,12 @@ mod ffi {
             level: i32,
             action: String,
         );
+        fn OnExtension(
+            self: &AbilityWrapper,
+            extension: String,
+            data: Pin<&mut MessageParcel>,
+            reply: Pin<&mut MessageParcel>,
+        ) -> i32;
     }
 
     // C++ types and signatures exposed to Rust.
@@ -122,8 +128,6 @@ mod ffi {
             mut system_ability_id: i32,
         ) -> bool;
 
-        fn StopAbilityWrapper(self: Pin<&mut SystemAbilityWrapper>, system_ability: i32);
-
         fn CancelIdleWrapper(self: Pin<&mut SystemAbilityWrapper>) -> bool;
 
         fn PublishWrapper(self: Pin<&mut SystemAbilityWrapper>, ability: Box<AbilityStub>) -> bool;
@@ -136,6 +140,13 @@ mod ffi {
             extraData: &OnDemandReasonExtraData,
             data: Pin<&mut MessageParcel>,
         ) -> bool;
+
+        fn OnExtension(
+            self: Pin<&mut SystemAbilityWrapper>,
+            extension: &CxxString,
+            data: Pin<&mut MessageParcel>,
+            reply: Pin<&mut MessageParcel>,
+        ) -> i32;
     }
 }
 
@@ -192,6 +203,19 @@ impl AbilityWrapper {
     fn OnDeviceLevelChanged(&self, change_type: i32, level: i32, action: String) {
         self.inner
             .on_device_level_changed(change_type, level, action)
+    }
+
+    fn OnExtension(
+        &self,
+        extension: String,
+        data: Pin<&mut MessageParcel>,
+        reply: Pin<&mut MessageParcel>,
+    ) -> i32 {
+        unsafe {
+            let mut data = MsgParcel::from_ptr(data.get_unchecked_mut() as *mut MessageParcel);
+            let mut reply = MsgParcel::from_ptr(reply.get_unchecked_mut() as *mut MessageParcel);
+            self.inner.on_extension(extension, &mut data, &mut reply)
+        }
     }
 }
 
@@ -305,5 +329,57 @@ impl OnDemandReasonExtraData {
             }
         }
         res
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    use cxx::let_cxx_string;
+
+    use super::*;
+    #[test]
+    fn on_extension_ut() {
+        const TEST_EXTENSION: &str = "test";
+        const TEST_RETURN: i32 = 0;
+
+        struct TestAbility {
+            inner: Rc<RefCell<String>>,
+        }
+        impl Ability for TestAbility {
+            fn on_extension(
+                &self,
+                extension: String,
+                data: &mut MsgParcel,
+                reply: &mut MsgParcel,
+            ) -> i32 {
+                self.inner.borrow_mut().push_str(&extension);
+                data.write(TEST_EXTENSION).unwrap();
+                reply.write(TEST_EXTENSION).unwrap();
+                TEST_RETURN
+            }
+        }
+
+        let extension = Rc::new(RefCell::new(String::new()));
+        let ability = TestAbility {
+            inner: extension.clone(),
+        };
+        let ability = Box::new(AbilityWrapper {
+            inner: Box::new(ability),
+        });
+        let mut sys = BuildSystemAbility(ability, 3706, true);
+        let mut data = MsgParcel::new();
+        let mut reply = MsgParcel::new();
+        let_cxx_string!(cxx_s = TEST_EXTENSION);
+        assert_eq!(
+            sys.pin_mut()
+                .OnExtension(&cxx_s, data.pin_mut().unwrap(), reply.pin_mut().unwrap(),),
+            TEST_RETURN
+        );
+        assert_eq!(*extension.borrow_mut(), TEST_EXTENSION);
+        assert_eq!(data.read::<String>().unwrap(), TEST_EXTENSION);
+        assert_eq!(reply.read::<String>().unwrap(), TEST_EXTENSION);
     }
 }
