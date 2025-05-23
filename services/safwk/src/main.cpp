@@ -55,6 +55,7 @@ constexpr int DEFAULT_SAID = -1;
 constexpr int DEFAULT_LOAD = 1;
 constexpr int ONDEMAND_LOAD = 2;
 constexpr int ARGC_LIMIT = 2;
+constexpr int ARGC_MAX_COUNT = 64;
 constexpr int PARTEVENT_NUM = 5;
 constexpr int MAX_LENGTH = 2000;
 constexpr int MALLOPT_CONFIG_LEN = 2;
@@ -184,10 +185,6 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
     std::vector<std::string> malloptStrList;
 #endif
-    if (argc < ARGC_LIMIT) {
-        HILOGE(TAG, "argc is too small");
-        return;
-    }
     for (int i = 0; i < argc - 1; ++i) {
         if (strcmp(PARAM_PREFIX_M, argv[i]) == 0) {
 #ifdef CONFIG_USE_JEMALLOC_DFX_INTF
@@ -218,6 +215,14 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
 
 int main(int argc, char *argv[])
 {
+    if (argc < ARGC_LIMIT) {
+        HILOGE(TAG, "argc is too small");
+        return;
+    }
+    if (argc > ARGC_MAX_COUNT) {
+        HILOGE(TAG, "argc is too big");
+        return;
+    }
     HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
     int ondemandLoad = ONDEMAND_LOAD;
     int eventIndex = EVENT_INDEX;

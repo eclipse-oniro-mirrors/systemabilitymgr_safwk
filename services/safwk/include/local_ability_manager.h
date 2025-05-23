@@ -153,8 +153,8 @@ private:
     // longtime-unusedtimeout map
     std::shared_mutex unusedCfgMapLock_;
     std::map<int32_t, int32_t> unusedCfgMap_;
-    uint32_t ondemandTimer_;
-    timer_t residentTimer_;
+    uint32_t ondemandTimer_ = 0;
+    timer_t residentTimer_ = nullptr;
 };
 }
 #endif
