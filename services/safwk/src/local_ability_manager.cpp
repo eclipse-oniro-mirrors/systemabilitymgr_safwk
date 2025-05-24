@@ -77,7 +77,6 @@ constexpr int NORMAL_PRIO = 0;
 #endif
 
 constexpr const char* PROFILES_DIR = "/system/profile/";
-constexpr const char* DEFAULT_DIR = "/system/usr/";
 constexpr const char* PREFIX = PROFILES_DIR;
 constexpr const char* SUFFIX = "_trust.json";
 
@@ -187,12 +186,7 @@ bool LocalAbilityManager::CheckAndGetProfilePath(const std::string& profilePath,
         HILOGE(TAG, "file path does not exist!");
         return false;
     }
-    // realProfilePath must begin with "/system/profile/" or begin with "/system/usr/"
     realProfilePath = realPath;
-    if (realProfilePath.find(PROFILES_DIR) != 0 && realProfilePath.find(DEFAULT_DIR) != 0) {
-        HILOGE(TAG, "file path is not matched");
-        return false;
-    }
     return true;
 }
 

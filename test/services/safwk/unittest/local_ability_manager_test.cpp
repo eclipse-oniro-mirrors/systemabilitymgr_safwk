@@ -386,21 +386,6 @@ HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath001, TestSize.Level3)
 }
 
 /**
- * @tc.name: CheckAndGetProfilePath002
- * @tc.desc:  CheckAndGetProfilePath, Doc dir is not matched!
- * @tc.type: FUNC
- */
-HWTEST_F(LocalAbilityManagerTest, CheckAndGetProfilePath002, TestSize.Level1)
-{
-    DTEST_LOG << "CheckAndGetProfilePath002 start" << std::endl;
-    string profilePath = TEST_RESOURCE_PATH + "test_trust_all_allow.json";
-    string realProfilePath = "";
-    bool res = LocalAbilityManager::GetInstance().CheckAndGetProfilePath(profilePath, realProfilePath);
-    EXPECT_FALSE(res);
-    DTEST_LOG << "CheckAndGetProfilePath002 end" << std::endl;
-}
-
-/**
  * @tc.name: CheckAndGetProfilePath003
  * @tc.desc: test CheckAndGetProfilePath, with invalid profilepath length
  * @tc.type: FUNC
