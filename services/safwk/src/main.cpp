@@ -215,13 +215,9 @@ static void InitMallopt(int argc, char *argv[], int& ondemandLoad, int& eventInd
 
 int main(int argc, char *argv[])
 {
-    if (argc < ARGC_LIMIT) {
-        HILOGE(TAG, "argc is too small");
-        return 0;
-    }
-    if (argc > ARGC_MAX_COUNT) {
-        HILOGE(TAG, "argc is too big");
-        return 0;
+    if (argc < ARGC_LIMIT || argc > ARGC_MAX_COUNT) {
+        HILOGE(TAG, "argc : %{public}s is invalid"， argc);
+        return -1;
     }
     HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
     int ondemandLoad = ONDEMAND_LOAD;
