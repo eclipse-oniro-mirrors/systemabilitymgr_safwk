@@ -1206,7 +1206,7 @@ void LocalAbilityManager::StartResidentTimer()
     }
 
     if (sa.sa_handler != SIG_DFL) {
-        HILOGE(TAG, "sig %d has been used", IDLE_SA_REPORT_SIGNUM);
+        HILOGE(TAG, "sig %{public}d has been used", IDLE_SA_REPORT_SIGNUM);
         return;
     }
 
@@ -1247,7 +1247,7 @@ void LocalAbilityManager::StartOnDemandTimer()
         timerCallback = std::bind(&LocalAbilityManager::IdentifyUnusedOndemand, this);
         idleTimer_ = std::make_unique<Utils::Timer>("OS_IdleSaReport", -1);
         idleTimer_->Setup();
-        uint32_t ondemandTimer_ = idleTimer_->Register(timerCallback, timerInterval);
+        ondemandTimer_ = idleTimer_->Register(timerCallback, timerInterval);
         HILOGI(TAG, "StartIdleTimer timerId:%{public}u, interval:%{public}d", ondemandTimer_, timerInterval);
     }
 }
