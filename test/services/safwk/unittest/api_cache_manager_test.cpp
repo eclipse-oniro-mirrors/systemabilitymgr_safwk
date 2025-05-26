@@ -107,6 +107,35 @@ HWTEST_F(CacheManagerTest, AddAndDeleteCacheAPI001, TestSize.Level0)
 }
 
 /**
+ * @tc.name: PostSendRequest001
+ * @tc.desc: test writeRemoteObject
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CacheManagerTest, PostSendRequest001, TestSize.Level2)
+{
+    DTEST_LOG << "PostSendRequest001 start" << std::endl;
+    bool ret;
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_3S);
+
+    MessageParcel data1;
+    MessageParcel reply1;
+    sptr<IPCObjectProxy> obj = sptr<IPCObjectProxy>(new (std::nothrow) IPCObjectProxy(0));
+    EXPECT_TRUE(obj != nullptr);
+    reply1.WriteRemoteObject(obj);
+    ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data1, reply1);
+    EXPECT_EQ(ret, false);
+
+    MessageParcel data2;
+    MessageParcel reply2;
+    data2.WriteRemoteObject(obj);
+    ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data2, reply2);
+    EXPECT_EQ(ret, false);
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
+    DTEST_LOG << "PostSendRequest001 end" << std::endl;
+}
+
+/**
  * @tc.name: PreSendRequest001
  * @tc.desc: test AddCacheApi and DelCacheApi
  * @tc.type: FUNC
@@ -169,6 +198,74 @@ HWTEST_F(CacheManagerTest, PreSendRequest001, TestSize.Level2)
     EXPECT_EQ(ret, false);
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
     DTEST_LOG << "PreSendRequest001 end" << std::endl;
+}
+
+/**
+ * @tc.name: PreSendRequest002
+ * @tc.desc: test SetMaxCapacity
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CacheManagerTest, PreSendRequest002, TestSize.Level2)
+{
+    DTEST_LOG << "PreSendRequest002 start" << std::endl;
+    bool ret = true;
+    ApiCacheManager::GetInstance().AddCacheApi(g_descriptor1, CACHE_API_CODE_100, EXPIRE_TIME_3S);
+    
+    MessageParcel data1;
+    MessageParcel reply1;
+    data1.WriteString16(CACHE_KEY_STR_1);
+    std::vector<std::u16string> keyU16StringVector = {
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
+        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val"
+    };
+    int i = 0;
+    int count = 100;
+    reply1.SetMaxCapacity(reply1.GetMaxCapacity() + keyU16StringVector.size());
+    for (; i < count && ret; ++i) {
+        ret = reply1.WriteString16Vector(keyU16StringVector);
+    }
+    --i;
+    ret = ApiCacheManager::GetInstance().PostSendRequest(g_descriptor1, CACHE_API_CODE_100, data1, reply1);
+    EXPECT_EQ(ret, true);
+
+    MessageParcel data2;
+    MessageParcel reply2;
+    data2.WriteString16(CACHE_KEY_STR_1);
+    ret = ApiCacheManager::GetInstance().PreSendRequest(g_descriptor1, CACHE_API_CODE_100, data2, reply2);
+    EXPECT_EQ(ret, true);
+
+    for (; i > 0 && ret; --i) {
+        std::vector<std::u16string> retU16StringVector;
+        ret = reply2.ReadString16Vector(&retU16StringVector);
+        EXPECT_EQ(keyU16StringVector, retU16StringVector);
+    }
+    EXPECT_EQ(i, 0);
+
+    ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
+    DTEST_LOG << "PreSendRequest002 end" << std::endl;
 }
 
 void LRUTest001AddCache1()

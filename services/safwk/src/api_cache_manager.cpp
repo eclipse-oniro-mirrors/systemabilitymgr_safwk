@@ -124,7 +124,15 @@ bool ApiCacheManager::PreSendRequest(const std::u16string& descriptor, uint32_t 
         return false;
     }
 
-    reply.WriteBuffer(reinterpret_cast<void *>(&(*valueVec)[0]), valueVec->size());
+    auto size = reply.GetDataSize() + valueVec->size();
+    if (size > reply.GetMaxCapacity()) {
+        reply.SetMaxCapacity(size);
+    }
+    auto ret = reply.WriteBuffer(reinterpret_cast<void *>(&(*valueVec)[0]), valueVec->size());
+    if (!ret) {
+        HILOGE(TAG, "Cache WriteBuffer failure");
+        return false;
+    }
     HILOGD(TAG, "Cache hit success");
     return true;
 }
@@ -132,6 +140,10 @@ bool ApiCacheManager::PreSendRequest(const std::u16string& descriptor, uint32_t 
 bool ApiCacheManager::PostSendRequest(const std::u16string& descriptor, uint32_t apiCode, const MessageParcel& data,
     MessageParcel& reply)
 {
+    if (data.GetOffsetsSize() != 0 || reply.GetOffsetsSize() != 0) {
+        HILOGE(TAG, "not support IRemoteObject");
+        return false;
+    }
     uint8_t *key = reinterpret_cast<uint8_t *>(data.GetData());
     size_t keySize = data.GetDataSize();
     std::vector<uint8_t> keyVec(key, key + keySize);
