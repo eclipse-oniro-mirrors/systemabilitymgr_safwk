@@ -68,7 +68,6 @@ ohos_shared_library("system_ability_fwk") {
     ":system_ability_config",
     "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
   ]
-  all_dependent_configs = [ ":system_ability_all_deps_config" ]
   defines = []
   if (is_standard_system) {
     external_deps = [
