@@ -71,7 +71,7 @@ void MockLocalAbilityManagerTest::TearDown()
  * @tc.type: FUNC
  * @tc.require: IBSPUT
  */
-HWTEST_F(MockLocalAbilityManagerTest, StartFfrtStatistics001, TestSize.Level3)
+HWTEST_F(MockLocalAbilityManagerTest, StartFfrtStatistics001, TestSize.Level0)
 {
     DTEST_LOG << "StartFfrtStatistics001 begin" << std::endl;
     std::string result;
@@ -87,7 +87,7 @@ HWTEST_F(MockLocalAbilityManagerTest, StartFfrtStatistics001, TestSize.Level3)
  * @tc.type: FUNC
  * @tc.require: IBSPUT
  */
-HWTEST_F(MockLocalAbilityManagerTest, StopFfrtStatistics001, TestSize.Level3)
+HWTEST_F(MockLocalAbilityManagerTest, StopFfrtStatistics001, TestSize.Level0)
 {
     DTEST_LOG << "StopFfrtStatistics001 begin" << std::endl;
     std::string result;

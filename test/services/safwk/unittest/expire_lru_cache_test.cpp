@@ -328,7 +328,7 @@ HWTEST_F(ExpireLruCacheTest, LRUTest002, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(ExpireLruCacheTest, GetTest001, TestSize.Level2)
+HWTEST_F(ExpireLruCacheTest, GetTest001, TestSize.Level0)
 {
     DTEST_LOG << "GetTest001 start" << std::endl;
     ExpireLruCache<std::vector<char>, std::vector<char>> cache(3, 50);
@@ -421,7 +421,7 @@ HWTEST_F(ExpireLruCacheTest, Timestamp001, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(ExpireLruCacheTest, RemoveTest001, TestSize.Level2)
+HWTEST_F(ExpireLruCacheTest, RemoveTest001, TestSize.Level0)
 {
     DTEST_LOG << "RemoveTest001 start" << std::endl;
     ExpireLruCache<std::vector<char>, std::vector<char>> cache(3, 2000);
