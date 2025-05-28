@@ -264,7 +264,7 @@ HWTEST_F(SvcTest, Parse011, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: I5KMF7
  */
-HWTEST_F(SvcTest, SetCmdArgs001, TestSize.Level2)
+HWTEST_F(SvcTest, SetCmdArgs001, TestSize.Level0)
 {
     DTEST_LOG << "SetCmdArgs001 start" << std::endl;
     char *argv[] = { g_svcStr, g_wifiStr, g_helpStr };
@@ -344,7 +344,7 @@ HWTEST_F(SvcTest, CmdErrorToString004, TestSize.Level2)
  * @tc.type: FUNC
  * @tc.require: I5KMF7
  */
-HWTEST_F(SvcTest, Main001, TestSize.Level2)
+HWTEST_F(SvcTest, Main001, TestSize.Level0)
 {
     DTEST_LOG << "Main001 start" << std::endl;
     int32_t fds[2];
