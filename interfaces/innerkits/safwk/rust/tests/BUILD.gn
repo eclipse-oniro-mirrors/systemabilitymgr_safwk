@@ -17,14 +17,12 @@ ohos_rust_unittest("rust_safwk_ut_test") {
   module_out_path = "safwk/safwk"
 
   sources = [ "../src/lib.rs" ]
-  deps = [
-    "../../rust:system_ability_fwk_rust_cxx",
-    "//third_party/rust/crates/cxx:lib",
-  ]
+  deps = [ "../../rust:system_ability_fwk_rust_cxx" ]
 
   external_deps = [
     "hilog:hilog_rust",
     "ipc:ipc_rust",
+    "rust_cxx:lib",
     "samgr:samgr_rust",
   ]
 
