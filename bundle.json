@@ -33,7 +33,10 @@
                 "json",
                 "samgr",
                 "c_utils",
-                "access_token"
+                "access_token",
+                "ylong_runtime",
+                "hisysevent",
+                "rust_cxx"
             ]
         },
         "build": {
