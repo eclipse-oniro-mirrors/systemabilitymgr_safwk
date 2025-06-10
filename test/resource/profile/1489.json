@@ -5,7 +5,7 @@
             "name": 1489,
             "libpath": "mydemo.z.so",
             "run-on-create": true,
-            "distributed": true,
+            "distributed": false,
             "dump-level": 1
         }
     ]

@@ -168,7 +168,7 @@ Sample *serviceid*.json file:
             "name": serviceid,
             "libpath": "liblisten_test.z.so",
             "run-on-create": true,
-            "distributed": true,
+            "distributed": false,
             "dump_level": 1
         }
     ]
