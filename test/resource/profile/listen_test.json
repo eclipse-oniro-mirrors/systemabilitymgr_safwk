@@ -5,14 +5,14 @@
             "name": 1499,
             "libpath": "libaudio_rust_sa.dylib.so",
             "run-on-create": true,
-            "distributed": true,
+            "distributed": false,
             "dump_level": 1
         },
         {
             "name": 1494,
             "libpath": "liblisten_rust_sa.dylib.so",
             "run-on-create": true,
-            "distributed": true,
+            "distributed": false,
             "dump_level": 1
         }
     ]
