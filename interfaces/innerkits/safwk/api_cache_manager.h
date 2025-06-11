@@ -41,9 +41,9 @@ public:
         MessageParcel& reply);
 private:
     ApiCacheManager() = default;
-    std::lock_guard<std::mutex> Lock(cachesMutex_);
     ~ApiCacheManager()
     {
+        std::lock_guard<std::mutex> Lock(cachesMutex_);
         for (auto i:caches_) {
             delete i.second;
         }
