@@ -43,6 +43,7 @@ private:
     ApiCacheManager() = default;
     ~ApiCacheManager()
     {
+        std::lock_guard<std::mutex> Lock(cachesMutex_);
         for (auto i:caches_) {
             delete i.second;
         }
