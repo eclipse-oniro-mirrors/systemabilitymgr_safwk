@@ -65,7 +65,6 @@ ohos_rust_shared_library("system_ability_fwk_rust") {
   ]
 
   install_images = [ system_base_dir ]
-  relative_install_dir = "chipset-pub-sdk"
 
   subsystem_name = "systemabilitymgr"
   part_name = "safwk"
