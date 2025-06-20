@@ -220,29 +220,10 @@ HWTEST_F(CacheManagerTest, PreSendRequest002, TestSize.Level2)
         u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
         u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
         u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
-        u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val",
         u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val", u"hhh", u"!!!", u"val"
     };
     int i = 0;
-    int count = 100;
+    int count = 260;
     reply1.SetMaxCapacity(reply1.GetMaxCapacity() + keyU16StringVector.size());
     for (; i < count && ret; ++i) {
         ret = reply1.WriteString16Vector(keyU16StringVector);
