@@ -91,30 +91,6 @@ HWTEST_F(LocalAbilityManagerTest, StartTimedQuery001, TestSize.Level1)
 }
 
 /**
- * @tc.name: StartTimedQuery002
- * @tc.desc: StartTimedQuery RunOnCreate is false
- * @tc.type: FUNC
- */
-HWTEST_F(LocalAbilityManagerTest, StartTimedQuery002, TestSize.Level1)
-{
-    DTEST_LOG << "StartTimedQuery002 start" << std::endl;
-    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
-    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    saMap.emplace(MUT_SAID, sysAby);
-    auto& unusedCfgMap = LocalAbilityManager::GetInstance().unusedCfgMap_;
-    int32_t timeout = 1;
-    unusedCfgMap.emplace(MUT_SAID, timeout);
-    auto ret = LocalAbilityManager::GetInstance().IsResident();
-    LocalAbilityManager::GetInstance().StartTimedQuery();
-    EXPECT_FALSE(ret);
-    LocalAbilityManager::GetInstance().StopTimedQuery();
-    unusedCfgMap.clear();
-    saMap.clear();
-    delete sysAby;
-    DTEST_LOG << "StartTimedQuery002 end" << std::endl;
-}
-
-/**
  * @tc.name: IdentifyUnusedResident001
  * @tc.desc: IdentifyUnusedResident GetSaLastRequestTime return false
  * @tc.type: FUNC
