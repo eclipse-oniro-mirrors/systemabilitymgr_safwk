@@ -22,15 +22,9 @@ ohos_rust_unittest("rust_safwk_ut_test") {
   external_deps = [
     "hilog:hilog_rust",
     "ipc:ipc_rust",
+    "rust_cxx:lib",
     "samgr:samgr_rust",
   ]
-
-  if (defined(global_parts_info) &&
-      !defined(global_parts_info.third_party_rust_cxx)) {
-    deps += [ "//third_party/rust/crates/cxx:lib" ]
-  } else {
-    external_deps += [ "rust_cxx:lib" ]
-  }
 
   subsystem_name = "systemabilitymgr"
   part_name = "safwk"
