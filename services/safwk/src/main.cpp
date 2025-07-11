@@ -219,6 +219,10 @@ int main(int argc, char *argv[])
         HILOGE(TAG, "argc : %{public}d is invalid", argc);
         return -1;
     }
+    if (argv == nullptr) {
+        HILOGE(TAG, "argv is NULL!");
+        return -1;
+    }
     HILOGI(TAG, "enter SAFWK main, proc:%{public}d", getpid());
     int ondemandLoad = ONDEMAND_LOAD;
     int eventIndex = EVENT_INDEX;
