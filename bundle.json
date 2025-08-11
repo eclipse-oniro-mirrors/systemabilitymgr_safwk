@@ -34,9 +34,9 @@
                 "samgr",
                 "c_utils",
                 "access_token",
+                "rust_cxx",
                 "ylong_runtime",
-                "hisysevent",
-                "rust_cxx"
+                "hisysevent"
             ]
         },
         "build": {
