@@ -1136,7 +1136,6 @@ HWTEST_F(CacheManagerTest, Conc001, TestSize.Level2)
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor1, CACHE_API_CODE_100);
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_1);
     ApiCacheManager::GetInstance().DelCacheApi(g_descriptor2, CACHE_API_CODE_100);
-    return;
     DTEST_LOG << "Conc001 end" << std::endl;
 }
 }

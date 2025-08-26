@@ -62,6 +62,7 @@ ohos_static_library("system_ability_fwk_tdd") {
       "hilog:libhilog",
       "hitrace:hitrace_meter",
       "ipc:ipc_single",
+      "ipc:ipc_core",
       "json:nlohmann_json_static",
       "samgr:samgr_common",
       "samgr:samgr_proxy",
