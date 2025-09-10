@@ -151,7 +151,6 @@ private:
     std::unique_ptr<ThreadPool> initPool_;
     std::unique_ptr<Utils::Timer> idleTimer_;
     // longtime-unusedtimeout map
-    std::shared_mutex unusedCfgMapLock_;
     std::map<int32_t, int32_t> unusedCfgMap_;
     uint32_t ondemandTimer_ = 0;
     timer_t residentTimer_ = nullptr;

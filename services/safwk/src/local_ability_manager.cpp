@@ -1082,7 +1082,6 @@ bool LocalAbilityManager::NoNeedCheckUnused(int32_t saId)
 
 bool LocalAbilityManager::IsConfigUnused()
 {
-    std::shared_lock<std::shared_mutex> readLock(unusedCfgMapLock_);
     HILOGI(TAG, "unusedCfgMap_ size:%{public}zu", unusedCfgMap_.size());
     return !unusedCfgMap_.empty();
 }
@@ -1102,7 +1101,6 @@ void LocalAbilityManager::LimitUnusedTimeout(int32_t saId, int32_t timeout)
 void LocalAbilityManager::InitUnusedCfg()
 {
     auto saProfileList = profileParser_->GetAllSaProfiles();
-    std::shared_lock<std::shared_mutex> writeLock(unusedCfgMapLock_);
     for (const auto& saProfile : saProfileList) {
         if (!saProfile.runOnCreate && saProfile.stopOnDemand.unusedTimeout != -1) {
             LimitUnusedTimeout(saProfile.saId, saProfile.stopOnDemand.unusedTimeout);
@@ -1168,7 +1166,6 @@ void LocalAbilityManager::IdentifyUnusedOndemand()
         return;
     }
 
-    std::shared_lock<std::shared_mutex> readLock(unusedCfgMapLock_);
     for (const auto& it : unusedCfgMap_) {
         int32_t saId = it.first;
         uint64_t lastRequestTime;
