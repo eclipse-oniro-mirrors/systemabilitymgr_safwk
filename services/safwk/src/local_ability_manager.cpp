@@ -1261,9 +1261,7 @@ void LocalAbilityManager::StartTimedQuery()
         }
     }
 
-    if (IsResident()) {
-        StartResidentTimer();
-    } else {
+    if (!IsResident()) {
         StartOnDemandTimer();
     }
 }
