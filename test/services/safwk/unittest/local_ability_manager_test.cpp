@@ -78,6 +78,7 @@ void LocalAbilityManagerTest::TearDown()
 HWTEST_F(LocalAbilityManagerTest, StartTimedQuery001, TestSize.Level1)
 {
     DTEST_LOG << "StartTimedQuery001 start" << std::endl;
+    LocalAbilityManager::GetInstance().StartTimedQuery();
     auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
     MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, true);
     saMap.emplace(MUT_SAID, sysAby);
