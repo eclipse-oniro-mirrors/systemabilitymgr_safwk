@@ -517,34 +517,31 @@ void LocalAbilityManager::StartOndemandSystemAbility(int32_t systemAbilityId)
     bool isExist = profileParser_->LoadSaLib(systemAbilityId);
     LOGI("StartOndemandSa LoadSaLib SA:%{public}d,spend:%{public}" PRId64 "ms",
         systemAbilityId, (GetTickCount() - begin));
-    if (isExist) {
-        int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
-        constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
-        {
-            auto it = localAbilityMap_.begin();
-            {
-                std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-                it = localAbilityMap_.find(systemAbilityId);
-            }
-            while (it == localAbilityMap_.end()) {
-                HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
-                if (timeout > 0) {
-                    usleep(duration);
-                    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-                    it = localAbilityMap_.find(systemAbilityId);
-                } else {
-                    HILOGE(TAG, "waiting for SA:%{public}d time out (1s)", systemAbilityId);
-                    return;
-                }
-                timeout--;
-            }
-        }
-
-        if (!OnStartAbility(systemAbilityId)) {
-            HILOGE(TAG, "failed to start SA:%{public}d", systemAbilityId);
-        }
-    } else {
+    if (!isExist) {
         HILOGW(TAG, "SA:%{public}d not found", systemAbilityId);
+        return;
+    }
+    int32_t timeout = RETRY_TIMES_FOR_ONDEMAND;
+    constexpr int32_t duration = std::chrono::microseconds(MILLISECONDS_WAITING_ONDEMAND_ONE_TIME).count();
+    while (timeout > 0) {
+        {
+            std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
+            auto it = localAbilityMap_.find(systemAbilityId);
+            if (it != localAbilityMap_.end()) {
+                break;
+            }
+        }
+        HILOGI(TAG, "waiting for SA:%{public}d...", systemAbilityId);
+        usleep(duration);
+        timeout--;
+    }
+    if (timeout <= 0) {
+        HILOGE(TAG, "waiting for SA:%{public}d time out (1s)", systemAbilityId);
+        return;
+    }
+
+    if (!OnStartAbility(systemAbilityId)) {
+        HILOGE(TAG, "failed to start SA:%{public}d", systemAbilityId);
     }
 }
 
