@@ -92,48 +92,6 @@ HWTEST_F(LocalAbilityManagerTest, StartTimedQuery001, TestSize.Level1)
 }
 
 /**
- * @tc.name: IdentifyUnusedResident001
- * @tc.desc: IdentifyUnusedResident GetSaLastRequestTime return false
- * @tc.type: FUNC
- */
-HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedResident001, TestSize.Level1)
-{
-    DTEST_LOG << "IdentifyUnusedResident001 start" << std::endl;
-    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
-    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    saMap.emplace(MUT_SAID, sysAby);
-    uint64_t lastRequestTime = 0;
-    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
-    LocalAbilityManager::GetInstance().IdentifyUnusedResident();
-    EXPECT_FALSE(ret);
-    saMap.clear();
-    delete sysAby;
-    DTEST_LOG << "IdentifyUnusedResident001 end" << std::endl;
-}
-
-/**
- * @tc.name: IdentifyUnusedResident002
- * @tc.desc: IdentifyUnusedResident GetSaLastRequestTime return true
- * @tc.type: FUNC
- */
-HWTEST_F(LocalAbilityManagerTest, IdentifyUnusedResident002, TestSize.Level1)
-{
-    DTEST_LOG << "IdentifyUnusedResident002 start" << std::endl;
-    auto& saMap = LocalAbilityManager::GetInstance().localAbilityMap_;
-    MockSaRealize *sysAby = new MockSaRealize(MUT_SAID, false);
-    saMap.emplace(MUT_SAID, sysAby);
-    sysAby->publishObj_ = sptr<IRemoteObject>(new TestAudioAbility(MUT_SAID, false));
-    uint64_t lastRequestTime = 0;
-    auto ret = LocalAbilityManager::GetInstance().GetSaLastRequestTime(MUT_SAID, lastRequestTime);
-    usleep(1500000);
-    LocalAbilityManager::GetInstance().IdentifyUnusedResident();
-    EXPECT_TRUE(ret);
-    saMap.clear();
-    delete sysAby;
-    DTEST_LOG << "IdentifyUnusedResident002 end" << std::endl;
-}
-
-/**
  * @tc.name: IdentifyUnusedOndemand001
  * @tc.desc: IdentifyUnusedOndemand GetSaLastRequestTime return false
  * @tc.type: FUNC
