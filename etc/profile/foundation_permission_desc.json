@@ -269,6 +269,16 @@
             "name" : "ohos.permission.RECEIVE_UPDATE_MESSAGE",
             "said" : "403",
             "description" : "Permission required for FMS to reveive DUE update message."
+        },
+        {
+            "name" : "ohos.permission.NFC_CARD_EMULATION",
+            "said" : "403",
+            "description" : "Permission required for ScreenLock to register application status listener."
+        },
+        {
+            "name" : "ohos.permission.RUNNING_STATE_OBSERVER",
+            "said" : "403",
+            "description" : "Permission required for ScreenLock to get the bundle names of all payment services‌."
         }
     ],
     "restart" : [
