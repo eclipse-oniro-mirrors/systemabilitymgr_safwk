@@ -21,9 +21,6 @@
 #include <iostream>
 #include <sys/types.h>
 #include <thread>
-#include <csignal>
-#include <sys/time.h>
-#include <securec.h>
 
 #include "datetime_ex.h"
 #include "errors.h"
@@ -54,12 +51,9 @@ namespace {
 constexpr int32_t RETRY_TIMES_FOR_ONDEMAND = 10;
 constexpr int32_t RETRY_TIMES_FOR_SAMGR = 50;
 constexpr int32_t DEFAULT_SAID = -1;
-constexpr int32_t IDLE_SA_REPORT_SIGNUM = 60;
-constexpr int32_t UNUSED_RESIDENT_TIMER_INTERVAL_SECONDS = 60 * 60;
 constexpr int32_t UNUSED_ONDEMAND_TIMER_INTERVAL_MSECONDS = 1000 * 60 * 1;
 constexpr int32_t ONDEMAND_SA_UNUSED_TIMEOUT_LOWLIMIT = UNUSED_ONDEMAND_TIMER_INTERVAL_MSECONDS;
 constexpr int32_t ONDEMAND_SA_UNUSED_TIMEOUT_UPLIMIT = 1000 * 60 * 120;
-constexpr int32_t RESIDENT_SA_UNUSED_TIMEOUT = 1000 * 60 * 60;
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_SAMGR_ONE_TIME(200);
 constexpr std::chrono::milliseconds MILLISECONDS_WAITING_ONDEMAND_ONE_TIME(100);
 constexpr int32_t TIME_S_TO_MS = 1000;
@@ -1123,34 +1117,6 @@ bool LocalAbilityManager::GetSaLastRequestTime(int32_t saId, uint64_t& lastReque
     return true;
 }
 
-void LocalAbilityManager::IdentifyUnusedResident()
-{
-    auto cur = std::chrono::steady_clock::now();
-    uint64_t currTime = static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(
-        cur.time_since_epoch()).count());
-
-    std::shared_lock<std::shared_mutex> readLock(localAbilityMapLock_);
-    for (const auto& it : localAbilityMap_) {
-        int32_t saId = it.first;
-        uint64_t lastRequestTime = 0;
-        bool ret = GetSaLastRequestTime(saId, lastRequestTime);
-        if ((ret != true) || (currTime <= lastRequestTime)) {
-            continue;
-        }
-        uint64_t idleTime = currTime - lastRequestTime;
-        uint64_t threshold = static_cast<uint64_t>(RESIDENT_SA_UNUSED_TIMEOUT);
-        if (idleTime > threshold) {
-            char reason[128] = {0};
-            errno_t res = snprintf_s(reason, sizeof(reason), sizeof(reason) - 1,
-                "saId:%d REASON:long time unused: %" PRIu64, saId, idleTime);
-            if (res < 0) {
-                continue;
-            }
-            ReportSAIdle(reason);
-        }
-    }
-}
-
 void LocalAbilityManager::IdentifyUnusedOndemand()
 {
     auto cur = std::chrono::steady_clock::now();
@@ -1178,56 +1144,6 @@ void LocalAbilityManager::IdentifyUnusedOndemand()
             samgr->UnloadSystemAbility(saId);
             HILOGI(TAG, "ondemand SA:%{public}d, longtime:%{public}" PRIu64 "unused", saId, idleTime);
         }
-    }
-}
-
-void IdentifyUnusedResidentSignalHandler(int signo)
-{
-    if (signo == IDLE_SA_REPORT_SIGNUM) {
-        LocalAbilityManager::GetInstance().IdentifyUnusedResident();
-    }
-}
-
-void LocalAbilityManager::StartResidentTimer()
-{
-    struct sigaction sa;
-    struct sigevent sev;
-    struct itimerspec ts;
-
-    if (sigaction(IDLE_SA_REPORT_SIGNUM, nullptr, &sa) == -1) {
-        HILOGE(TAG, "sigsaction get old handler failed");
-        return;
-    }
-
-    if (sa.sa_handler != SIG_DFL) {
-        HILOGE(TAG, "sig %{public}d has been used", IDLE_SA_REPORT_SIGNUM);
-        return;
-    }
-
-    sa.sa_handler = &IdentifyUnusedResidentSignalHandler;
-    sa.sa_flags = 0;
-    sa.sa_flags |= SA_RESTART;
-    sigemptyset(&sa.sa_mask);
-    if (sigaction(IDLE_SA_REPORT_SIGNUM, &sa, nullptr) == -1) {
-        HILOGE(TAG, "sigsaction set new handler failed");
-        return;
-    }
-
-    sev.sigev_notify = SIGEV_SIGNAL;
-    sev.sigev_signo = IDLE_SA_REPORT_SIGNUM;
-    sev.sigev_value.sival_ptr = &residentTimer_;
-    if (timer_create(CLOCK_REALTIME, &sev, &residentTimer_) != 0) {
-        HILOGE(TAG, "timer_create failed");
-        return;
-    }
-
-    ts.it_value.tv_sec = UNUSED_RESIDENT_TIMER_INTERVAL_SECONDS;
-    ts.it_value.tv_nsec = 0;
-    ts.it_interval.tv_sec = UNUSED_RESIDENT_TIMER_INTERVAL_SECONDS;
-    ts.it_interval.tv_nsec = 0;
-    if (timer_settime(residentTimer_, 0, &ts, nullptr) != 0) {
-        HILOGE(TAG, "timer_settime failed");
-        return;
     }
 }
 
@@ -1265,11 +1181,6 @@ void LocalAbilityManager::StartTimedQuery()
 
 void LocalAbilityManager::StopTimedQuery()
 {
-    if (residentTimer_ != nullptr) {
-        timer_delete(residentTimer_);
-        residentTimer_ = nullptr;
-    }
-
     if (idleTimer_!= nullptr) {
         idleTimer_->Unregister(ondemandTimer_);
         idleTimer_->Shutdown();

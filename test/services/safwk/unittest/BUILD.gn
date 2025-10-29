@@ -118,7 +118,6 @@ ohos_unittest("LocalAbilityManagerTest") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
-    "hisysevent:libhisysevent_easy",
     "ipc:ipc_core",
     "json:nlohmann_json_static",
     "samgr:samgr_common",

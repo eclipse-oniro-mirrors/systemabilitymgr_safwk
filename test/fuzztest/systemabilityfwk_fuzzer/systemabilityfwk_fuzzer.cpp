@@ -108,7 +108,6 @@ void FuzzStartTimedQuery()
     int32_t systemAbilityId = GetData<int32_t>();
     LocalAbilityManager::GetInstance().StartTimedQuery();
     LocalAbilityManager::GetInstance().IdentifyUnusedOndemand();
-    LocalAbilityManager::GetInstance().IdentifyUnusedResident();
     LocalAbilityManager::GetInstance().NoNeedCheckUnused(systemAbilityId);
     int32_t timeout = GetData<int32_t>();
     LocalAbilityManager::GetInstance().LimitUnusedTimeout(systemAbilityId, timeout);
