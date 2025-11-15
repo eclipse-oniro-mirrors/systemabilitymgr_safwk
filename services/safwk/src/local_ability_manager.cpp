@@ -284,8 +284,6 @@ bool LocalAbilityManager::AddAbility(SystemAbility* ability)
     ability->SetDependTimeout(saProfile.dependTimeout);
     ability->SetDistributed(saProfile.distributed);
     ability->SetDumpLevel(saProfile.dumpLevel);
-    ability->SetCapability(saProfile.capability);
-    ability->SetPermission(saProfile.permission);
     localAbilityMap_.emplace(saId, ability);
     return true;
 }
