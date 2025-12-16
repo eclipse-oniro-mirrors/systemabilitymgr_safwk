@@ -14,4 +14,5 @@
 declare_args() {
   # enable update thread priority when start run-on-demand sa.
   safwk_enable_run_on_demand_qos = false
+  safwk_feature_support_saspawn = false
 }
