@@ -346,6 +346,63 @@ ohos_unittest("SaProxyCacheTest") {
   ]
 }
 
+ohos_unittest("SystemAbilityStartTest") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../../../../cfi_blocklist.txt"
+  }
+  module_out_path = module_output_path
+ 
+  resource_config_file =
+      "//foundation/systemabilitymgr/safwk/test/resource/ohos_test.xml"
+ 
+  include_dirs = [
+    "//foundation/systemabilitymgr/safwk/services/safwk/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/include",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/listen_ability/include",
+  ]
+ 
+  sources = [
+    "./system_ability_start_test.cpp",
+    "//foundation/systemabilitymgr/safwk/services/safwk/src/system_ability_start.cpp",
+  ]
+ 
+  configs =
+      [ "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags" ]
+ 
+  deps = [ ":system_ability_fwk_tdd" ]
+ 
+  if (target_cpu == "arm") {
+    cflags = [ "-DBINDER_IPC_32BIT" ]
+  }
+ 
+  external_deps = [
+    "access_token:libaccesstoken_sdk",
+    "c_utils:utils",
+    "googletest:gtest_main",
+    "hilog:libhilog",
+    "ipc:ipc_single",
+    "json:nlohmann_json_static",
+    "samgr:samgr_common",
+  ]
+  defines = []
+  if (safwk_support_access_token) {
+    external_deps += [
+      "access_token:libnativetoken_shared",
+      "access_token:libtokensetproc_shared",
+    ]
+    defines += [ "SUPPORT_ACCESS_TOKEN" ]
+  }
+  if (is_standard_system) {
+    external_deps += [
+      "init:libbegetutil"
+    ]
+  }
+}
+ 
 group("unittest") {
   testonly = true
   deps = [
@@ -354,5 +411,6 @@ group("unittest") {
     ":LocalAbilityManagerTest",
     ":MockLocalAbilityManagerTest",
     ":SystemAbilityTest",
+    ":SystemAbilityStartTest",
   ]
 }
