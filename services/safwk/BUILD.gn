@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("../../config.gni")
 
 ################################################################################
 config("config_safwk") {
@@ -76,5 +77,63 @@ ohos_executable("sa_main") {
 
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"
+}
+
+ohos_shared_library("sa_start") {
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+    cfi_no_nvcall = true
+    blocklist = "../../cfi_blocklist.txt"
+  }
+  branch_protector_ret = "pac_ret"
+
+  install_enable = true
+  relative_install_dir = "platformsdk"
+  sources = [ "src/system_ability_start.cpp" ]
+
+  configs = [
+    ":config_safwk",
+    "//foundation/systemabilitymgr/safwk/test/resource:coverage_flags",
+  ]
+  configs += [ "//build/config/gcc:symbol_visibility_hidden" ]
+
+  ldflags = [
+    "-rdynamic",
+    "-Wl,-z,max-page-size=4096",
+    "-Wl,-z,separate-code",
+  ]
+
+  deps = [
+    "../../interfaces/innerkits/safwk:system_ability_fwk",
+  ]
+
+  if (is_standard_system) {
+    external_deps = [
+      "c_utils:utils",
+      "hilog:libhilog",
+      "init:libbegetutil",
+      "ipc:ipc_single",
+      "json:nlohmann_json_static",
+      "samgr:samgr_common",
+    ]
+  }
+
+  defines = []
+  if (use_musl) {
+    if (musl_use_jemalloc && musl_use_jemalloc_dfx_intf) {
+      defines += [ "CONFIG_USE_JEMALLOC_DFX_INTF" ]
+    }
+  }
+
+  part_name = "safwk"
+  subsystem_name = "systemabilitymgr"
+}
+
+group("sa_start_group") {
+  if (safwk_feature_support_saspawn) {
+    deps = [ ":sa_start" ]
+  }
 }
 ################################################################################
