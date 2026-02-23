@@ -199,6 +199,7 @@ void SystemAbility::Idle(SystemAbilityOnDemandReason& idleReason,
         std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
         if (abilityState_ != SystemAbilityState::ACTIVE) {
             LOGW("cannot Idle SA:%{public}d,sta is %{public}d", saId_, abilityState_);
+            delayTime = -1;
             return;
         }
     }
