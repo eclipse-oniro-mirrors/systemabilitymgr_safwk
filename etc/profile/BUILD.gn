@@ -20,9 +20,15 @@ ohos_prebuilt_etc("foundation_trust") {
   subsystem_name = "systemabilitymgr"
 }
 
-ohos_prebuilt_etc("foundation_cfg") {
-  source = "foundation.cfg"
-  relative_install_dir = "init"
-  part_name = "safwk"
-  subsystem_name = "systemabilitymgr"
+if (support_jsapi) {
+  ohos_prebuilt_etc("foundation_cfg") {
+    source = foundation.cfg
+    relative_install_dir = "init"
+    part_name = "safwk"
+    subsystem_name = "systemabilitymgr"
+  }
+} else {
+  group("foundation_cfg") {
+    deps = []
+  }
 }
