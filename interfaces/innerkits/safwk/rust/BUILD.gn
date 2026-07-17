@@ -25,6 +25,7 @@ ohos_static_library("system_ability_fwk_rust_cxx") {
     cfi_no_nvcall = true
     blocklist = "../../../../cfi_blocklist.txt"
   }
+  branch_protector_ret = "pac_ret"
 
   sources = [ "src/cxx/system_ability_wrapper.cpp" ]
   sources += get_target_outputs(":system_ability_fwk_rust_gen")
