@@ -30,13 +30,15 @@ test/
   mock/common/                    # Mock SA库（demo_sa, ondemand_ability, connect_ability...）
 ```
 
-| 构建目标 | 类型 | 产物 |
-|---|---|---|
-| `services/safwk:sa_main` | 可执行文件 | `/system/bin/sa_main`（SA进程入口） |
-| `interfaces/innerkits/safwk:system_ability_fwk` | 共享库 | `libsystem_ability_fwk.z.so`（SA开发框架） |
-| `interfaces/innerkits/safwk:system_ability_ondemand_reason` | 静态库 | 按需原因序列化 |
-| `interfaces/innerkits/safwk:api_cache_manager` | 共享库 | API缓存管理 |
-| `svc:svc` | 可执行文件 | `/system/bin/svc`（SA调试工具） |
+> 若子目录包含自己的 `AGENTS.md`，则该目录范围内的任务以子目录文档为准。
+
+| 构建目标　　　　　　　　　　　　　　　　　　　　　　　　　　| 类型　　　 | 产物　　　　　　　　　　　　　　　　　　　 |
+| -------------------------------------------------------------| ------------| --------------------------------------------|
+| `services/safwk:sa_main`　　　　　　　　　　　　　　　　　　| 可执行文件 | `/system/bin/sa_main`（SA进程入口）　　　　|
+| `interfaces/innerkits/safwk:system_ability_fwk`　　　　　　 | 共享库　　 | `libsystem_ability_fwk.z.so`（SA开发框架） |
+| `interfaces/innerkits/safwk:system_ability_ondemand_reason` | 静态库　　 | 按需原因序列化　　　　　　　　　　　　　　 |
+| `interfaces/innerkits/safwk:api_cache_manager`　　　　　　　| 共享库　　 | API缓存管理　　　　　　　　　　　　　　　　|
+| `svc:svc`　　　　　　　　　　　　　　　　　　　　　　　　　 | 可执行文件 | `/system/bin/svc`（SA调试工具）　　　　　　|
 
 ## 知识路由
 
@@ -59,6 +61,18 @@ test/
 
 **SA开发四件套**: (1) SA实现（.cpp，继承SystemAbility + REGISTER宏）、(2) profile JSON（每个文件一个SA）、(3) `ohos_sa_profile` BUILD.gn、(4) 进程.cfg（init通过 `sa_main /system/profile/xxx.json` 启动）。
 
+**按任务类型定位**:
+
+| 任务 | 起点 |
+|---|---|
+| 开发新SA | `system_ability.h` → `test/services/safwk/unittest/listen_ability/` |
+| 调试sa_main启动 | `src/main.cpp` → `local_ability_manager.cpp` → `DoStartSAProcess` |
+| 修复生命周期回调问题 | `system_ability.cpp`（OnStart/OnIdle/OnActive/OnStop分发） |
+| 修改Profile解析 | samgr: `parse_util.cpp` → `sa_profiles.h`（结构定义） |
+| 调试IPC Stub（samgr指令） | `local_ability_manager_stub.cpp` |
+
+**编辑任何文件前，先声明**: (1) 任务类别、(2) 已读文档、(3) 适用约束。
+
 ## 专家约束
 
 1. **必须使用REGISTER_SYSTEM_ABILITY_BY_ID宏** — 禁止直接 `new` SA对象。宏在静态初始化阶段执行。
@@ -74,6 +88,9 @@ test/
 11. **innerapi可见性**: `system_ability_fwk` 标记为 `platformsdk_indirect` + `sasdk`。
 12. **foundation_trust.json**: 安全门控 — 只有列表中的SA能在foundation进程中加载。
 13. **AccessToken**: `safwk_support_access_token` 控制调用方校验（access_token组件存在时默认开启）。
+14. **Profile JSON源真值**: `out/` 下的Profile JSON由 `ohos_sa_profile` BUILD.gn规则生成。必须编辑子系统 `sa_profile/` 目录下的源JSON，禁止直接修改 `out/` 输出。
+15. **修改前需确认**: `SystemAbility` 公共API签名 · `foundation_trust.json` 条目 · Profile JSON schema · `local_ability_manager_stub.cpp` IPC事务码。这些是破坏性变更面，需人工确认。
+16. **DFX必填**: SA生命周期转换(OnStart/OnStop)必须通过HiSysEvent适配器上报耗时（调用点在 `system_ability.cpp`）。sa_main退出路径必须调用 `ReportSaMainExit()` 并传入原因字符串。新增耗时操作应可通过 `hitrace` 追踪。
 
 **反模式**: 手动new SA对象 · OnStart忘记Publish · OnStart中阻塞 · Profile多systemability节点 · 进程名跨文件不一致 · 使用std::thread而非FfrtHandler。
 
@@ -98,4 +115,27 @@ test/
 
 **特性开关** (`config.gni`): `safwk_enable_run_on_demand_qos`(F)、`safwk_feature_support_saspawn`(F)。变量(`var.gni`): `safwk_support_access_token`(T，条件)。
 
-**设备调试**: `ps -ef | grep sa_main`（列出SA进程）· `hidumper -s <said>` · `svc <command>` · `cat /system/profile/<process>.json` · `sa_main /system/profile/<process>.json`（手动启动）。
+**设备调试**:
+```bash
+# svc工具 — 仅支持 wifi/bluetooth/nearlink（非通用SA控制）
+svc wifi enable | disable | help
+svc bluetooth enable | disable | help
+svc nearlink enable | disable | help
+
+# 通过samgr hidumper统计SA进程的IPC/FFRT
+hidumper -s 0 -a "--ipc <进程名> --start-stat"  # 后接 --stat / --stop-stat
+hidumper -s 0 -a "--ffrt <pid> --start-stat"    # 后接 --stat / --stop-stat
+
+# Dump单个SA
+hidumper -s <said>
+
+# hilog标签: SAFWK，domain: 0xD001810
+hilog -T SAFWK
+
+# 调试SA加载前先确认samgr就绪
+param get bootevent.samgr.ready
+```
+
+**静态分析**: CFI(`cfi=true`、`cfi_cross_dso=true`)和PAC(`branch_protector_ret="pac_ret"`)在 `sa_main` 和 `system_ability_fwk` 的BUILD.gn `sanitize` 块中均强制开启。编译出现CFI链接错误时，仅限有充分理由时添加到 `cfi_blocklist.txt`。ASAN调试构建: `./build.sh --product-name {product} --gn-args is_asan=true --build-target safwk`。
+
+**完成标准**: 报告完成前: (1) 展示编译退出码0、(2) 展示至少受影响的safwk单元测试套通过、(3) 若修改了DFX路径，验证生命周期耗时上报和 `ReportSaMainExit` 调用完整、(4) 若无法运行验证，明确说明已验证和未验证项并列出残留风险。
