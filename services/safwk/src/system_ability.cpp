@@ -157,7 +157,7 @@ void SystemAbility::GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDe
         HILOGE(TAG, "failed to get samgrProxy");
         return;
     }
-    LOGI("get extra id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDataId()));
+    LOGD("get extra id: %{public}d", static_cast<int32_t>(onDemandStartReason.GetExtraDataId()));
     MessageParcel extraDataParcel;
     int32_t ret = samgrProxy->GetOnDemandReasonExtraData(onDemandStartReason.GetExtraDataId(), extraDataParcel);
     if (ret != ERR_OK) {
