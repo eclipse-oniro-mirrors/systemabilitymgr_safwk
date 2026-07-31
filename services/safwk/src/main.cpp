@@ -108,7 +108,7 @@ static void SetProcName(const string& filePath, const ProcessNameSetFunc& setPro
 static int32_t ParseArgv(char *argv[], nlohmann::json& eventMap, int eventIndex)
 {
     string eventStr(argv[eventIndex]);
-    HILOGI(TAG, "ParseArgv extraArgv eventStr:%{public}s!", eventStr.c_str());
+    HILOGD(TAG, "extraArgv:%{public}s!", eventStr.c_str());
     int32_t saId = DEFAULT_SAID;
     if (eventStr.size() > MAX_LENGTH) {
         return DEFAULT_SAID;
