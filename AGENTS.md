@@ -1,10 +1,10 @@
-# AGENT.md — safwk（系统服务框架）
+# AGENTS.md — safwk（系统服务框架）
 
 > 路径: `foundation/systemabilitymgr/safwk` | 子系统: `systemabilitymgr` | 仅标准系统
 >
 > **维护规则**: 使用agent进行代码修改时，如新增代码结构或功能特性，必须同步更新本AGENT文档。
 
-## 代码地图
+## 代码结构
 
 ```
 interfaces/innerkits/safwk/
@@ -76,7 +76,7 @@ test/
 ## 专家约束
 
 1. **必须使用REGISTER_SYSTEM_ABILITY_BY_ID宏** — 禁止直接 `new` SA对象。宏在静态初始化阶段执行。
-2. **OnStart中必须调用Publish(this)** — 否则SA对其他进程不可见。
+2. **OnStart中必须调用Publish(this)** — 否则SA对其余进程不可见。
 3. **进程名三处一致**: .cfg服务名 = profile JSON的`process`字段 = sa_main推导名。不一致导致按需加载静默失败。
 4. **Profile JSON每个文件只能一个systemability节点** — 多个导致编译失败。
 5. **dependTimeout范围**: [200ms, 60000ms]，默认6000ms，超范围会被截断。
