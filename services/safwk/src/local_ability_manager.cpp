@@ -860,7 +860,7 @@ bool LocalAbilityManager::Run(int32_t saId)
     }
     LOGD("Run succ to add proc name:%{public}s", Str16ToStr8(procName_).c_str());
     uint32_t concurrentThreads = std::thread::hardware_concurrency();
-    LOGI("Run curThread is %{public}d,proc:%{public}s,SA:%{public}d",
+    LOGD("Run curThread is %{public}d,proc:%{public}s,SA:%{public}d",
         concurrentThreads, Str16ToStr8(procName_).c_str(), saId);
     initPool_->Start(concurrentThreads);
     initPool_->SetMaxTaskNum(MAX_TASK_NUMBER);
@@ -1072,7 +1072,7 @@ bool LocalAbilityManager::NoNeedCheckUnused(int32_t saId)
 bool LocalAbilityManager::IsConfigUnused()
 {
     std::shared_lock<std::shared_mutex> readLock(unusedCfgMapLock_);
-    HILOGI(TAG, "unusedCfgMap_ size:%{public}zu", unusedCfgMap_.size());
+    HILOGD(TAG, "unusedCfgMap_ size:%{public}zu", unusedCfgMap_.size());
     return !unusedCfgMap_.empty();
 }
 
