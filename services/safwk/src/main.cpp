@@ -22,7 +22,6 @@
 #include "parameter.h"
 #include "parse_util.h"
 #include "safwk_log.h"
-#include "securec.h"
 #include "string_ex.h"
 #include "system_ability_definition.h"
 #include "hisysevent_adapter.h"
