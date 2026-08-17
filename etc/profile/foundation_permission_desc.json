@@ -173,7 +173,7 @@
         {
             "name" : "ohos.permission.MANAGE_CLONE_BUNDLE_PREFERENCES",
             "said" : "180",
-            "description" : "Permission required for AMS to obtain clone preferences."
+            "description" : "Permission required for abilitymgr to obtain clone preferences."
         },
         {
             "name" : "ohos.permission.RUNNING_STATE_OBSERVER",
