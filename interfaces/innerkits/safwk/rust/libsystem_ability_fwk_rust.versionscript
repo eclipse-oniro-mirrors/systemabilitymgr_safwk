@@ -1,0 +1,55 @@
+# Copyright (c) 2026 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+{
+  global:
+    /* ---- system_ability_fwk::exts::SystemAbility (Rust pub API) ---- */
+    _RNv*18system_ability_fwk*13SystemAbility3new;
+    _RNv*18system_ability_fwk*13SystemAbility8register;
+
+    /* ---- Handler (cancel_idle, add_system_ability_listen) ---- */
+    _RNv*18system_ability_fwk*7Handler11cancel_idle;
+    _RNv*18system_ability_fwk*7Handler25add_system_ability_listen;
+
+    /* ---- wrapper::ffi (BuildSystemAbility, PublishWrapper) ---- */
+    _RNv*18system_ability_fwk*18BuildSystemAbility;
+    _RNv*18system_ability_fwk*20SystemAbilityWrapper14PublishWrapper;
+
+    /* ---- OnDemandReasonExtraData::want ---- */
+    _RNv*18system_ability_fwk*23OnDemandReasonExtraData4want;
+
+    /* ---- Debug::fmt for OnDemandReasonId, SystemAbilityOnDemandReason ---- */
+    _RNv*18system_ability_fwk*16OnDemandReasonId*5Debug3fmt;
+    _RNv*18system_ability_fwk*27SystemAbilityOnDemandReason*5Debug3fmt;
+
+    /* ---- cxx unique_ptr SystemAbilityWrapper (___get, ___drop) ---- */
+    _RNv*18system_ability_fwk*20SystemAbilityWrapper*15UniquePtrTarget5___get;
+    _RNv*18system_ability_fwk*20SystemAbilityWrapper*15UniquePtrTarget6___drop;
+
+    /* ---- Rust crate metadata (hash is volatile) ---- */
+    rust_metadata_system_ability_fwk*;
+
+    /* ---- cxx bridge box alloc/dealloc (FFI thunk, stable names) ---- */
+    cxxbridge1$box$OHOS$SafwkRust$AbilityStub$alloc;
+    cxxbridge1$box$OHOS$SafwkRust$AbilityStub$dealloc;
+    cxxbridge1$box$OHOS$SafwkRust$AbilityWrapper$alloc;
+    cxxbridge1$box$OHOS$SafwkRust$AbilityWrapper$dealloc;
+
+    /* ---- cxx bridge operator sizeof/alignof (FFI thunk, stable names) ---- */
+    OHOS$SafwkRust$cxxbridge1$AbilityStub$operator$sizeof;
+    OHOS$SafwkRust$cxxbridge1$AbilityStub$operator$alignof;
+    OHOS$SafwkRust$cxxbridge1$AbilityWrapper$operator$sizeof;
+    OHOS$SafwkRust$cxxbridge1$AbilityWrapper$operator$alignof;
+  local:
+    *;
+};

@@ -132,6 +132,7 @@ ohos_shared_library("api_cache_manager") {
   branch_protector_ret = "pac_ret"
   branch_protector_frt = "bti"
 
+  version_script = "libapi_cache_manager.versionscript"
   sources = [ "//foundation/systemabilitymgr/safwk/services/safwk/src/api_cache_manager.cpp" ]
   public_configs = [ ":api_cache_manager_config" ]
 

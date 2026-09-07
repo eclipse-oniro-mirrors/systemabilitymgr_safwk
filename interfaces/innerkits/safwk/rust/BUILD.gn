@@ -53,6 +53,7 @@ ohos_static_library("system_ability_fwk_rust_cxx") {
 ohos_rust_shared_library("system_ability_fwk_rust") {
   crate_name = "system_ability_fwk"
 
+  version_script = "libsystem_ability_fwk_rust.versionscript"
   sources = [ "src/lib.rs" ]
 
   rustflags = [ "-Zstack-protector=all" ]
