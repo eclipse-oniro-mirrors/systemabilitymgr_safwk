@@ -15,13 +15,128 @@
 
 #include "listen_ability_stub.h"
 
+#include <chrono>
+#include <cstdint>
+#include <string>
+#include <thread>
+#include <vector>
+
+#include "errors.h"
+#include "if_system_ability_manager.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
+#include "system_ability_on_demand_event.h"
+
 namespace OHOS {
-int32_t ListenAbilityStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
+namespace {
+constexpr std::chrono::milliseconds UNLOAD_DELAY { 100 };
+
+int32_t ScheduleListenAbilityUnload()
+{
+    std::thread([] {
+        std::this_thread::sleep_for(UNLOAD_DELAY);
+        auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (samgr != nullptr) {
+            (void)samgr->UnloadSystemAbility(DISTRIBUTED_SCHED_TEST_LISTEN_ID);
+        }
+    }).detach();
+    return ERR_OK;
+}
+
+int32_t UpdateOnDemandPolicyForTest(int32_t saId, MessageParcel& data)
+{
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        return ERR_NULL_OBJECT;
+    }
+    int32_t policyType = data.ReadInt32();
+    int32_t eventId = data.ReadInt32();
+    std::string name = data.ReadString();
+    std::string value = data.ReadString();
+    if (name.empty()) {
+        return ERR_INVALID_VALUE;
+    }
+    SystemAbilityOnDemandEvent event;
+    event.eventId = static_cast<OnDemandEventId>(eventId);
+    event.name = name;
+    event.value = value;
+    std::vector<SystemAbilityOnDemandEvent> events { event };
+    return samgr->UpdateOnDemandPolicy(saId, static_cast<OnDemandPolicyType>(policyType), events);
+}
+
+int32_t GetOnDemandPolicyForTest(int32_t saId, MessageParcel& data, std::string& policy)
+{
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (samgr == nullptr) {
+        return ERR_NULL_OBJECT;
+    }
+    int32_t policyType = data.ReadInt32();
+    std::vector<SystemAbilityOnDemandEvent> events;
+    int32_t result = samgr->GetOnDemandPolicy(
+        saId, static_cast<OnDemandPolicyType>(policyType), events);
+    if (result != ERR_OK) {
+        return result;
+    }
+    policy.clear();
+    for (const auto& event : events) {
+        if (!policy.empty()) {
+            policy += ";";
+        }
+        policy += std::to_string(static_cast<int32_t>(event.eventId)) + "|" + event.name + "|" + event.value;
+    }
+    return ERR_OK;
+}
+}
+
+int32_t ListenAbilityStub::TriggerRemoveForTest()
+{
+    return ERR_INVALID_OPERATION;
+}
+
+int32_t ListenAbilityStub::TriggerRepublishForTest()
+{
+    return ERR_INVALID_OPERATION;
+}
+
+bool ListenAbilityStub::IsPrivateRequest(uint32_t code) const
+{
+    switch (code) {
+        case TRIGGER_UNLOAD:
+        case UPDATE_ON_DEMAND_POLICY:
+        case GET_ON_DEMAND_POLICY:
+        case TRIGGER_REMOVE:
+        case TRIGGER_REPUBLISH:
+            return true;
+        default:
+            return false;
+    }
+}
+
+int32_t ListenAbilityStub::HandlePrivateRequest(uint32_t code, MessageParcel& data, MessageParcel& reply)
+{
+    switch (code) {
+        case TRIGGER_UNLOAD:
+            return reply.WriteInt32(ScheduleListenAbilityUnload()) ? ERR_OK : ERR_FLATTEN_OBJECT;
+        case UPDATE_ON_DEMAND_POLICY:
+            return reply.WriteInt32(UpdateOnDemandPolicyForTest(
+                DISTRIBUTED_SCHED_TEST_LISTEN_ID, data)) ? ERR_OK : ERR_FLATTEN_OBJECT;
+        case GET_ON_DEMAND_POLICY: {
+            std::string policy;
+            int32_t result = GetOnDemandPolicyForTest(DISTRIBUTED_SCHED_TEST_LISTEN_ID, data, policy);
+            return (reply.WriteInt32(result) && reply.WriteString(policy)) ? ERR_OK : ERR_FLATTEN_OBJECT;
+        }
+        case TRIGGER_REMOVE:
+            return reply.WriteInt32(TriggerRemoveForTest()) ? ERR_OK : ERR_FLATTEN_OBJECT;
+        case TRIGGER_REPUBLISH:
+            return reply.WriteInt32(TriggerRepublishForTest()) ? ERR_OK : ERR_FLATTEN_OBJECT;
+        default:
+            return ERR_TRANSACTION_FAILED;
+    }
+}
+
+int32_t ListenAbilityStub::HandleInterfaceRequest(uint32_t code, MessageParcel& data,
     MessageParcel& reply, MessageOption& option)
 {
-    if (GetDescriptor() != data.ReadInterfaceToken()) {
-        return ERR_TRANSACTION_FAILED;
-    }
     switch (code) {
         case ADD_VOLUME: {
             int32_t volume = data.ReadInt32();
@@ -54,8 +169,18 @@ int32_t ListenAbilityStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
         default:
             return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
+}
 
-    return ERR_TRANSACTION_FAILED;
+int32_t ListenAbilityStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
+    MessageParcel& reply, MessageOption& option)
+{
+    if (IsPrivateRequest(code)) {
+        return HandlePrivateRequest(code, data, reply);
+    }
+    if (GetDescriptor() != data.ReadInterfaceToken()) {
+        return ERR_TRANSACTION_FAILED;
+    }
+    return HandleInterfaceRequest(code, data, reply, option);
 }
 
 int32_t ListenAbilityStub::StubTestSaCallSa(MessageParcel &data, MessageParcel &reply)

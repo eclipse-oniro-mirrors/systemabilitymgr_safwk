@@ -17,6 +17,8 @@ group("unittest") {
   testonly = true
   deps = [
     "services/safwk/unittest:unittest",
+    "services/safwk/unittest/listen_ability:listen_test_deploy",
+    "services/safwk/unittest/multi_instance_test_probe:multi_instance_test_probe_deploy",
     "svc/unittest:unittest",
   ]
 }

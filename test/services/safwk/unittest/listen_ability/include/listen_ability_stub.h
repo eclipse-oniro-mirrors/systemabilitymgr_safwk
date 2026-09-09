@@ -30,7 +30,18 @@ public:
 
 protected:
     int32_t StubTestSaCallSa(MessageParcel &data, MessageParcel &reply);
+    virtual int32_t TriggerRemoveForTest();
+    virtual int32_t TriggerRepublishForTest();
 private:
+    bool IsPrivateRequest(uint32_t code) const;
+    int32_t HandlePrivateRequest(uint32_t code, MessageParcel& data, MessageParcel& reply);
+    int32_t HandleInterfaceRequest(uint32_t code, MessageParcel& data,
+        MessageParcel& reply, MessageOption& option);
+    static constexpr uint32_t TRIGGER_UNLOAD = 3;
+    static constexpr uint32_t UPDATE_ON_DEMAND_POLICY = 5;
+    static constexpr uint32_t GET_ON_DEMAND_POLICY = 6;
+    static constexpr uint32_t TRIGGER_REMOVE = 7;
+    static constexpr uint32_t TRIGGER_REPUBLISH = 8;
     static constexpr int32_t ADD_VOLUME = MIN_TRANSACTION_ID + 0;
     static constexpr int32_t COMMAND_TEST_SA_CALL_SA = MIN_TRANSACTION_ID + 1;
     static constexpr int32_t COMMAND_TEST_GET_IPC_TIMES = MIN_TRANSACTION_ID + 2;
