@@ -82,6 +82,17 @@ ErrCode ListenAbility::TestClearSa1493Proxy_()
     return ERR_OK;
 }
 
+int32_t ListenAbility::TriggerRemoveForTest()
+{
+    auto samgr = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    return samgr == nullptr ? ERR_NULL_OBJECT : samgr->RemoveSystemAbility(DISTRIBUTED_SCHED_TEST_LISTEN_ID);
+}
+
+int32_t ListenAbility::TriggerRepublishForTest()
+{
+    return Publish(this) ? ERR_OK : ERR_INVALID_OPERATION;
+}
+
 void ListenAbility::OnStart()
 {
     HiLog::Info(LABEL, "OnStart()");

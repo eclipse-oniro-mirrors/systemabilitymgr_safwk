@@ -49,3 +49,10 @@ ohos_shared_library("listen_test") {
   part_name = "safwk"
   subsystem_name = "systemabilitymgr"
 }
+
+group("listen_test_deploy") {
+  deps = [
+    ":listen_test",
+    "//foundation/systemabilitymgr/safwk/test/services/safwk/unittest/test_sa_proxy_cache_ability:test_sa_proxy_cache",
+  ]
+}

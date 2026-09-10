@@ -33,6 +33,8 @@ public:
     ErrCode TestSaCallSa(int32_t input, double& output) override;
     ErrCode TestGetIpcSendRequestTimes(int32_t& times) override;
     ErrCode TestClearSa1493Proxy_() override;
+    int32_t TriggerRemoveForTest() override;
+    int32_t TriggerRepublishForTest() override;
 protected:
     void OnStart() override;
     void OnAddSystemAbility(int32_t systemAbilityId, const std::string& deviceId) override;
