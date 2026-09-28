@@ -39,6 +39,10 @@ namespace {
 const std::string PERMISSION_EXT_TRANSACTION = "ohos.permission.ACCESS_EXT_SYSTEM_ABILITY";
 const std::string PERMISSION_MANAGE = "ohos.permission.MANAGE_SYSTEM_ABILITY";
 const std::string PERMISSION_SVC = "ohos.permission.CONTROL_SVC_CMD";
+
+constexpr uint64_t FDSAN_TAG_IPC_STAT = 0XD001810ULL << 32 | 0X00000001;
+constexpr uint64_t FDSAN_TAG_FFRT_STAT = 0XD001810ULL << 32 | 0X00000002;
+constexpr uint64_t FDSAN_TAG_SVC_CTRL = 0XD001810ULL << 32 | 0X00000003;
 }
 
 LocalAbilityManagerStub::LocalAbilityManagerStub()
@@ -244,19 +248,20 @@ int32_t LocalAbilityManagerStub::IpcStatCmdProcInner(MessageParcel& data, Messag
     if (fd < 0) {
         return ERR_NULL_OBJECT;
     }
+    fdsan_exchange_owner_tag(fd, 0, FDSAN_TAG_IPC_STAT);
     int cmd = -1;
     bool ret = data.ReadInt32(cmd);
     if (!ret) {
-        ::close(fd);
+        fdsan_close_with_tag(fd, FDSAN_TAG_IPC_STAT);
         return ERR_NULL_OBJECT;
     }
     bool result = IpcStatCmdProc(fd, cmd);
     if (!reply.WriteBool(result)) {
         HILOGW(TAG, "IpcStatCmdProc Write result failed!");
-        ::close(fd);
+        fdsan_close_with_tag(fd, FDSAN_TAG_IPC_STAT);
         return ERR_NULL_OBJECT;
     }
-    ::close(fd);
+    fdsan_close_with_tag(fd, FDSAN_TAG_IPC_STAT);
     HILOGD(TAG, "IpcStatCmdProc called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
@@ -267,19 +272,20 @@ int32_t LocalAbilityManagerStub::FfrtStatCmdProcInner(MessageParcel& data, Messa
     if (fd < 0) {
         return ERR_NULL_OBJECT;
     }
+    fdsan_exchange_owner_tag(fd, 0, FDSAN_TAG_FFRT_STAT);
     int cmd = -1;
     bool ret = data.ReadInt32(cmd);
     if (!ret) {
-        ::close(fd);
+        fdsan_close_with_tag(fd, FDSAN_TAG_FFRT_STAT);
         return ERR_NULL_OBJECT;
     }
     bool result = FfrtStatCmdProc(fd, cmd);
     if (!reply.WriteBool(result)) {
         HILOGW(TAG, "FfrtStatCmdProc Write result failed!");
-        ::close(fd);
+        fdsan_close_with_tag(fd, FDSAN_TAG_FFRT_STAT);
         return ERR_NULL_OBJECT;
     }
-    ::close(fd);
+    fdsan_close_with_tag(fd, FDSAN_TAG_FFRT_STAT);
     HILOGD(TAG, "FfrtStatCmdProc called %{public}s  ", result ? "success" : "failed");
     return ERR_NONE;
 }
@@ -357,12 +363,13 @@ int32_t LocalAbilityManagerStub::ServiceControlCmdInner(MessageParcel& data, Mes
         HILOGE(TAG, "ServiceControlCmdInner get invalid fd");
         return INVALID_DATA;
     }
+    fdsan_exchange_owner_tag(fd, 0, FDSAN_TAG_SVC_CTRL);
 
     std::vector<std::u16string> args;
     ret = data.ReadString16Vector(&args);
     if (!ret) {
         HILOGE(TAG, "ServiceControlCmdInner read args failed");
-        ::close(fd);
+        fdsan_close_with_tag(fd, FDSAN_TAG_SVC_CTRL);
         return INVALID_DATA;
     }
 
@@ -370,7 +377,7 @@ int32_t LocalAbilityManagerStub::ServiceControlCmdInner(MessageParcel& data, Mes
     if (result != ERR_NONE) {
         HILOGE(TAG, "ServiceControlCmdInner failed, result: %{public}d", result);
     }
-    ::close(fd);
+    fdsan_close_with_tag(fd, FDSAN_TAG_SVC_CTRL);
     return result;
 }
 }
