@@ -263,10 +263,6 @@ private:
     void SetPermission(const std::u16string& defPerm);
     void GetOnDemandReasonExtraData(SystemAbilityOnDemandReason& onDemandStartReason);
     sptr<IRemoteObject> GetAbilityRemoteObject();
-    void ClearResourceForIndependentUnload()
-    {
-        publishObj_ = nullptr;
-    }
 
     friend class LocalAbilityManager;
     friend class ::CSystemAbilityInnerService;
