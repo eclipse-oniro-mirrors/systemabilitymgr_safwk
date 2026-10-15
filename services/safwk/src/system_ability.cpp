@@ -29,6 +29,9 @@
 #include "string_ex.h"
 #include "samgr_xcollie.h"
 
+namespace {
+constexpr unsigned int REFCOUNT_CHECK_INTERVAL_MS = 1000;
+}
 namespace OHOS {
 
 SystemAbility::SystemAbility(bool runOnCreate)
@@ -474,5 +477,15 @@ int32_t SystemAbility::OnExtension(const std::string& extension, MessageParcel& 
 sptr<IRemoteObject> SystemAbility::GetAbilityRemoteObject()
 {
     return publishObj_;
+}
+
+void SystemAbility::ClearResourceForIndependentUnload()
+{
+    int refcount = 0;
+    while ((refcount = publishObj_->GetSptrRefCount()) > 1) {
+        HILOGW(TAG, "last check of refcount %{public}d", refcount);
+        usleep(REFCOUNT_CHECK_INTERVAL_MS);
+    }
+    publishObj_ = nullptr;
 }
 }
