@@ -476,6 +476,17 @@ bool LocalAbilityManager::OnStopAbility(int32_t systemAbilityId)
         return false;
     }
     ability->Stop();
+    SaProfile saProfile;
+    if (profileParser_->GetProfile(systemAbilityId, saProfile) && saProfile.independentUnload) {
+        HILOGI(TAG, "SA:%{public}d independent unload, clean up resource", systemAbilityId);
+        RemoveAbility(systemAbilityId);
+        ability->ClearResourceForIndependentUnload();
+        profileParser_->CloseSo(systemAbilityId);
+        auto samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (samgrProxy != nullptr) {
+            samgrProxy->AddOnDemandSystemAbilityInfo(systemAbilityId, procName_);
+        }
+    }
     return true;
 }
 
