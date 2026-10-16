@@ -430,6 +430,76 @@ HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility002, TestSize.Level2)
 }
 
 /**
+ * @tc.name: OnStopAbility003
+ * @tc.desc: test OnStopAbility with independentUnload=true, covers full unload path
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility003, TestSize.Level2)
+{
+    DTEST_LOG << "OnStopAbility003 start" << std::endl;
+    LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
+    SaProfile profile;
+    profile.saId = SAID;
+    profile.independentUnload = true;
+    LocalAbilityManager::GetInstance().profileParser_->saProfiles_.push_back(profile);
+    MockSaRealize* mockSa = new MockSaRealize(SAID, false);
+    mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
+    bool ret = LocalAbilityManager::GetInstance().OnStopAbility(SAID);
+    EXPECT_EQ(LocalAbilityManager::GetInstance().localAbilityMap_.find(SAID),
+        LocalAbilityManager::GetInstance().localAbilityMap_.end());
+    LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
+    delete mockSa;
+    EXPECT_TRUE(ret);
+    DTEST_LOG << "OnStopAbility003 end" << std::endl;
+}
+
+/**
+ * @tc.name: OnStopAbility004
+ * @tc.desc: test OnStopAbility with independentUnload=false, skips unload path
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility004, TestSize.Level2)
+{
+    DTEST_LOG << "OnStopAbility004 start" << std::endl;
+    LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
+    SaProfile profile;
+    profile.saId = SAID;
+    profile.independentUnload = false;
+    LocalAbilityManager::GetInstance().profileParser_->saProfiles_.push_back(profile);
+    MockSaRealize* mockSa = new MockSaRealize(SAID, false);
+    mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
+    bool ret = LocalAbilityManager::GetInstance().OnStopAbility(SAID);
+    LocalAbilityManager::GetInstance().localAbilityMap_.erase(SAID);
+    delete mockSa;
+    EXPECT_TRUE(ret);
+    DTEST_LOG << "OnStopAbility004 end" << std::endl;
+}
+
+/**
+ * @tc.name: OnStopAbility005
+ * @tc.desc: test OnStopAbility with no matching profile (GetProfile returns false)
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(LocalAbilityManagerStubTest, OnStopAbility005, TestSize.Level2)
+{
+    DTEST_LOG << "OnStopAbility005 start" << std::endl;
+    LocalAbilityManager::GetInstance().profileParser_->saProfiles_.clear();
+    MockSaRealize* mockSa = new MockSaRealize(SAID, false);
+    mockSa->abilityState_ = SystemAbilityState::NOT_LOADED;
+    LocalAbilityManager::GetInstance().localAbilityMap_[SAID] = mockSa;
+    bool ret = LocalAbilityManager::GetInstance().OnStopAbility(SAID);
+    LocalAbilityManager::GetInstance().localAbilityMap_.erase(SAID);
+    delete mockSa;
+    EXPECT_TRUE(ret);
+    DTEST_LOG << "OnStopAbility005 end" << std::endl;
+}
+
+/**
  * @tc.name: ActiveAbility001
  * @tc.desc: test ActiveAbility, cover function with valid SaID
  * @tc.type: FUNC
