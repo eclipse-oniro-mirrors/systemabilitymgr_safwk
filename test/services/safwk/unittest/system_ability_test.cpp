@@ -12,17 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "gtest/gtest.h"
 #include "iservice_registry.h"
 #include "local_ability_manager_stub.h"
 #include "memory"
 #include "sa_mock_permission.h"
 #include "test_log.h"
+#include "gtest/gtest.h"
+#include <chrono>
+#include <thread>
 
 #define private public
 #define protected public
 #include "local_ability_manager.h"
 #include "mock_sa_realize.h"
+#undef private
+#undef protected
 using namespace testing;
 using namespace testing::ext;
 
@@ -563,6 +567,59 @@ HWTEST_F(SystemAbilityTest, GetOnDemandReasonExtraData001, TestSize.Level2)
     sysAby->GetOnDemandReasonExtraData(onDemandStartReason);
     EXPECT_TRUE(onDemandStartReason.HasExtraData());
     DTEST_LOG << "GetOnDemandReasonExtraData001 end" << std::endl;
+}
+
+/**
+ * @tc.name: ClearResourceForIndependentUnload001
+ * @tc.desc: test ClearResourceForIndependentUnload with null publishObj_
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(SystemAbilityTest, ClearResourceForIndependentUnload001, TestSize.Level2)
+{
+    DTEST_LOG << "ClearResourceForIndependentUnload001 start" << std::endl;
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->ClearResourceForIndependentUnload();
+    EXPECT_EQ(sysAby->publishObj_, nullptr);
+    DTEST_LOG << "ClearResourceForIndependentUnload001 end" << std::endl;
+}
+
+/**
+ * @tc.name: ClearResourceForIndependentUnload002
+ * @tc.desc: test ClearResourceForIndependentUnload with non-null publishObj_ and refcount=1
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(SystemAbilityTest, ClearResourceForIndependentUnload002, TestSize.Level2)
+{
+    DTEST_LOG << "ClearResourceForIndependentUnload002 start" << std::endl;
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sysAby->publishObj_ = sptr<IRemoteObject>(new MockLocalAbilityManager());
+    sysAby->ClearResourceForIndependentUnload();
+    EXPECT_EQ(sysAby->publishObj_, nullptr);
+    DTEST_LOG << "ClearResourceForIndependentUnload002 end" << std::endl;
+}
+
+/**
+ * @tc.name: ClearResourceForIndependentUnload003
+ * @tc.desc: test ClearResourceForIndependentUnload with refcount>1 (loop iteration)
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(SystemAbilityTest, ClearResourceForIndependentUnload003, TestSize.Level3)
+{
+    DTEST_LOG << "ClearResourceForIndependentUnload003 start" << std::endl;
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sptr<IRemoteObject> extraRef = new MockLocalAbilityManager();
+    sysAby->publishObj_ = extraRef;
+    std::thread releaser([&extraRef]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        extraRef = nullptr;
+    });
+    sysAby->ClearResourceForIndependentUnload();
+    EXPECT_EQ(sysAby->publishObj_, nullptr);
+    releaser.join();
+    DTEST_LOG << "ClearResourceForIndependentUnload003 end" << std::endl;
 }
 }
 }

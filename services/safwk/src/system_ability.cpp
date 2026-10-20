@@ -30,7 +30,7 @@
 #include "samgr_xcollie.h"
 
 namespace {
-constexpr unsigned int REFCOUNT_CHECK_INTERVAL_MS = 1000;
+constexpr unsigned int REFCOUNT_CHECK_INTERVAL_US = 1000 * 1000;
 }
 namespace OHOS {
 
@@ -481,10 +481,14 @@ sptr<IRemoteObject> SystemAbility::GetAbilityRemoteObject()
 
 void SystemAbility::ClearResourceForIndependentUnload()
 {
+    if (publishObj_ == nullptr) {
+        HILOGW(TAG, "publishObj_ is null, skip clear resource");
+        return;
+    }
     int refcount = 0;
     while ((refcount = publishObj_->GetSptrRefCount()) > 1) {
         HILOGW(TAG, "last check of refcount %{public}d", refcount);
-        usleep(REFCOUNT_CHECK_INTERVAL_MS);
+        usleep(REFCOUNT_CHECK_INTERVAL_US);
     }
     publishObj_ = nullptr;
 }
