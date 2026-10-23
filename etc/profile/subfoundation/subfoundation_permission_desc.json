@@ -1,5 +1,5 @@
 {
-    "permisssions" : [
+    "permissions" : [
         {
             "name" : "ohos.permission.GET_BUNDLE_INFO",
             "said" : "3203",
@@ -64,6 +64,116 @@
             "name" : "ohos.permission.GET_LOCAL_ACCOUNT_IDENTIFIERS",
             "said" : "185",
             "description" : "Permission required for get account indentifiers."
+        },
+        {
+            "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
+            "said" : "3203",
+            "description" : "Permission required for ANS BundleManagerHelper to query privileged bundle info."
+        },
+        {
+            "name" : "ohos.permission.GET_BUNDLE_RESOURCES",
+            "said" : "3203",
+            "description" : "Permission required for ANS to get bundle resources for notification icons."
+        },
+        {
+            "name" : "ohos.permission.NOTIFICATION_CONTROLLER",
+            "said" : "3203",
+            "description" : "Permission required for in-process IPC self calls (RemoveNotification / IsAllowedNotify / IsSilentReminderEnabled / GetDoNotDisturbDate) that have no ANS_UID bypass."
+        },
+        {
+            "name" : "ohos.permission.START_SYSTEM_DIALOG",
+            "said" : "3203",
+            "description" : "Permission required for ANS to connect the enable-notification system dialog."
+        },
+        {
+            "name" : "ohos.permission.START_ABILITIES_FROM_BACKGROUND",
+            "said" : "3203",
+            "description" : "Permission required for ANS to connect the system dialog from background."
+        },
+        {
+            "name" : "ohos.permission.START_INVISIBLE_ABILITY",
+            "said" : "3203",
+            "description" : "Permission required for ANS to connect the invisible system dialog ability."
+        },
+        {
+            "name" : "ohos.permission.ACCESS_SCREEN_LOCK",
+            "said" : "3203",
+            "description" : "Permission required for ANS smart reminder to query screen lock state."
+        },
+        {
+            "name" : "ohos.permission.ACCESS_SCREEN_LOCK_INNER",
+            "said" : "3203",
+            "description" : "Permission required for ANS to access inner screen lock service."
+        },
+        {
+            "name" : "ohos.permission.REPORT_RESOURCE_SCHEDULE_EVENT",
+            "said" : "3203",
+            "description" : "Permission required for ANS to report notification info to resource schedule service."
+        },
+        {
+            "name" : "ohos.permission.ACCESS_CUSTOM_RINGTONE",
+            "said" : "3203",
+            "description" : "Permission required for ANS SystemSoundHelper to manage customized notification tones."
+        },
+        {
+            "name" : "ohos.permission.WRITE_RINGTONE",
+            "said" : "3203",
+            "description" : "Permission required for ANS to remove customized ringtone files."
+        },
+        {
+            "name" : "ohos.permission.PROXY_AUTHORIZATION_URI",
+            "said" : "3203",
+            "description" : "Permission required for ANS GrantSoundPermission to proxy URI authorization."
+        },
+        {
+            "name" : "ohos.permission.GRANT_URI_PERMISSION_PRIVILEGED",
+            "said" : "3203",
+            "description" : "Permission required for ANS GrantSoundPermission to grant URI permission to sceneboard."
+        },
+        {
+            "name" : "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
+            "said" : "3203",
+            "description" : "Permission required for ANS to publish system common events."
+        },
+        {
+            "name" : "ohos.permission.RECEIVER_STARTUP_COMPLETED",
+            "said" : "3203",
+            "description" : "Permission required for ANS to subscribe BOOT_COMPLETED common event."
+        },
+        {
+            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS",
+            "said" : "3203",
+            "description" : "Permission required for ANS to handle notifications across local accounts."
+        },
+        {
+            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS_EXTENSION",
+            "said" : "3203",
+            "description" : "Permission extension required for ANS to interact across local accounts."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_LOCAL_ACCOUNTS",
+            "said" : "3203",
+            "description" : "Permission required for ANS OsAccountManagerHelper to query account info."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_SETTINGS",
+            "said" : "3203",
+            "description" : "Permission required for ANS to read settings data via datashare."
+        },
+        {
+            "name" : "ohos.permission.MANAGE_SECURE_SETTINGS",
+            "said" : "3203",
+            "description" : "Permission required for ANS to read secure settings data via datashare."
+        },
+        {
+            "name" : "ohos.permission.DISTRIBUTED_DATASYNC",
+            "said" : "3203",
+            "description" : "Permission required for ANS distributed notification sync over softbus."
+        },
+        {
+            "name" : "ohos.permission.ACCESS_SERVICE_DM",
+            "said" : "3203",
+            "description" : "Permission required for ANS to access distributed hardware device manager service."
         }
     ],
     "mkdir" :[
