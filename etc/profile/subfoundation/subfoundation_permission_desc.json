@@ -6,24 +6,14 @@
             "description" : "Permission required for ReminderRequest to update the database."
         },
         {
-            "name" : "ohos.permission.START_RESTORE_NOTIFICATION",
-            "said" : "3203",
-            "description" : "Permission required for ans to access backup service."
-        },
-        {
             "name" : "ohos.permission.GET_BUNDLE_INFO",
             "said" : "185",
             "description" : "Permission required for agent manager service to get bundle."
         },
         {
-            "name" : "ohos.permission.GET_RUNNING_INFO",
-            "said" : "185",
-            "description" : "Permission required for get appliation running info."
-        },
-        {
-            "name" : "ohos.permission.GET_LOCAL_ACCOUNT_IDENTIFIERS",
-            "said" : "185",
-            "description" : "Permission required for get account indentifiers."
+            "name" : "ohos.permission.START_RESTORE_NOTIFICATION",
+            "said" : "3203",
+            "description" : "Permission required for ans to access backup service."
         },
         {
             "name" : "ohos.permission.ABILITY_BACKGROUND_COMMUNICATION",
@@ -76,7 +66,52 @@
             "description" : "Permission required for FMS to query running process info."
         },
         {
-"name" : "ohos.permission.GET_LOCAL_ACCOUNT_IDENTIFIERS",
+            "name" : "ohos.permission.CONNECT_FORM_EXTENSION",
+            "said" : "403",
+            "description" : "Permission required for FMS to connect form extension ability."
+        },
+        {
+            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS",
+            "said" : "403",
+            "description" : "Permission required for FMS to interact across local accounts."
+        },
+        {
+            "name" : "ohos.permission.GET_LOCAL_ACCOUNTS",
+            "said" : "403",
+            "description" : "Permission required for FMS to get local accounts."
+        },
+        {
+            "name" : "ohos.permission.START_INVISIBLE_ABILITY",
+            "said" : "403",
+            "description" : "Permission required for FMS to start invisible ability."
+        },
+        {
+            "name" : "ohos.permission.START_ABILITIES_FROM_BACKGROUND",
+            "said" : "403",
+            "description" : "Permission required for FMS to start abilities from background."
+        },
+        {
+            "name" : "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
+            "said" : "403",
+            "description" : "Permission required for FMS to publish system common event."
+        },
+        {
+            "name" : "ohos.permission.GET_NETWORK_INFO",
+            "said" : "403",
+            "description" : "Permission required for FMS to get network info."
+        },
+        {
+            "name" : "ohos.permission.CONNECTIVITY_INTERNAL",
+            "said" : "403",
+            "description" : "Permission required for FMS to access internal connectivity."
+        },
+        {
+            "name" : "ohos.permission.GET_RUNNING_INFO",
+            "said" : "185",
+            "description" : "Permission required for get appliation running info."
+        },
+        {
+            "name" : "ohos.permission.GET_LOCAL_ACCOUNT_IDENTIFIERS",
             "said" : "185",
             "description" : "Permission required for get account indentifiers."
         },
@@ -214,46 +249,6 @@
             "name" : "ohos.permission.START_INVISIBLE_ABILITY",
             "said" : "3204",
             "description" : "Permission required for reminder to connect the invisible system dialog ability."
-        },
-        {
-            "name" : "ohos.permission.CONNECT_FORM_EXTENSION",
-            "said" : "403",
-            "description" : "Permission required for FMS to connect form extension ability."
-        },
-        {
-            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS",
-            "said" : "403",
-            "description" : "Permission required for FMS to interact across local accounts."
-        },
-        {
-            "name" : "ohos.permission.GET_LOCAL_ACCOUNTS",
-            "said" : "403",
-            "description" : "Permission required for FMS to get local accounts."
-        },
-        {
-            "name" : "ohos.permission.START_INVISIBLE_ABILITY",
-            "said" : "403",
-            "description" : "Permission required for FMS to start invisible ability."
-        },
-        {
-            "name" : "ohos.permission.START_ABILITIES_FROM_BACKGROUND",
-            "said" : "403",
-            "description" : "Permission required for FMS to start abilities from background."
-        },
-        {
-            "name" : "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
-            "said" : "403",
-            "description" : "Permission required for FMS to publish system common event."
-        },
-        {
-            "name" : "ohos.permission.GET_NETWORK_INFO",
-            "said" : "403",
-            "description" : "Permission required for FMS to get network info."
-        },
-        {
-            "name" : "ohos.permission.CONNECTIVITY_INTERNAL",
-            "said" : "403",
-            "description" : "Permission required for FMS to access internal connectivity."
         }
     ],
     "mkdir" :[
