@@ -43,17 +43,67 @@
         {
             "name" : "ohos.permission.RECEIVE_UPDATE_MESSAGE",
             "said" : "403",
-            "description" : "Permission required for FMS to reveive DUE update message."
-        },
-        {
-            "name" : "ohos.permission.NFC_CARD_EMULATION",
-            "said" : "403",
-            "description" : "Permission required for ScreenLock to register application status listener."
+            "description" : "Permission required for FMS to receive DUE update message."
         },
         {
             "name" : "ohos.permission.RUNNING_STATE_OBSERVER",
             "said" : "403",
-            "description" : "Permission required for ScreenLock to get the bundle names of all payment services‌."
+            "description" : "Permission required for FMS to report bundle active event."
+        },
+        {
+            "name" : "ohos.permission.GET_BUNDLE_INFO_PRIVILEGED",
+            "said" : "403",
+            "description" : "Permission required for FMS to query privileged bundle info."
+        },
+        {
+            "name" : "ohos.permission.GET_BUNDLE_INFO",
+            "said" : "403",
+            "description" : "Permission required for FMS to query bundle info."
+        },
+        {
+            "name" : "ohos.permission.GET_RUNNING_INFO",
+            "said" : "403",
+            "description" : "Permission required for FMS to query running process info."
+        },
+        {
+            "name" : "ohos.permission.CONNECT_FORM_EXTENSION",
+            "said" : "403",
+            "description" : "Permission required for FMS to connect form extension ability."
+        },
+        {
+            "name" : "ohos.permission.INTERACT_ACROSS_LOCAL_ACCOUNTS",
+            "said" : "403",
+            "description" : "Permission required for FMS to interact across local accounts."
+        },
+        {
+            "name" : "ohos.permission.GET_LOCAL_ACCOUNTS",
+            "said" : "403",
+            "description" : "Permission required for FMS to get local accounts."
+        },
+        {
+            "name" : "ohos.permission.START_INVISIBLE_ABILITY",
+            "said" : "403",
+            "description" : "Permission required for FMS to start invisible ability."
+        },
+        {
+            "name" : "ohos.permission.START_ABILITIES_FROM_BACKGROUND",
+            "said" : "403",
+            "description" : "Permission required for FMS to start abilities from background."
+        },
+        {
+            "name" : "ohos.permission.PUBLISH_SYSTEM_COMMON_EVENT",
+            "said" : "403",
+            "description" : "Permission required for FMS to publish system common event."
+        },
+        {
+            "name" : "ohos.permission.GET_NETWORK_INFO",
+            "said" : "403",
+            "description" : "Permission required for FMS to get network info."
+        },
+        {
+            "name" : "ohos.permission.CONNECTIVITY_INTERNAL",
+            "said" : "403",
+            "description" : "Permission required for FMS to access internal connectivity."
         },
         {
             "name" : "ohos.permission.GET_RUNNING_INFO",
