@@ -1,11 +1,6 @@
 {
     "permissions" : [
         {
-            "name" : "ohos.permission.MANAGE_HAP_TOKENID",
-            "said" : "66568",
-            "description" : "Permission required for API Metrics service to get hap token info."
-        },
-        {
             "name" : "ohos.permission.LISTEN_BUNDLE_CHANGE",
             "said" : "66568",
             "description" : "Permission required for API Metrics service to listen bundle change."
