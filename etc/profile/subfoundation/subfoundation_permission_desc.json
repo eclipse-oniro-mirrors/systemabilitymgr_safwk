@@ -1,6 +1,16 @@
 {
     "permissions" : [
         {
+            "name" : "ohos.permission.LISTEN_BUNDLE_CHANGE",
+            "said" : "66568",
+            "description" : "Permission required for API Metrics service to listen bundle change."
+        },
+        {
+            "name" : "ohos.permission.INSTALL_SANDBOX_BUNDLE",
+            "said" : "66568",
+            "description" : "Permission required for API Metrics service to install sandbox bundle."
+        },
+        {
             "name" : "ohos.permission.GET_BUNDLE_INFO",
             "said" : "3203",
             "description" : "Permission required for ReminderRequest to update the database."
