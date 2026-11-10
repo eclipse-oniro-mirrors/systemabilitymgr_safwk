@@ -181,6 +181,11 @@
             "description" : "Permission required for abilitymgr to obtain clone preferences."
         },
         {
+            "name" : "ohos.permission.REPORT_SECURITY_EVENT",
+            "said" : "3524",
+            "description" : "Permission required for security guard to report security events."
+        },
+        {
             "name" : "ohos.permission.RUNNING_STATE_OBSERVER",
             "said" : "180",
             "description" : "Permission required for AMS to register application state observer."
