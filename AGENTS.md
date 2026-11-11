@@ -57,6 +57,19 @@ test/
 | API缓存 | `api_cache_manager.cpp` |
 | saspawn特性 | `config.gni` → `system_ability_start.cpp` |
 
+### docs/knowledge 文档路由
+
+| 问题 | 先读 |
+|---|---|
+| safwk定位、职责边界与上下游输入输出 | [业务背景](docs/knowledge/business-context.md) |
+| 模块、构建部署、线程资源、特性与架构约束 | [架构设计及约束](docs/knowledge/architecture.md) |
+| 修改SA生命周期、IPC、配置、缓存或Rust桥前的约束 | [编码铁律](docs/knowledge/coding-standards.md) |
+| 本地登记/Publish、状态/运行标记、原因、缓存等概念 | [术语表](docs/knowledge/glossary.md) |
+| SA对象、Profile、LSA、阶段任务、监听与缓存项的关系/生命周期 | [业务实体知识](docs/knowledge/safwk-Entity.md) |
+| 进程启动、依赖、按需启停、通知、原因取数、缓存、诊断及跨语言机制 | [技术机制知识](docs/knowledge/safwk-Technology.md) |
+
+按任务先读相关概念与机制，再沿源码导航核查当前实现；修改前读编码约束。资料与当前实现的差异在架构及机制中说明，不以导航摘要替代实现依据。
+
 **SA生命周期状态机**: `NOT_LOADED → ACTIVE → IDLE → (CancelIdle→ACTIVE | stop)`。回调: `OnStart`→ACTIVE、`OnIdle`→IDLE（返回delayTime毫秒）、`OnActive`→ACTIVE、`OnStop`→终止。
 
 **SA开发四件套**: (1) SA实现（.cpp，继承SystemAbility + REGISTER宏）、(2) profile JSON（每个文件一个SA）、(3) `ohos_sa_profile` BUILD.gn、(4) 进程.cfg（init通过 `sa_main /system/profile/xxx.json` 启动）。
