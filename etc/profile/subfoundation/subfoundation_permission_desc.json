@@ -259,6 +259,16 @@
             "name" : "ohos.permission.START_INVISIBLE_ABILITY",
             "said" : "3204",
             "description" : "Permission required for reminder to connect the invisible system dialog ability."
+        },
+        {
+            "name" : "ohos.permission.MONITOR_DEVICE_NETWORK_STATE",
+            "said" : "3203",
+            "description" : "Permission required for ANS to register device state callback and query trusted devices from distributed hardware device manager service."
+        },
+        {
+            "name" : "ohos.permission.RECEIVE_BMS_BROKER_MESSAGES",
+            "said" : "3203",
+            "description" : "Permission required for ANS to receive BMS broker messages for application clone restore events."
         }
     ],
     "mkdir" :[
