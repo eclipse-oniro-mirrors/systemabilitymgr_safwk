@@ -31,6 +31,7 @@
 
 namespace {
 constexpr unsigned int REFCOUNT_CHECK_INTERVAL_US = 1000 * 1000;
+constexpr int32_t RESERVED_INTERNAL_REFCOUNT = 2;
 }
 namespace OHOS {
 
@@ -81,17 +82,20 @@ bool SystemAbility::Publish(sptr<IRemoteObject> systemAbility)
         return false;
     }
     LOGD("Publish SA:%{public}d", saId_);
-    // Avoid automatic destruction of system ability caused by failure of publishing ability
-    publishObj_ = systemAbility;
     int64_t begin = GetTickCount();
     sptr<ISystemAbilityManager> samgrProxy = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     if (samgrProxy == nullptr) {
         HILOGE(TAG, "failed to get samgrProxy");
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        // Avoid automatic destruction of system ability caused by failure of publishing ability
+        publishObj_ = systemAbility;
         return false;
     }
 
     ISystemAbilityManager::SAExtraProp saExtra(GetDistributed(), GetDumpLevel(), capability_, permission_);
     std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+    // Avoid automatic destruction of system ability caused by failure of publishing ability
+    publishObj_ = systemAbility;
     int32_t result = samgrProxy->AddSystemAbility(saId_, publishObj_, saExtra);
     KHILOGI(TAG, "SA:%{public}d result:%{public}d,spend:%{public}" PRId64 "ms",
         saId_, result, (GetTickCount() - begin));
@@ -476,20 +480,31 @@ int32_t SystemAbility::OnExtension(const std::string& extension, MessageParcel& 
 
 sptr<IRemoteObject> SystemAbility::GetAbilityRemoteObject()
 {
+    std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
     return publishObj_;
 }
 
 void SystemAbility::ClearResourceForIndependentUnload()
 {
-    if (publishObj_ == nullptr) {
-        HILOGW(TAG, "publishObj_ is null, skip clear resource");
-        return;
+    sptr<IRemoteObject> obj;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (publishObj_ == nullptr) {
+            HILOGW(TAG, "publishObj_ is null, skip clear resource");
+            return;
+        }
+        obj = publishObj_;
     }
     int refcount = 0;
-    while ((refcount = publishObj_->GetSptrRefCount()) > 1) {
+    while ((refcount = obj->GetSptrRefCount()) > RESERVED_INTERNAL_REFCOUNT) {
         HILOGW(TAG, "last check of refcount %{public}d", refcount);
         usleep(REFCOUNT_CHECK_INTERVAL_US);
     }
-    publishObj_ = nullptr;
+    {
+        std::lock_guard<std::recursive_mutex> autoLock(abilityLock);
+        if (publishObj_.GetRefPtr() == obj.GetRefPtr()) {
+            publishObj_ = nullptr;
+        }
+    }
 }
 }
