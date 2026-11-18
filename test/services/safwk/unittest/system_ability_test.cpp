@@ -18,7 +18,9 @@
 #include "sa_mock_permission.h"
 #include "test_log.h"
 #include "gtest/gtest.h"
+#include <atomic>
 #include <chrono>
+#include <mutex>
 #include <thread>
 
 #define private public
@@ -620,6 +622,57 @@ HWTEST_F(SystemAbilityTest, ClearResourceForIndependentUnload003, TestSize.Level
     EXPECT_EQ(sysAby->publishObj_, nullptr);
     releaser.join();
     DTEST_LOG << "ClearResourceForIndependentUnload003 end" << std::endl;
+}
+
+/**
+ * @tc.name: ClearResourceForIndependentUnload004
+ * @tc.desc: test ClearResourceForIndependentUnload waits across multiple checks and does not clear early
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(SystemAbilityTest, ClearResourceForIndependentUnload004, TestSize.Level3)
+{
+    DTEST_LOG << "ClearResourceForIndependentUnload004 start" << std::endl;
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sptr<IRemoteObject> extraRef = new MockLocalAbilityManager();
+    sysAby->publishObj_ = extraRef;
+    std::atomic<bool> clearedWhileHeld{false};
+    std::thread releaser([&sysAby, &extraRef, &clearedWhileHeld]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+        std::lock_guard<std::recursive_mutex> autoLock(sysAby->abilityLock);
+        clearedWhileHeld = (sysAby->publishObj_ == nullptr);
+        extraRef = nullptr;
+    });
+    sysAby->ClearResourceForIndependentUnload();
+    EXPECT_EQ(sysAby->publishObj_, nullptr);
+    releaser.join();
+    EXPECT_FALSE(clearedWhileHeld);
+    DTEST_LOG << "ClearResourceForIndependentUnload004 end" << std::endl;
+}
+
+/**
+ * @tc.name: ClearResourceForIndependentUnload005
+ * @tc.desc: test ClearResourceForIndependentUnload keeps a newer publishObj_ replaced during the wait
+ * @tc.type: FUNC
+ * @tc.require: I7G7DL
+ */
+HWTEST_F(SystemAbilityTest, ClearResourceForIndependentUnload005, TestSize.Level3)
+{
+    DTEST_LOG << "ClearResourceForIndependentUnload005 start" << std::endl;
+    std::shared_ptr<SystemAbility> sysAby = std::make_shared<MockSaRealize>(SAID, false);
+    sptr<IRemoteObject> oldRef = new MockLocalAbilityManager();
+    sptr<IRemoteObject> newRef = new MockLocalAbilityManager();
+    sysAby->publishObj_ = oldRef;
+    std::thread replacer([&sysAby, &newRef]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::lock_guard<std::recursive_mutex> autoLock(sysAby->abilityLock);
+        sysAby->publishObj_ = newRef;
+        newRef = nullptr;
+    });
+    sysAby->ClearResourceForIndependentUnload();
+    EXPECT_NE(sysAby->publishObj_, nullptr);
+    replacer.join();
+    DTEST_LOG << "ClearResourceForIndependentUnload005 end" << std::endl;
 }
 }
 }
