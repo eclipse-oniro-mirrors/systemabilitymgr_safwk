@@ -269,6 +269,11 @@
             "name" : "ohos.permission.RECEIVE_BMS_BROKER_MESSAGES",
             "said" : "3203",
             "description" : "Permission required for ANS to receive BMS broker messages for application clone restore events."
+        },
+        {
+            "name" : "ohos.permission.GRANT_SENSITIVE_PERMISSIONS",
+            "said" : "3203",
+            "description" : "Permission required for ANS to publish notification.event.PUSH_AGENT to subscribers that require the publisher to hold this permission."
         }
     ],
     "mkdir" :[
